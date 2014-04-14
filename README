@@ -1,0 +1,113 @@
+DomainHeatlh README
+===================
+
+Copyright (c) 2008-2013 Paul Done
+Version:  1.1.0
+Licence:  "3-clause" BSD based Licence - refer to the files 'LICENSE'
+Last updated:  18-Sep-2013
+Project Home Page:  http://sourceforge.net/projects/domainhealth
+Project Help Docs:  http://sourceforge.net/apps/mediawiki/domainhealth
+
+
+Introduction
+------------
+DomainHealth is an open source "zero-config" monitoring tool for WebLogic. It
+collects important server metrics over time, archives these into CSV files and
+provides a simple web interface for viewing graphs of current and historical 
+statistics.
+
+DomainHealth is designed to provide administrators with a quick and easy way
+to monitor a set WebLogic servers effectively. It is engineered to have a 
+minimal performance impact on the managed servers in the domain.
+
+DomainHealth also provides optional support for gathering statistics from 
+another Weblogic deployed open-source project called WLHostMachineStats.
+WLHostMachineStats is a small agent (JMX MBean) that runs in every WebLogic 
+Server to collect O.S. statistics (ie. CPU/Memory/Network usage) from the host
+machine. As a result, with the addition of WLHostMachineStats, DomainHealth
+is able to show historical host machine graphs alongside graphs of regular
+WebLogic Server statistics. For more information on WLHostMachineStats, see:
+http://sourceforge.net/projects/wlhostmchnstats/
+
+DomainHealth supports all WebLogic version from 9.0 to 12.1.x.
+
+
+
+Quick Installation How To
+-------------------------
+   1. Navigate to this project's 'Download' page and download the J2EE web-
+   application: domainhealth-nn.war
+   2. Deploy domainhealth-nn.war to WebLogic 9.x/10.x targeted to the Admin 
+   Server server of the domain only
+   3. Using a Web Browser, navigate: http://adminhost:port/domainhealth
+        (statistics may take a few minutes to appear - 
+          keep pressing the Latest Time (right arrow) Button)
+
+WARNING: If you have are replacing a previous version of DomainHealth on your
+Admin Server, you MUST first undeploy the old version, then delete (or archive
+off) the old 'statistics' directory containing the old recorded CSV files, then
+deploy the new version. This is required because of changes to the CSV content
+structure, for the new DomainHealth version, which is not backwards compatible
+with older versions.
+
+NOTE 1: If you need to change the path of directory where statistics CSV files
+are written to, for the WebLogic start-up settings of the Admin Server (eg. in
+setDomainEnv.sh), specify a JVM start-up parameter called 
+'dh_stats_output_path' with a required value of the absolute or relative path 
+of the root directory. For example: -Ddh_stats_output_path=/tmp/stats
+
+NOTE 2: If your main WebLogic Admin user is not called 'weblogic', unpack the
+'domainhealth-nn.war' web-app using an 'unzip' tool, and modify the
+'run-as-role-assignment/run-as-principal-name' element value in the file
+'WEB-INF/weblogic.xml' to the required WebLogic administrator name (eg. 
+'system'). Then zip the 'domainhealth-nn.war' back-up again and deploy to the 
+Admin Server.
+
+NOTE 3: If on WebLogic 10.3 or greater, you need to prevent Domain Health from 
+using WLDF to internally capture statistics and instead use JMX Polling (which
+is the default on WebLogic versions less that 10.3), for the WebLogic start-up
+settings of the Admin Server (eg. in startWebLogic.sh), specify a JVM start-up
+parameter called 'dh_always_use_jmxpoll' with a value of 'true'. For example:
+-Ddh_always_use_jmxpoll=true
+
+
+Building From Source
+--------------------
+This project includes an Ant buildfile in the root directory to enable the 
+project to be completely re-built from source and modified and enhanced where
+necessary. The project also includes an Eclipse '.project' Project file, 
+enabling developers to optionally use Eclipse to modify the source (just 
+import DomainHealth as an existing project into Eclipse).
+
+To re-build the project, first ensure the Java 1.5.x SDK and Ant 1.6+ is 
+installed and their 'bin' directories are present in PATH environment 
+variable, then check the values in the local.properties file in the project's
+root directory to ensure this reflects your local WebLogic environment 
+settings. 
+
+Run the following commands to clean the project, compile the source code and 
+build the WAR web-application:
+
+ > ant clean
+ > ant
+
+OPTIONAL: To run the unit tests for the project, copy the JUnit archive ('
+junit.jar') from this project's 'lib' directory into 'ANT_HOME/lib'm and then 
+run:
+
+ > ant test
+
+OPTIONAL: To automatically deploy the generated WAR web-application to a 
+running WebLogic Server, first modify the 'local.properties' file in the root 
+of the project, to reflect the required WebLogic settings and then run:
+
+ > ant deploy
+
+To undeploy the application, run:
+
+ > ant undeploy
+ 
+
+Project Contact
+---------------
+Paul Done  (send email to the "gmail.com" email address for gmail user 'pkdone')

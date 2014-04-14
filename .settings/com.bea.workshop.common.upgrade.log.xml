@@ -1,0 +1,5 @@
+<upgrade-log>
+  <entry time="2008-03-20 10:52:11 UTC">
+    <upgrade-participant pluginId="com.bea.workshop.common.wtp.core" pluginVersion="1.1.2.200801220144" class="com.bea.workshop.common.wtp.core.upgrade.internal.WtpComponentFileUpgradeParticipant"/>
+  </entry>
+</upgrade-log>
