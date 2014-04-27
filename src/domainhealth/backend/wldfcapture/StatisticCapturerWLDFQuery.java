@@ -162,6 +162,19 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
 	protected void logDestinationsStats() throws DataRetrievalException {
 		logResourceStats(DESTINATION_RESOURCE_TYPE, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, JMS_DESTINATION_RUNTIME), JMS_DESTINATION_MBEAN_MONITOR_ATTR_LIST, jmsDestinationStatsQuery);
 	}
+	
+	
+	
+	/**
+	 * Implements the abstract method to log SAF stats to a CSV 
+	 * file.
+	 * 
+	 * @throws DataRetrievalException Indicates problem occurred in trying to obtain and persist the server's statistics
+	 */
+	protected void logSafAgentStats() throws DataRetrievalException {
+		logResourceStats(DESTINATION_RESOURCE_TYPE, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, SAF_AGENT_RUNTIME), SAF_AGENT_MBEAN_MONITOR_ATTR_LIST, jmsDestinationStatsQuery);
+		
+	}
 
 	/**
 	 * Implements the abstract method to log Web Application stats to a CSV 
@@ -387,7 +400,8 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
 	// Members
 	private final static String coreServerStatsQuery;   
 	private final static String jdbcStatsQuery;   
-	private final static String jmsDestinationStatsQuery;   
+	private final static String jmsDestinationStatsQuery;  
+	private final static String safAgentStatsQuery;
 	private final static String webAppStatsQuery;   
 	private final static String ejbStatsQuery;   
 	private final static String wkMgrStatsQuery;   
@@ -411,6 +425,9 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
 		StringBuilder jmsDestinationStatsQueryBuilder = new StringBuilder(100);
 		appendWLDFQueryPart(jmsDestinationStatsQueryBuilder, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, JMS_DESTINATION_RUNTIME), JMS_DESTINATION_MBEAN_MONITOR_ATTR_LIST);
 		jmsDestinationStatsQuery = jmsDestinationStatsQueryBuilder.toString();
+		StringBuilder safAgentStatsQueryBuilder = new StringBuilder(100);
+		appendWLDFQueryPart(safAgentStatsQueryBuilder, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, SAF_AGENT_RUNTIME), SAF_AGENT_MBEAN_MONITOR_ATTR_LIST);
+		safAgentStatsQuery = safAgentStatsQueryBuilder.toString();
 		StringBuilder webAppStatsQueryBuilder = new StringBuilder(100);
 		appendWLDFQueryPart(webAppStatsQueryBuilder, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, WEBAPP_COMPONENT_RUNTIME), WEBAPP_MBEAN_MONITOR_ATTR_LIST);
 		webAppStatsQuery = webAppStatsQueryBuilder.toString();
@@ -428,4 +445,6 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
 		appendWLDFQueryPart(hostMachineStatsQueryBuilder, HOST_MACHINE_MBEAN, HOST_MACHINE_STATS_MBEAN_MONITOR_ATTR_LIST);
 		hostMachineStatsQuery = hostMachineStatsQueryBuilder.toString();				
 	}
+
+	
 }

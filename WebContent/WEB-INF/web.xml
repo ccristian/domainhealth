@@ -54,6 +54,10 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>ShowPageControllerServlet</servlet-name>
+		<url-pattern>/safstats/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ShowPageControllerServlet</servlet-name>
 		<url-pattern>/webappstats/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>

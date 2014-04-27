@@ -87,11 +87,25 @@ public interface WebLogicMBeanPropConstants {
 	 * 'JMSRuntime' MBean property
 	 */
 	public final static String JMS_RUNTIME = "JMSRuntime";	
+	
+	
+	/**
+	 * 'SAFRuntime' MBean property
+	 */
+	public final static String SAF_RUNTIME = "SAFRuntime";	
+
 
 	/**
 	 * 'JMSDestinationRuntime' MBean property
 	 */
 	public final static String JMS_DESTINATION_RUNTIME = "JMSDestinationRuntime";	
+	
+	
+	/**
+	 * 'SafAgentRuntime' MBean property
+	 */
+	public final static String SAF_AGENT_RUNTIME = "SAFAgentRuntime";	
+	
 
 	/**
 	 * 'ApplicationRuntimes' MBean property

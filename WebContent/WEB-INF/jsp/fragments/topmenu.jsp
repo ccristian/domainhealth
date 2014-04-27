@@ -9,6 +9,7 @@
 						</c:if>
 						<li><a href='<c:out value="${contexturl}"/>/datasourcestats?<dh:link-ctx-params/>'>JDBC</a></li>
 						<li><a href='<c:out value="${contexturl}"/>/destinationstats?<dh:link-ctx-params/>'>JMS</a></li>
+						<li><a href='<c:out value="${contexturl}"/>/safstats?<dh:link-ctx-params/>'>SAF</a></li>
 						<li><a href='<c:out value="${contexturl}"/>/webappstats?<dh:link-ctx-params/>'>Web-Apps</a></li>
 						<li><a href='<c:out value="${contexturl}"/>/ejbstats?<dh:link-ctx-params/>'>EJBs</a></li>
 						<li><a href='<c:out value="${contexturl}"/>/workmgrstats?<dh:link-ctx-params/>'>Work Mgrs</a></li>

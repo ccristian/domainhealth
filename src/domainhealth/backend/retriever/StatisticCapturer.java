@@ -102,6 +102,14 @@ public abstract class StatisticCapturer {
 	 * @throws DataRetrievalException Indicates problem occurred in trying to obtain and persist the server's statistics
 	 */
 	protected abstract void logDestinationsStats() throws DataRetrievalException;
+	
+	/**
+	 * Abstract method for capturing and persisting SAF Agent
+	 * statistics.
+	 * 
+	 * @throws DataRetrievalException Indicates problem occurred in trying to obtain and persist the server's statistics
+	 */
+	protected abstract void logSafAgentStats() throws DataRetrievalException;
 
 	/**
 	 * Abstract method for capturing and persisting Web Application 

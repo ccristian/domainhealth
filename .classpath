@@ -18,12 +18,8 @@
 			<attribute name="owner.project.facets" value="jst.web"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0_39">
-		<attributes>
-			<attribute name="owner.project.facets" value="java"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="var" path="WL_103/wlserver_10.3/server/lib/weblogic.jar"/>
+	<classpathentry kind="var" path="wls12/server/lib/weblogic.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jfreechart-1.0.13.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/Java SE 7 [1.7.0_45]"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

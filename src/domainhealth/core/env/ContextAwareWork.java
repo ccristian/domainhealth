@@ -56,6 +56,8 @@ public abstract class ContextAwareWork implements Work {
 		Thread currentThread = Thread.currentThread();
 		ClassLoader originalClassLoader = currentThread.getContextClassLoader();
 		
+		//it seems in weblogic 12c at least this is not necessary but i just let it like this for now
+		//for backward compatibility.
 		currentThread.setContextClassLoader(contextClassloader);
 		
 		try {

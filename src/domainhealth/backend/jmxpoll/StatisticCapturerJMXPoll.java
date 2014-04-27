@@ -353,4 +353,10 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 
 	// Constants
 	private static final int DEFAULT_CONTENT_LINE_LEN = 100;
+
+	@Override
+	protected void logSafAgentStats() throws DataRetrievalException {
+		// TODO Auto-generated method stub
+		
+	}
 }

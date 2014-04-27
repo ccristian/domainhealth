@@ -116,6 +116,12 @@ public class MonitorProperties {
 	public final static String DESTINATION_RESOURCE_TYPE = "destination";
 	
 	/**
+	 * Name of the 'saf' category of resource for Destination related statistics
+	 */
+	public final static String SAF_RESOURCE_TYPE = "saf";
+	
+	
+	/**
 	 * Name of the 'webapp' category of resource for Web App related statistics
 	 */
 	public final static String WEBAPP_RESOURCE_TYPE = "webapp";	
@@ -174,6 +180,11 @@ public class MonitorProperties {
 	 * List of JMS Destination MBean Attributes to be monitored
 	 */
 	public final static String[] JMS_DESTINATION_MBEAN_MONITOR_ATTR_LIST = {MESSAGES_CURRENT_COUNT, MESSAGES_PENDING_COUNT, MESSAGES_RECEIVED_COUNT, MESSAGES_HIGH_COUNT, CONSUMERS_CURRENT_COUNT, CONSUMERS_HIGH_COUNT, CONSUMERS_TOTAL_COUNT};
+	
+	/**
+	 * List of SAFAgent MBean Attributes to be monitored
+	 */
+	public final static String[] SAF_AGENT_MBEAN_MONITOR_ATTR_LIST = {MESSAGES_CURRENT_COUNT, MESSAGES_PENDING_COUNT, MESSAGES_RECEIVED_COUNT, MESSAGES_HIGH_COUNT};
 
 	/**
 	 * List of WebApp MBean Attributes to be monitored
