@@ -74,6 +74,7 @@ public abstract class StatisticCapturer {
 		logCoreStats();
 		logDataSourcesStats();
 		logDestinationsStats();
+		logSafAgentStats();
 		logWebAppStats();
 		logEJBStats();
 		logHostMachineStats();
