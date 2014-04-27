@@ -149,7 +149,7 @@ public class MonitorProperties {
 	/**
 	 * List of names or allowable resource types (eg. core, datasource)
 	 */
-	public final static List<String> LEGAL_RESOURCE_TYPES = Arrays.asList(CORE_RESOURCE_TYPE, DATASOURCE_RESOURCE_TYPE, DESTINATION_RESOURCE_TYPE, WEBAPP_RESOURCE_TYPE, EJB_RESOURCE_TYPE, WORKMGR_RESOURCE_TYPE, SVRCHNL_RESOURCE_TYPE, HOSTMACHINE_RESOURCE_TYPE);
+	public final static List<String> LEGAL_RESOURCE_TYPES = Arrays.asList(CORE_RESOURCE_TYPE, DATASOURCE_RESOURCE_TYPE, DESTINATION_RESOURCE_TYPE, SAF_RESOURCE_TYPE, WEBAPP_RESOURCE_TYPE, EJB_RESOURCE_TYPE, WORKMGR_RESOURCE_TYPE, SVRCHNL_RESOURCE_TYPE, HOSTMACHINE_RESOURCE_TYPE);
 
 	/**
 	 * List of Server MBean Attributes to be monitored
@@ -342,7 +342,7 @@ public class MonitorProperties {
 		propList.put(CONSUMERS_CURRENT_COUNT, new WLProperty(CONSUMERS_CURRENT_COUNT, "Consumers Current", NUMBER_UNITS)); 
 		propList.put(CONSUMERS_HIGH_COUNT, new WLProperty(CONSUMERS_HIGH_COUNT, "Consumers High", NUMBER_UNITS));
 		propList.put(CONSUMERS_TOTAL_COUNT, new WLProperty(CONSUMERS_TOTAL_COUNT, "Consumers Total", NUMBER_UNITS));
-
+		
 		// Add WebApp properties
 		propList.put(SESSIONS_CURRENT_COUNT, new WLProperty(SESSIONS_CURRENT_COUNT, "Open Sessions Current", NUMBER_UNITS)); 
 		propList.put(SESSIONS_HIGH_COUNT, new WLProperty(SESSIONS_HIGH_COUNT, "Open Sessions High", NUMBER_UNITS)); 

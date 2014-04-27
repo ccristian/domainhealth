@@ -222,7 +222,11 @@ public class ShowPageControllerServlet extends HttpServlet {
 				request.setAttribute(PAGE_TITLE, (resourceName == null) ? DESTINATIONS_MENU_TITLE : resourceName + DESTINATION_PAGE_TITLE);
 				request.setAttribute(MENU_TITLE, DESTINATIONS_MENU_TITLE);				
 				request.setAttribute(RESOURCES_LIST_PARAM,  statisticsStorage.getResourceNamesFromPropsList(endDateTime, DESTINATION_RESOURCE_TYPE));			
-			} else if (resourceType.equals(WEBAPP_RESOURCE_TYPE)) {
+			} else if (resourceType.equals(SAF_RESOURCE_TYPE)) {
+				request.setAttribute(PAGE_TITLE, (resourceName == null) ? SAF_MENU_TITLE : resourceName + SAF_PAGE_TITLE);
+				request.setAttribute(MENU_TITLE, SAF_MENU_TITLE);				
+				request.setAttribute(RESOURCES_LIST_PARAM,  statisticsStorage.getResourceNamesFromPropsList(endDateTime, SAF_RESOURCE_TYPE));			
+			}else if (resourceType.equals(WEBAPP_RESOURCE_TYPE)) {
 				request.setAttribute(PAGE_TITLE, (resourceName == null) ? WEBAPPS_MENU_TITLE : resourceName + WEBAPP_PAGE_TITLE);
 				request.setAttribute(MENU_TITLE, WEBAPPS_MENU_TITLE);				
 				request.setAttribute(RESOURCES_LIST_PARAM,  statisticsStorage.getResourceNamesFromPropsList(endDateTime, WEBAPP_RESOURCE_TYPE));			
@@ -400,7 +404,9 @@ public class ShowPageControllerServlet extends HttpServlet {
 	private final static String DATASOURCE_PAGE_TITLE = " data source";
 	private final static String DATASOURCES_MENU_TITLE = "Data Sources";	
 	private final static String DESTINATION_PAGE_TITLE = " destination";
-	private final static String DESTINATIONS_MENU_TITLE = "Destinations";	
+	private final static String DESTINATIONS_MENU_TITLE = "Destinations";
+	private final static String SAF_MENU_TITLE = "Saf";
+	private final static String SAF_PAGE_TITLE = " saf";
 	private final static String WEBAPP_PAGE_TITLE = " web-app";
 	private final static String WEBAPPS_MENU_TITLE = "Web-Apps";	
 	private final static String EJB_PAGE_TITLE = " ejb";

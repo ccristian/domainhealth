@@ -172,7 +172,7 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
 	 * @throws DataRetrievalException Indicates problem occurred in trying to obtain and persist the server's statistics
 	 */
 	protected void logSafAgentStats() throws DataRetrievalException {
-		logResourceStats(DESTINATION_RESOURCE_TYPE, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, SAF_AGENT_RUNTIME), SAF_AGENT_MBEAN_MONITOR_ATTR_LIST, jmsDestinationStatsQuery);
+		logResourceStats(SAF_RESOURCE_TYPE, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, SAF_AGENT_RUNTIME), SAF_AGENT_MBEAN_MONITOR_ATTR_LIST, safAgentStatsQuery);
 		
 	}
 
