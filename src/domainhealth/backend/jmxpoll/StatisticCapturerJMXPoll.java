@@ -176,6 +176,44 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 			throw new DataRetrievalException("Problem logging " + DESTINATION_RESOURCE_TYPE + " resources for server " + getServerName(), e);
 		}		
 	}	
+	
+	
+	/**
+	 * Implements the abstract method to log SAF destination stats to a CSV 
+	 * file.
+	 * 
+	 * @throws DataRetrievalException Indicates problem occurred in trying to obtain and persist the server's statistics
+	 */
+	protected void logSafAgentStats() throws DataRetrievalException {
+		try {
+			Date nowDate = new Date();
+			String now = (new SimpleDateFormat(DATETIME_PARAM_FORMAT)).format(nowDate);
+			Properties artifactList = new Properties();
+			String headerLine = constructHeaderLine(SAF_AGENT_MBEAN_MONITOR_ATTR_LIST);
+			ObjectName safRuntime = getConn().getChild(getServerRuntime(), SAF_RUNTIME);
+			
+		
+			
+			for (ObjectName safAgent : getConn().getChildren(safRuntime, "Agents")) { 
+					try {
+						System.out.println("!!!!!!!!!!!!"+getConn().getTextAttr(safAgent, NAME));
+						
+						String name = ResourceNameNormaliser.normalise(SAF_RESOURCE_TYPE, getConn().getTextAttr(safAgent, NAME));
+						String contentLine = constructStatsLine(safAgent, SAF_AGENT_MBEAN_MONITOR_ATTR_LIST);
+						getCSVStats().appendToResourceStatisticsCSV(new Date(), getServerName(), SAF_RESOURCE_TYPE, name, headerLine, contentLine);
+						artifactList.put(name, now);
+					} catch (Exception e) {
+						AppLog.getLogger().warning("Issue logging " + SAF_RESOURCE_TYPE + ":" + safAgent.getCanonicalName() + " for server " + getServerName() + ", reason=" + e.getLocalizedMessage());
+					}						
+				
+			}
+
+			getCSVStats().appendSavedOneDayResourceNameList(nowDate, SAF_RESOURCE_TYPE, artifactList);			
+		} catch (Exception e) {
+			throw new DataRetrievalException("Problem logging " + SAF_RESOURCE_TYPE + " resources for server " + getServerName(), e);
+		}
+		
+	}
 
 	/**
 	 * Implements the abstract method to log Web Application stats to a CSV 
@@ -354,9 +392,5 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 	// Constants
 	private static final int DEFAULT_CONTENT_LINE_LEN = 100;
 
-	@Override
-	protected void logSafAgentStats() throws DataRetrievalException {
-		// TODO Auto-generated method stub
-		
-	}
+	
 }

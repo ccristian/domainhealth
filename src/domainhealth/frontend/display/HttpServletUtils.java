@@ -169,7 +169,6 @@ public class HttpServletUtils {
 	
 	public static String getServletMapping(HttpServletRequest request) {
 		String path = request.getServletPath();
-		System.out.println("!!!!!!!PAth:"+path);
 		if ((path != null) && (path.length() > 0)) {
 			return path.substring(1);			
 		} else {

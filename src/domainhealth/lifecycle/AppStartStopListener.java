@@ -21,10 +21,10 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import domainhealth.backend.retriever.RetrieverBackgroundService;
 import domainhealth.core.env.AppLog;
 import domainhealth.core.env.AppProperties;
 import domainhealth.core.env.AppProperties.PropKey;
-import domainhealth.backend.retriever.RetrieverBackgroundService;
 
 /**
  * Application start/deploy and stop/undeploy event listener to initialise and

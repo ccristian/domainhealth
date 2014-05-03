@@ -14,6 +14,9 @@
 //POSSIBILITY OF SUCH DAMAGE.
 package domainhealth.backend.retriever;
 
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.DOMAIN_VERSION;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.NAME;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,16 +28,16 @@ import javax.naming.NamingException;
 
 import commonj.work.WorkItem;
 import commonj.work.WorkManager;
-import static domainhealth.core.env.AppProperties.*;
+
 import domainhealth.backend.jmxpoll.StatisticCapturerJMXPoll;
 import domainhealth.backend.wldfcapture.HarvesterWLDFModuleCreator;
 import domainhealth.backend.wldfcapture.StatisticCapturerWLDFQuery;
 import domainhealth.core.env.AppLog;
 import domainhealth.core.env.AppProperties;
+import domainhealth.core.env.AppProperties.PropKey;
 import domainhealth.core.env.ContextAwareWork;
 import domainhealth.core.jmx.DomainRuntimeServiceMBeanConnection;
 import domainhealth.core.jmx.WebLogicMBeanException;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.*;
 import domainhealth.core.statistics.StatisticsStorage;
 import domainhealth.core.util.FileUtil;
 import domainhealth.core.util.ProductVersionUtil;
@@ -155,6 +158,7 @@ public class RetrieverBackgroundService {
 		}
 
 		long newSleepIntervalMillis = queryIntervalMillis;
+		
 		
 		if ((keepRunning) && (!firstTimeProcessingRanOK)) {
 			try {

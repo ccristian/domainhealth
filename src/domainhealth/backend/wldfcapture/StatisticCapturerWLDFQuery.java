@@ -237,15 +237,20 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
 			HarvesterWLDFQueryRunner queryRunner = new HarvesterWLDFQueryRunner(getConn(), getServerName(), wldfQuery, getQueryIntervalMillis());
 			DataRecordsCollection dataRecords = queryRunner.retrieveDataRecords();			
 			Map<String, InstanceDataRecord> objectRecords = getUniqueObjectRecords(resourceType, mbeanPropertyName, dataRecords);
+			
+			System.out.println("-----------------"+mbeanPropertyName+"-----------------");
+			
 			Iterator<String> names = objectRecords.keySet().iterator(); 
 
 			while (names.hasNext()) {
 				String name = (String) names.next();
-			
+				System.out.println("----Name:"+name);
 				// Skip resources which are on blacklist (unless this is for 
 				// the WLHostMachine resource type in which case allow anyway)
 				if ((resourceType.equals(HOSTMACHINE_RESOURCE_TYPE)) || (!getComponentBlacklist().contains(name))) {										
 					String contentLine = constructStatsLine(objectRecords.get(name), monitorAttrList);
+					if (mbeanPropertyName.contains("SaFRuntime")){
+					System.out.println("Content Line:"+contentLine);}
 					getCSVStats().appendToResourceStatisticsCSV(nowDate, getServerName(), resourceType, name, headerLine, contentLine);
 					artifactList.put(name, now);
 				}
