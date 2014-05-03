@@ -173,6 +173,11 @@ public interface WebLogicMBeanPropConstants {
 	public final static String JMS_SERVERS = "JMSServers";	
 
 	/**
+	 * 'Agents' MBean property
+	 */
+	public final static String AGENTS = "Agents";		
+
+	/**
 	 * 'Destinations' MBean property
 	 */
 	public final static String DESTINATIONS = "Destinations";	

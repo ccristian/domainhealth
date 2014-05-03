@@ -191,13 +191,9 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 			Properties artifactList = new Properties();
 			String headerLine = constructHeaderLine(SAF_AGENT_MBEAN_MONITOR_ATTR_LIST);
 			ObjectName safRuntime = getConn().getChild(getServerRuntime(), SAF_RUNTIME);
-			
-		
-			
-			for (ObjectName safAgent : getConn().getChildren(safRuntime, "Agents")) { 
+				
+			for (ObjectName safAgent : getConn().getChildren(safRuntime, AGENTS)) { 
 					try {
-						System.out.println("!!!!!!!!!!!!"+getConn().getTextAttr(safAgent, NAME));
-						
 						String name = ResourceNameNormaliser.normalise(SAF_RESOURCE_TYPE, getConn().getTextAttr(safAgent, NAME));
 						String contentLine = constructStatsLine(safAgent, SAF_AGENT_MBEAN_MONITOR_ATTR_LIST);
 						getCSVStats().appendToResourceStatisticsCSV(new Date(), getServerName(), SAF_RESOURCE_TYPE, name, headerLine, contentLine);
