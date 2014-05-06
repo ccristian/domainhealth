@@ -1,5 +1,4 @@
-![](https://github.com/ccristian/domainhealth/raw/master/WebContent/images/buttons/dhicon.png) 
- DomainHealth
+![](https://github.com/ccristian/domainhealth/raw/master/WebContent/images/buttons/dhicon.png) DomainHealth
 ============
 
 
