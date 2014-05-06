@@ -1,6 +1,10 @@
 DomainHealth CHANGES 
 ====================
 
+1.1.1: 5-May-2014  (cristian.chiovari)
+  General minor release
+  * Store-and-Forward monitoring
+  
 1.1.0: 18-Sep-2013  (pkdone)
   General minor enhancements release
   * ENH#0000049 - Allow DH WLDF module to co-exist with other modules in WLS v 12.1.2+
