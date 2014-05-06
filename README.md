@@ -6,5 +6,7 @@ DomainHealth is an open source "zero-config" monitoring tool for WebLogic. It co
 
 You can download the latest release from https://github.com/ccristian/domainhealth/releases/tag/1.1.1
 
+The wiki page can be found at https://github.com/ccristian/domainhealth/wiki
+
 
 Special thanks to Paul Done the original owner of this project
