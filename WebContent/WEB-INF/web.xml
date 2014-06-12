@@ -9,6 +9,10 @@
 	<context-param>
 		<param-name>dh_always_use_jmxpoll</param-name>
 		<param-value>false</param-value>
+		
+		<!--
+		<param-value>true</param-value>
+		-->
 	</context-param>		
 	<context-param>
 		<param-name>dh_query_interval_secs</param-name>
@@ -76,6 +80,13 @@
 		<servlet-name>ShowPageControllerServlet</servlet-name>
 		<url-pattern>/hostmachinestats/*</url-pattern>
 	</servlet-mapping>
+	
+	<!--  Added by gregoan the 03/06/2014 -->
+	<servlet-mapping>
+		<servlet-name>ShowPageControllerServlet</servlet-name>
+		<url-pattern>/jmssrvdashboard/*</url-pattern>
+	</servlet-mapping>
+	
 	<servlet-mapping>
 		<servlet-name>LineChartImageGeneratorServlet</servlet-name>
 		<url-pattern>/charts/*</url-pattern>
@@ -89,6 +100,11 @@
 		<taglib>
 			<taglib-uri>domainhealth-tags</taglib-uri>
 			<taglib-location>/WEB-INF/tlds/domainhealth.tld</taglib-location>
+		</taglib>
+		
+		<taglib>
+			<taglib-uri>domainhealth-role</taglib-uri>
+			<taglib-location>/WEB-INF/tlds/autorisation.tld</taglib-location>
 		</taglib>
 	</jsp-config>
 

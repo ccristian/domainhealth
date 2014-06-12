@@ -18,7 +18,12 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -29,16 +34,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static javax.servlet.http.HttpServletResponse.*;
-
+import domainhealth.backend.retriever.DataRetrievalException;
 import domainhealth.core.env.AppLog;
 import domainhealth.core.env.AppProperties.PropKey;
 import domainhealth.core.jmx.DomainRuntimeServiceMBeanConnection;
+import domainhealth.core.jmx.WebLogicMBeanConnection;
 import domainhealth.core.jmx.WebLogicMBeanException;
+import domainhealth.core.jmx.WebLogicMBeanPropConstants;
 import static domainhealth.core.jmx.WebLogicMBeanPropConstants.*;
 import static domainhealth.core.util.DateUtil.*;
 import static domainhealth.core.statistics.MonitorProperties.*;
 import domainhealth.core.statistics.StatisticsStorage;
 import domainhealth.core.util.DateUtil;
+import domainhealth.frontend.data.JMSServerSummaryData;
 import static domainhealth.frontend.display.GraphScopedAttributeUtils.*;
 import static domainhealth.frontend.display.HttpServletUtils.*;
 
@@ -120,6 +128,7 @@ public class ShowPageControllerServlet extends HttpServlet {
 				String direction = getDirectionParam(request);
 				Date newDateTime = determineNewTimeWindowEndDate(dateTime, direction, durationMins);
 				conn = new DomainRuntimeServiceMBeanConnection();
+				
 				setGeneralRequestAttributes(request, conn, durationMins, newDateTime, resourceType);
 				setResourceRequestAttributes(request, conn, newDateTime, resourceType);
 				setOkHTTPResponseHeaders(response);
@@ -192,7 +201,8 @@ public class ShowPageControllerServlet extends HttpServlet {
 	 * @throws IOException Indicates a problem calculate new end time
 	 * @throws WebLogicMBeanException Indicates a problem calculate new end time
 	 */
-	private void setResourceRequestAttributes(HttpServletRequest request, DomainRuntimeServiceMBeanConnection conn, Date endDateTime, String resourceType) throws ServletException, IOException, WebLogicMBeanException {	
+	private void setResourceRequestAttributes(HttpServletRequest request, DomainRuntimeServiceMBeanConnection conn, Date endDateTime, String resourceType) throws ServletException, IOException, WebLogicMBeanException {
+				
 		if (resourceType.equals(CORE_RESOURCE_TYPE)) {
 			request.setAttribute(RESOURCE_NAME_PARAM, resourceType);		
 			request.setAttribute(PAGE_URL_PARAM, request.getContextPath() + URL_PATH_SEPERATOR + resourceType + STATS_SERVLET_MAPPING_SUFFIX);
@@ -202,7 +212,44 @@ public class ShowPageControllerServlet extends HttpServlet {
 			request.setAttribute(RESOURCE_NAME_PARAM, resourceType);		
 			request.setAttribute(PAGE_URL_PARAM, request.getContextPath() + URL_PATH_SEPERATOR + resourceType + STATS_SERVLET_MAPPING_SUFFIX);
 			request.setAttribute(PAGE_TITLE, HOSTMACHINE_PAGE_TITLE);
-			request.setAttribute(MENU_TITLE, HOSTMACHINE_MENU_TITLE);											
+			request.setAttribute(MENU_TITLE, HOSTMACHINE_MENU_TITLE);
+			
+		// **************************************************************
+		// Added by gregoan
+		} else if (resourceType.equals(JMSSVR_RESOURCE_TYPE)) {
+			
+			//request.setAttribute(RESOURCE_NAME_PARAM, resourceType);
+			request.setAttribute(PAGE_URL_PARAM, request.getContextPath() + URL_PATH_SEPERATOR + resourceType + DASHBOARD_SERVLET_MAPPING_SUFFIX);
+			
+			request.setAttribute(PAGE_TITLE, JMSSRV_DASHBOARD_PAGE_TITLE);
+			request.setAttribute(MENU_TITLE, JMSSRV_DASHBOARD_MENU_TITLE);				
+			request.setAttribute(RESOURCES_LIST_PARAM, getJMSServersList(conn));
+			
+			String resourceName = HttpServletUtils.getEndPathFromURL(request);
+			
+			// Resource is selected so dashboard should be generated
+			if (resourceName != null)
+			{
+//System.out.println("ShowPageControllerServlet::setResourceRequestAttributes() - JMS Server ResourceName is selected -> " + resourceName);
+
+				request.setAttribute(RESOURCE_NAME_PARAM, resourceName);
+					
+				//Set<JMSServerSummaryData> jmsServerSummaryData = getJMSServerDashboard(conn, serverRuntime, resourceName);
+				Set<JMSServerSummaryData> jmsServerSummaryData = getJMSServerDashboard(conn, resourceName);
+					
+				// Put the dashboard in the HttpRequest
+				//request.setAttribute("jmsServersSummary", jmsServersSummaryData);
+				request.setAttribute("jmsServerSummary", jmsServerSummaryData);
+			}
+			else
+			{
+				// RESOURCE_NAME_PARAM shouldn't be set otherwise "Select resource from left menu" will not be printed (see maindisplay.jsp)
+				//request.setAttribute(RESOURCE_NAME_PARAM, resourceType);
+				
+//System.out.println("ShowPageControllerServlet::setResourceRequestAttributes() - JMS Server ResourceName IS NOT selected");
+			}
+		// **************************************************************
+			
 		} else {
 			String resourceName = HttpServletUtils.getEndPathFromURL(request);
 			request.setAttribute(RESOURCE_NAME_PARAM, resourceName);
@@ -242,14 +289,51 @@ public class ShowPageControllerServlet extends HttpServlet {
 				request.setAttribute(PAGE_TITLE, (resourceName == null) ? SVRCHNLS_MENU_TITLE : resourceName + SVRCHNL_PAGE_TITLE);
 				request.setAttribute(MENU_TITLE, SVRCHNLS_MENU_TITLE);				
 				request.setAttribute(RESOURCES_LIST_PARAM, statisticsStorage.getResourceNamesFromPropsList(endDateTime, SVRCHNL_RESOURCE_TYPE));			
-			} else {
+			
+			// **************************************************************
+			// Added by gregoan
+			}/* else if (resourceType.equals(JMSSVR_RESOURCE_TYPE)) {
+			
+				request.setAttribute(RESOURCE_NAME_PARAM, resourceType);		
+				request.setAttribute(PAGE_URL_PARAM, request.getContextPath() + URL_PATH_SEPERATOR + resourceType + DASHBOARD_SERVLET_MAPPING_SUFFIX);
+				
+				request.setAttribute(PAGE_TITLE, (resourceName == null) ? JMSSRV_DASHBOARD_MENU_TITLE : resourceName + JMSSRV_DASHBOARD_PAGE_TITLE);
+				request.setAttribute(MENU_TITLE, JMSSRV_DASHBOARD_MENU_TITLE);
+				
+				// Add the JMS server list to the request
+				request.setAttribute(RESOURCES_LIST_PARAM, getJMSServersList(conn));
+				
+				// Resource is selected so dashboard should be generated
+				if (resourceName != null)
+				{
+System.out.println("ShowPageControllerServlet::setResourceRequestAttributes() - JMS Server ResourceName is selected -> " + resourceName);
+					
+					//Set<JMSServerSummaryData> jmsServerSummaryData = getJMSServerDashboard(conn, serverRuntime, resourceName);
+					Set<JMSServerSummaryData> jmsServerSummaryData = getJMSServerDashboard(conn, resourceName);
+					
+					// Put the dashboard in the HttpRequest
+					//request.setAttribute("jmsServersSummary", jmsServersSummaryData);
+					request.setAttribute("jmsServersSummary", jmsServerSummaryData);
+				}
+				else
+				{
+System.out.println("ShowPageControllerServlet::setResourceRequestAttributes() - JMS Server ResourceName IS NOT selected");
+				}
+
+			// **************************************************************	
+			} */else {
 				throw new ServletException("Unable to map servlet path '" + request.getServletPath() + "' to a known resource type to show statistics for");
 			}			
 		}
 
 		// Indicate to only show Hosts top menu link if any data has been retrieved from WLHostMachineStats custom mbeans
 		Set<String> hostmachinesSet = statisticsStorage.getResourceNamesFromPropsList(endDateTime, HOSTMACHINE_RESOURCE_TYPE);
-		request.setAttribute(SHOW_HOSTS_PARAM, ((hostmachinesSet != null) && (!hostmachinesSet.isEmpty())));							
+		request.setAttribute(SHOW_HOSTS_PARAM, ((hostmachinesSet != null) && (!hostmachinesSet.isEmpty())));
+		
+		// Added by gregoan the 03/06/2014
+		// JMSDashboard is a table without statistics on metrics so we need to check if there is a MBean or not
+		// TODO : Should check if MBean is available or not -> see StatisticCapturerJMXPoll::logHostMachineStats()
+		request.setAttribute(SHOW_JMSSRV_DASHBOARDS_PARAM, true);
 	}
 
 	/**
@@ -263,15 +347,18 @@ public class ShowPageControllerServlet extends HttpServlet {
 	private String getResourceType(String servletMapping) throws ServletException {
 		String resourceType = null;
 		int resourceTypeEndPos = servletMapping.indexOf(STATS_SERVLET_MAPPING_SUFFIX);
-	
+		
+		// Added by gregoan
+		// If < 0, it's maybe a dashboard type
+		if(resourceTypeEndPos < 0)	resourceTypeEndPos = servletMapping.indexOf(DASHBOARD_SERVLET_MAPPING_SUFFIX);
+				
 		if (resourceTypeEndPos > 0) {
 			resourceType = servletMapping.substring(0, resourceTypeEndPos);
-			
+						
 			if (!LEGAL_RESOURCE_TYPES.contains(resourceType)) {
 				resourceType = null;
 			}
-		} 
-
+		}		
 		return resourceType;
 	}
 	
@@ -280,7 +367,7 @@ public class ShowPageControllerServlet extends HttpServlet {
 	 * WebLogic domain.
 	 * 
 	 * @param conn JMX connection to domain runtime
-	 * @return The names of all servers in the doamin
+	 * @return The names of all servers in the domain
 	 * @throws WebLogicMBeanException Indicates a problem reading the domain's configuration settings.
 	 */
 	private Set<String> getAllPossibleServerNames(DomainRuntimeServiceMBeanConnection conn) throws WebLogicMBeanException {
@@ -416,5 +503,151 @@ public class ShowPageControllerServlet extends HttpServlet {
 	private final static String SVRCHNL_PAGE_TITLE = " server channel";
 	private final static String SVRCHNLS_MENU_TITLE = "Server Channels";	
 	private final static String HOSTMACHINE_PAGE_TITLE = "Host Machine";
-	private final static String HOSTMACHINE_MENU_TITLE = "Host Machine";	
+	private final static String HOSTMACHINE_MENU_TITLE = "Host Machine";
+	
+	// *************************************************************************
+	// Added by gregoan
+	private final static String JMSSRV_DASHBOARD_PAGE_TITLE = "JMS Dashboard";
+	private final static String JMSSRV_DASHBOARD_MENU_TITLE = "JMS Dashboard";
+	private final static String DASHBOARD_SERVLET_MAPPING_SUFFIX = "dashboard";
+	
+	/**
+	 * 
+	 * @param conn
+	 * @return
+	 */
+	public Set<String> getJMSServersList(DomainRuntimeServiceMBeanConnection conn){
+		
+		Set<String> jmsSet = new HashSet<String>();
+		
+		try{
+			ObjectName[] serverRuntimes = conn.getAllServerRuntimes();			
+			
+			//Find the Admin server
+			for (int index = 0; index < serverRuntimes.length; index++){
+				if(DomainRuntimeServiceMBeanConnection.isThisTheAdminServer()){
+					
+					ObjectName serverRuntime = serverRuntimes[index];
+					String serverName = "";
+					
+					try {
+			        	serverName = conn.getTextAttr(serverRuntime, NAME);
+			        	ObjectName jmsRuntime = conn.getChild(serverRuntime, JMS_RUNTIME);
+			            ObjectName[] jmsServers = conn.getChildren(jmsRuntime, JMS_SERVERS);
+			            
+			            for (ObjectName jmsServer : jmsServers)
+			            {
+			            	String currentJmsServerName = conn.getTextAttr(jmsServer, NAME);
+							jmsSet.add(currentJmsServerName);
+			            }
+			        
+			        } catch (Exception e) {
+						throw new DataRetrievalException("Problem getting " + JMSSVR_RESOURCE_TYPE + " resources for server " + serverName, e);
+					}
+				}
+			}
+		
+		} catch(Exception ex){
+			System.out.println("ShowPageControllerServlet::getJMSServersList() - Error to get the JMS servers list");
+		}
+		return jmsSet;
+	}
+	
+	/**
+	 * 
+	 * @param conn
+	 * @return
+	 */
+	//public Set<JMSServerSummaryData> getJMSServerDashboard(DomainRuntimeServiceMBeanConnection conn, ObjectName serverRuntime, String jmsServerName){
+	public Set<JMSServerSummaryData> getJMSServerDashboard(DomainRuntimeServiceMBeanConnection conn, String jmsServerName){
+		
+		Set<JMSServerSummaryData> jmsServersSummary = new TreeSet<JMSServerSummaryData>(new JMSServerSummaryData());
+		
+		try {
+			
+			ObjectName[] serverRuntimes = conn.getAllServerRuntimes();
+			
+			//Find the Admin server
+			for (int index = 0; index < serverRuntimes.length; index++){
+				if(DomainRuntimeServiceMBeanConnection.isThisTheAdminServer()){
+			
+					ObjectName serverRuntime = serverRuntimes[index]; 
+					String serverName = conn.getTextAttr(serverRuntime, NAME);
+			    	ObjectName jmsRuntime = conn.getChild(serverRuntime, JMS_RUNTIME);
+			    	
+			        ObjectName[] jmsServers = conn.getChildren(jmsRuntime, JMS_SERVERS);
+			        
+			        for (ObjectName jmsServer : jmsServers)
+			        {
+			        	String currentJmsServerName = conn.getTextAttr(jmsServer, NAME);
+			        	
+			        	if(currentJmsServerName.equals(jmsServerName)){
+			        		
+			        		for (ObjectName destination : conn.getChildren(jmsServer, DESTINATIONS)) {
+			        			
+			        			JMSServerSummaryData jmsSummaryData = new JMSServerSummaryData();
+						    	String destinationName = getRealDestinationName(conn.getTextAttr(destination, NAME));
+						    	destinationName = transformComponentName(destinationName);
+						    	
+								jmsSummaryData.setDestinationName(destinationName);
+								jmsSummaryData.setMessagesCurrentCount(new Long((int)conn.getNumberAttr(destination, MESSAGES_CURRENT_COUNT)).toString());
+								jmsSummaryData.setMessagesPendingCount(new Long((int)conn.getNumberAttr(destination, MESSAGES_PENDING_COUNT)).toString());
+								jmsSummaryData.setMessagesReceivedCount(new Long((int)conn.getNumberAttr(destination, MESSAGES_RECEIVED_COUNT)).toString());
+								jmsSummaryData.setMessagesHighCount(new Long((int)conn.getNumberAttr(destination, MESSAGES_HIGH_COUNT)).toString());
+								jmsSummaryData.setConsumersCurrentCount(new Long((int)conn.getNumberAttr(destination, CONSUMERS_CURRENT_COUNT)).toString());
+								jmsSummaryData.setConsumersHighCount(new Long((int)conn.getNumberAttr(destination, CONSUMERS_HIGH_COUNT)).toString());
+								jmsSummaryData.setConsumersTotalCount(new Long((int)conn.getNumberAttr(destination, CONSUMERS_TOTAL_COUNT)).toString());
+								
+								// Add the information for the JMS server
+								jmsServersSummary.add(jmsSummaryData);
+			        		}
+			        	}			    
+			        }
+				}
+			}
+		
+		} catch(Exception ex){
+			System.out.println("ShowPageControllerServlet::getJMSServerDashboard() - Error to genarate the JMS dashboard");
+		}
+		return jmsServersSummary;
+	}
+    
+    /**
+	 * Resolves the real queue or topic name from any module and/or server 
+	 * name which may be included in name of the destinaton on s specific 
+	 * server. For example, resolve "MyServer!MyModule@MyQueue" or 
+	 * "MyModule@MyQueue" to "MyQueue" 
+	 * 
+	 * @param destinationName The full name of the queue/topic hosted on a server
+	 * @return The real queue/topic name
+	 */
+	private String getRealDestinationName(String destinationName)
+	{
+		String realName = destinationName;
+		int startPos = destinationName.indexOf(DESTINATION_MODULE_PHYSICALDEST);
+
+		if (startPos < 0)
+		{
+			startPos = destinationName.indexOf(DESTINATION_SERVER_MODULE_SEPARATOR);
+		}
+		
+		if (startPos > 0)
+		{
+			realName = destinationName.substring(startPos + 1);
+		}
+		
+		return transformComponentName(realName);
+	}
+    
+    /*
+	*/
+	private String transformComponentName(String componentName)
+	{
+		// Replace "/" with "."
+		return componentName.replace("/", ".");
+	}
+	
+	private static final char DESTINATION_MODULE_PHYSICALDEST = '@';
+	private static final char DESTINATION_SERVER_MODULE_SEPARATOR = '!';
+	// ********************************************************************************************
 }

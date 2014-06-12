@@ -130,6 +130,7 @@ public class StatisticsStorage {
 	public void appendToResourceStatisticsCSV(Date dateTime, String serverName, String resourceType, String resourceName, String headerLine, String contentLine) throws IOException {
 		FileUtil.createOrRetrieveDir(getDayServerResourceDirectoryPath(dateTime, serverName, resourceType));
 		String filepath = getDayServerResourceCSVPath(dateTime, serverName, resourceType, resourceName);
+		
 		PrintWriter out = null;
 
 		try {

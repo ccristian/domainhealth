@@ -444,7 +444,5 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
 		StringBuilder hostMachineStatsQueryBuilder = new StringBuilder(100);
 		appendWLDFQueryPart(hostMachineStatsQueryBuilder, HOST_MACHINE_MBEAN, HOST_MACHINE_STATS_MBEAN_MONITOR_ATTR_LIST);
 		hostMachineStatsQuery = hostMachineStatsQueryBuilder.toString();				
-	}
-
-	
+	}	
 }

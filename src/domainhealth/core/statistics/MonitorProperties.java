@@ -85,6 +85,18 @@ public class MonitorProperties {
 	 */
 	public final static String WKMGR_MBEAN_NAME_TEMPLATE = "com.bea:Name=weblogic.kernel.Default,ServerRuntime=%s,Type=WorkManagerRuntime";	
 
+	// Added by gregoan the 03/06/2014
+	/**
+	 * 'JMSDashboard' MBean instance name
+	 */
+	public final static String JMS_DASHBOARD_MBEAN_NAME = "JMSDashboard";
+
+	// Added by greoan the 03/06/2014
+	/**
+	 * 'jmsdashboard=%s,name=JMSDashboard' MBean name template
+	 */
+	public final static String JMS_DASHBOARD_MBEAN_FULLNAME_TEMPLATE = "jmsdashboard:Location=%s,name=" + JMS_DASHBOARD_MBEAN_NAME;
+	
 	/**
 	 * 'WLHostMachineStats' MBean instance name
 	 */
@@ -93,7 +105,7 @@ public class MonitorProperties {
 	/**
 	 * 'wlhostmachinestats:Location=%s,name=WLHostMachineStats' MBean name template
 	 */
-	public final static String HOST_MACHINE_MBEAN_FULLNAME_TEMPLATE = "wlhostmachinestats:Location=%s,name=" + HOST_MACHINE_MBEAN_NAME;	
+	public final static String HOST_MACHINE_MBEAN_FULLNAME_TEMPLATE = "wlhostmachinestats:Location=%s,name=" + HOST_MACHINE_MBEAN_NAME;
 
 	/**
 	 * Default Name of core resource - empty string ''
@@ -120,7 +132,6 @@ public class MonitorProperties {
 	 */
 	public final static String SAF_RESOURCE_TYPE = "saf";
 	
-	
 	/**
 	 * Name of the 'webapp' category of resource for Web App related statistics
 	 */
@@ -144,12 +155,19 @@ public class MonitorProperties {
 	/**
 	 * Name of the 'hostmachine' category of resource for WL Host Machine custom MBean related statistics
 	 */
-	public final static String HOSTMACHINE_RESOURCE_TYPE = "hostmachine";	
+	public final static String HOSTMACHINE_RESOURCE_TYPE = "hostmachine";
+	
+	/**
+	 * Name of the 'jmsdashboard' category of resource for JMSDashboard custom MBean related statistics
+	 */
+	public final static String JMSSVR_RESOURCE_TYPE = "jmssrv";
 
 	/**
 	 * List of names or allowable resource types (eg. core, datasource)
 	 */
-	public final static List<String> LEGAL_RESOURCE_TYPES = Arrays.asList(CORE_RESOURCE_TYPE, DATASOURCE_RESOURCE_TYPE, DESTINATION_RESOURCE_TYPE, SAF_RESOURCE_TYPE, WEBAPP_RESOURCE_TYPE, EJB_RESOURCE_TYPE, WORKMGR_RESOURCE_TYPE, SVRCHNL_RESOURCE_TYPE, HOSTMACHINE_RESOURCE_TYPE);
+	// Updated by gregoan
+	//public final static List<String> LEGAL_RESOURCE_TYPES = Arrays.asList(CORE_RESOURCE_TYPE, DATASOURCE_RESOURCE_TYPE, DESTINATION_RESOURCE_TYPE, SAF_RESOURCE_TYPE, WEBAPP_RESOURCE_TYPE, EJB_RESOURCE_TYPE, WORKMGR_RESOURCE_TYPE, SVRCHNL_RESOURCE_TYPE, HOSTMACHINE_RESOURCE_TYPE);
+	public final static List<String> LEGAL_RESOURCE_TYPES = Arrays.asList(CORE_RESOURCE_TYPE, DATASOURCE_RESOURCE_TYPE, DESTINATION_RESOURCE_TYPE, SAF_RESOURCE_TYPE, WEBAPP_RESOURCE_TYPE, EJB_RESOURCE_TYPE, WORKMGR_RESOURCE_TYPE, SVRCHNL_RESOURCE_TYPE, HOSTMACHINE_RESOURCE_TYPE, JMSSVR_RESOURCE_TYPE);
 
 	/**
 	 * List of Server MBean Attributes to be monitored

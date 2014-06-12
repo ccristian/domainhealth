@@ -23,23 +23,36 @@
 		</div>
 		
 		<div id="main_content">
+		
 			<table border="0" cellpadding="0" cellspacing="0">
 				<tr><td colspan="2"><h6>&nbsp;</h6></td></tr>
 				<c:if test="${resourcetype eq 'core' or not empty resourcename}">
 					<jsp:include page='<%="content/" + pageContext.findAttribute("resourcetype") + ".jsp"%>'/>
-				</c:if>									
+				</c:if>
+							
 				<c:if test="${resourcetype ne 'core' and empty resourcename}">				
 					<tr>
 						<td colspan="2">
 							<c:if test="${not empty resources}">
 								<div id="choosetext">Select resource from left menu</div>
-							</c:if>									
+							</c:if>
+							
+							<%--
 							<c:if test="${empty resources and resourcetype ne 'workmgr' and resourcetype ne 'svrchnl'}">
 								<div id="choosetext">No resources of this type exist</div>
 							</c:if>									
 							<c:if test="${empty resources and (resourcetype eq 'workmgr' or resourcetype eq 'svrchnl')}">
 								<div id="choosetext">No resources of this type exist (only available for WLDF collected statistics)</div>
+							</c:if>
+							--%>
+							
+							<c:if test="${empty resources and resourcetype ne 'workmgr' and resourcetype ne 'svrchnl' and resourcetype ne 'jmssrv'}">
+								<div id="choosetext">No resources of this type exist</div>
 							</c:if>									
+							<c:if test="${empty resources and (resourcetype eq 'workmgr' or resourcetype eq 'svrchnl' or resourcetype eq 'jmssrv')}">
+								<div id="choosetext">No resources of this type exist (only available for WLDF collected statistics)</div>
+							</c:if>
+												
 						</td>
 					</tr>
 				</c:if>

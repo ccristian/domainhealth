@@ -73,6 +73,12 @@ public class GraphScopedAttributeUtils {
 	 * in the top menu.
 	 */
 	public final static String SHOW_HOSTS_PARAM = "showhosts";
+	
+	/**
+	 * The 'showjmssrvdashboards' pamameter to indicate whether to show the 'JMS Dashboard' link 
+	 * in the top menu.
+	 */
+	public final static String SHOW_JMSSRV_DASHBOARDS_PARAM = "showjmssrvdashboards";
 
 	/**
 	 * The list of names of all servers in domain attribute/parameter

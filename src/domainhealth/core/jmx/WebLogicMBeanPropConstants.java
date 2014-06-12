@@ -586,7 +586,6 @@ public interface WebLogicMBeanPropConstants {
 	 * 'MessagesHighCount' MBean property
 	 */
 	public final static String MESSAGES_HIGH_COUNT = "MessagesHighCount"; 	
-		
 	
 	/**
 	 * 'ConsumersCurrentCount' MBean property

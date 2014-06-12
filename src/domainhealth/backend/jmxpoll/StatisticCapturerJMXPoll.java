@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+import java.util.TreeSet;
 
 import javax.management.ObjectName;
 
@@ -73,7 +74,8 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 	 * @return The text data row (ready to be appended to a CSV)
 	 * @throws WebLogicMBeanException Indicates problem accessing the server to retrieve the statistics
 	 */
-	private String getCoreStatsLine() throws WebLogicMBeanException {
+	private String getCoreStatsLine() throws WebLogicMBeanException {		
+		
 		StringBuilder line = new StringBuilder(DEFAULT_CONTENT_LINE_LEN);
 
 		// Date-time
@@ -157,18 +159,26 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 			Properties artifactList = new Properties();
 			String headerLine = constructHeaderLine(JMS_DESTINATION_MBEAN_MONITOR_ATTR_LIST);
 			ObjectName jmsRuntime = getConn().getChild(getServerRuntime(), JMS_RUNTIME);
-			
-			for (ObjectName jmsServer : getConn().getChildren(jmsRuntime, JMS_SERVERS)) { 
+						
+			for (ObjectName jmsServer : getConn().getChildren(jmsRuntime, JMS_SERVERS)) {
+				
+//String jmsServerName = getConn().getTextAttr(jmsServer, NAME);
+//System.out.println("StatisticCapturerJMXPoll::logDestinationsStats() - JMS server = " + jmsServerName);
+				
 				for (ObjectName destination : getConn().getChildren(jmsServer, DESTINATIONS)) {
 					try {
 						String name = ResourceNameNormaliser.normalise(DESTINATION_RESOURCE_TYPE, getConn().getTextAttr(destination, NAME));
+						
+//System.out.println("   StatisticCapturerJMXPoll::logDestinationsStats() - JMS resources = " + name);
+						
 						String contentLine = constructStatsLine(destination, JMS_DESTINATION_MBEAN_MONITOR_ATTR_LIST);
 						getCSVStats().appendToResourceStatisticsCSV(new Date(), getServerName(), DESTINATION_RESOURCE_TYPE, name, headerLine, contentLine);
 						artifactList.put(name, now);
 					} catch (Exception e) {
 						AppLog.getLogger().warning("Issue logging " + DESTINATION_RESOURCE_TYPE + ":" + destination.getCanonicalName() + " for server " + getServerName() + ", reason=" + e.getLocalizedMessage());
-					}						
+					}			
 				}
+//System.out.println("");
 			}
 
 			getCSVStats().appendSavedOneDayResourceNameList(nowDate, DESTINATION_RESOURCE_TYPE, artifactList);			
@@ -387,6 +397,4 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 
 	// Constants
 	private static final int DEFAULT_CONTENT_LINE_LEN = 100;
-
-	
 }
