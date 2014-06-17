@@ -29,6 +29,9 @@
 	</work-manager>
 	
     <session-descriptor>
-		<timeout-secs>20</timeout-secs>
+    	<!--
+    	<timeout-secs>20</timeout-secs>
+    	-->
+		<timeout-secs>600</timeout-secs>
 	</session-descriptor>
 </weblogic-web-app>

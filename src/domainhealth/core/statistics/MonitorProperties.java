@@ -158,16 +158,23 @@ public class MonitorProperties {
 	public final static String HOSTMACHINE_RESOURCE_TYPE = "hostmachine";
 	
 	/**
-	 * Name of the 'jmsdashboard' category of resource for JMSDashboard custom MBean related statistics
+	 * Name of the 'jmssrv' category of resource for JMSDashboard custom MBean related statistics
 	 */
+	// Added by gregoan
 	public final static String JMSSVR_RESOURCE_TYPE = "jmssrv";
+	
+	/**
+	 * Name of the 'safagent' category of resource for JMSDashboard custom MBean related statistics
+	 */
+	// Added by gregoan
+	public final static String SAFAGENT_RESOURCE_TYPE = "safagent";
 
 	/**
 	 * List of names or allowable resource types (eg. core, datasource)
 	 */
 	// Updated by gregoan
 	//public final static List<String> LEGAL_RESOURCE_TYPES = Arrays.asList(CORE_RESOURCE_TYPE, DATASOURCE_RESOURCE_TYPE, DESTINATION_RESOURCE_TYPE, SAF_RESOURCE_TYPE, WEBAPP_RESOURCE_TYPE, EJB_RESOURCE_TYPE, WORKMGR_RESOURCE_TYPE, SVRCHNL_RESOURCE_TYPE, HOSTMACHINE_RESOURCE_TYPE);
-	public final static List<String> LEGAL_RESOURCE_TYPES = Arrays.asList(CORE_RESOURCE_TYPE, DATASOURCE_RESOURCE_TYPE, DESTINATION_RESOURCE_TYPE, SAF_RESOURCE_TYPE, WEBAPP_RESOURCE_TYPE, EJB_RESOURCE_TYPE, WORKMGR_RESOURCE_TYPE, SVRCHNL_RESOURCE_TYPE, HOSTMACHINE_RESOURCE_TYPE, JMSSVR_RESOURCE_TYPE);
+	public final static List<String> LEGAL_RESOURCE_TYPES = Arrays.asList(CORE_RESOURCE_TYPE, DATASOURCE_RESOURCE_TYPE, DESTINATION_RESOURCE_TYPE, SAF_RESOURCE_TYPE, WEBAPP_RESOURCE_TYPE, EJB_RESOURCE_TYPE, WORKMGR_RESOURCE_TYPE, SVRCHNL_RESOURCE_TYPE, HOSTMACHINE_RESOURCE_TYPE, JMSSVR_RESOURCE_TYPE, SAFAGENT_RESOURCE_TYPE);
 
 	/**
 	 * List of Server MBean Attributes to be monitored
@@ -192,7 +199,7 @@ public class MonitorProperties {
 	/**
 	 * List of JDBC Data Source MBean Attributes to be monitored
 	 */
-	public final static String[] JDBC_MBEAN_MONITOR_ATTR_LIST = {NUM_AVAILABLE, NUM_UNAVAILABLE, ACTIVE_CONNECTONS_CURRENT_COUNT, CONNECTION_DELAY_TIME, FAILED_RESERIVE_REQUEST_COUNT, FAILURES_TO_RECONNECT_COUNT, LEAKED_CONNECTION_COUNT, WAITING_FOR_CONNECTION_CURRENT_COUNT, WAITING_FOR_CONNECTION_FAILURES_TOTAL, WAITING_SECONDS_HIGH_COUNT};
+	public final static String[] JDBC_MBEAN_MONITOR_ATTR_LIST = {NUM_AVAILABLE, NUM_UNAVAILABLE, ACTIVE_CONNECTONS_CURRENT_COUNT, CONNECTION_DELAY_TIME, FAILED_RESERVE_REQUEST_COUNT, FAILURES_TO_RECONNECT_COUNT, LEAKED_CONNECTION_COUNT, WAITING_FOR_CONNECTION_CURRENT_COUNT, WAITING_FOR_CONNECTION_FAILURES_TOTAL, WAITING_SECONDS_HIGH_COUNT};
 
 	/**
 	 * List of JMS Destination MBean Attributes to be monitored
@@ -345,7 +352,7 @@ public class MonitorProperties {
 		propList.put(NUM_UNAVAILABLE, new WLProperty(NUM_UNAVAILABLE, "Number Unavailable", NUMBER_UNITS)); 
 		propList.put(ACTIVE_CONNECTONS_CURRENT_COUNT, new WLProperty(ACTIVE_CONNECTONS_CURRENT_COUNT, "Active Connections", NUMBER_UNITS)); 
 		propList.put(CONNECTION_DELAY_TIME, new WLProperty(CONNECTION_DELAY_TIME, "Average Connection Delay", MILLISECONDS_UNITS)); 
-		propList.put(FAILED_RESERIVE_REQUEST_COUNT, new WLProperty(FAILED_RESERIVE_REQUEST_COUNT, "Failed Reserve Request", NUMBER_UNITS)); 
+		propList.put(FAILED_RESERVE_REQUEST_COUNT, new WLProperty(FAILED_RESERVE_REQUEST_COUNT, "Failed Reserve Request", NUMBER_UNITS)); 
 		propList.put(FAILURES_TO_RECONNECT_COUNT, new WLProperty(FAILURES_TO_RECONNECT_COUNT, "Failures To Reconnect", NUMBER_UNITS)); 
 		propList.put(LEAKED_CONNECTION_COUNT, new WLProperty(LEAKED_CONNECTION_COUNT, "Leaked Connections", NUMBER_UNITS)); 
 		propList.put(WAITING_FOR_CONNECTION_CURRENT_COUNT, new WLProperty(WAITING_FOR_CONNECTION_CURRENT_COUNT, "Waiting For Connection Current", NUMBER_UNITS)); 

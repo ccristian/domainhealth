@@ -242,8 +242,16 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
 
 			while (names.hasNext()) {
 				String name = (String) names.next();
-				// Skip resources which are on blacklist (unless this is for 
-				// the WLHostMachine resource type in which case allow anyway)
+				
+/*
+if(getComponentBlacklist().contains(name)){
+	System.out.println("StatisticCapturerWLDFQuery::logResourceStats() - The element " + name + " is blacklisted ...");
+}
+else{
+	System.out.println("StatisticCapturerWLDFQuery::logResourceStats() - The element " + name + " is not blacklisted");
+}
+*/
+				// Skip resources which are on blacklist (unless this is for the WLHostMachine resource type in which case allow anyway)
 				if ((resourceType.equals(HOSTMACHINE_RESOURCE_TYPE)) || (!getComponentBlacklist().contains(name))) {										
 					String contentLine = constructStatsLine(objectRecords.get(name), monitorAttrList);
 					getCSVStats().appendToResourceStatisticsCSV(nowDate, getServerName(), resourceType, name, headerLine, contentLine);

@@ -19,5 +19,8 @@
 						<c:if test="${showjmssrvdashboards}">
 							<li><a href='<c:out value="${contexturl}"/>/jmssrvdashboard?<dh:link-ctx-params/>'>JMS Dashboard</a></li>
 						</c:if>
+						<c:if test="${showsafagentdashboards}">
+							<li><a href='<c:out value="${contexturl}"/>/safagentdashboard?<dh:link-ctx-params/>'>SAF Dashboard</a></li>
+						</c:if>
 					</ul>
 				</div> 

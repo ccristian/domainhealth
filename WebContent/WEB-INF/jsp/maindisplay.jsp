@@ -14,8 +14,18 @@
 			<%@ include file="fragments/titlebar.jsp" %>
 		</div>
 
+		<%-- Toolbar is not used for dashboard --%>
+		<%--
+		 Updated by gregoan
 		<div id="tool_bar">
 			<%@ include file="fragments/toolbar.jsp" %>
+		</div>
+		--%>
+		
+		<div id="tool_bar">
+			<c:if test="${resourcetype ne 'jmssrv' and resourcetype ne 'safagent'}">
+			<%@ include file="fragments/toolbar.jsp" %>
+			</c:if>
 		</div>
 			
 		<div id="left_column">
@@ -40,16 +50,16 @@
 							<%--
 							<c:if test="${empty resources and resourcetype ne 'workmgr' and resourcetype ne 'svrchnl'}">
 								<div id="choosetext">No resources of this type exist</div>
-							</c:if>									
+							</c:if>
 							<c:if test="${empty resources and (resourcetype eq 'workmgr' or resourcetype eq 'svrchnl')}">
 								<div id="choosetext">No resources of this type exist (only available for WLDF collected statistics)</div>
 							</c:if>
 							--%>
 							
-							<c:if test="${empty resources and resourcetype ne 'workmgr' and resourcetype ne 'svrchnl' and resourcetype ne 'jmssrv'}">
+							<c:if test="${empty resources and resourcetype ne 'workmgr' and resourcetype ne 'svrchnl' and resourcetype ne 'jmssrv' and resourcetype ne 'safagent'}">
 								<div id="choosetext">No resources of this type exist</div>
-							</c:if>									
-							<c:if test="${empty resources and (resourcetype eq 'workmgr' or resourcetype eq 'svrchnl' or resourcetype eq 'jmssrv')}">
+							</c:if>
+							<c:if test="${empty resources and (resourcetype eq 'workmgr' or resourcetype eq 'svrchnl' or resourcetype eq 'jmssrv' or resourcetype eq 'safagent')}">
 								<div id="choosetext">No resources of this type exist (only available for WLDF collected statistics)</div>
 							</c:if>
 												

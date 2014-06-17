@@ -33,17 +33,38 @@ public class ResourceNameNormaliser {
 	 */
 	public static String normalise(String resourceType, String resourceName) {
 		String normalisedName = resourceName;
-		
-		if (resourceType == DESTINATION_RESOURCE_TYPE) {		
+				
+		// Updated by gregoan
+		//if (resourceType == DESTINATION_RESOURCE_TYPE) {
+		if (resourceType == DESTINATION_RESOURCE_TYPE || resourceType == JMSSVR_RESOURCE_TYPE) {
+			
 			int startPos = resourceName.indexOf(DEST_MODULE_PHYSICAL_SEPERATOR);
-	
+			
 			if (startPos < 0) {
 				startPos = resourceName.indexOf(DEST_SERVER_MODULE_SEPARATOR);
 			}
-			
+					
 			if (startPos > 0) {
 				normalisedName = resourceName.substring(startPos + 1);
 			}
+		// For SAF the relevant information is between last "DEST_SERVER_MODULE_SEPARATOR" and "DEST_MODULE_PHYSICAL_SEPERATOR"
+		} else if (resourceType == SAFAGENT_RESOURCE_TYPE) {
+			
+			int startPos = resourceName.lastIndexOf(DEST_SERVER_MODULE_SEPARATOR);
+			int endPos = resourceName.indexOf(DEST_MODULE_PHYSICAL_SEPERATOR);
+			
+			if (startPos > 0 && endPos > 0) {
+				normalisedName = resourceName.substring(startPos +1, endPos);
+			}
+			else {
+				if (startPos < 0) {
+					startPos = resourceName.indexOf(DEST_SERVER_MODULE_SEPARATOR);
+				}
+						
+				if (startPos > 0) {
+					normalisedName = resourceName.substring(startPos + 1);
+				}
+			}			
 		} else if (resourceType == WEBAPP_RESOURCE_TYPE) {
 			int startPos = resourceName.indexOf(WEBAPP_SERVER_NAME_SEPARATOR);
 

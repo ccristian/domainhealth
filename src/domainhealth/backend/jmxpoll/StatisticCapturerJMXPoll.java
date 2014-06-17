@@ -18,7 +18,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-import java.util.TreeSet;
 
 import javax.management.ObjectName;
 
@@ -161,16 +160,10 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 			ObjectName jmsRuntime = getConn().getChild(getServerRuntime(), JMS_RUNTIME);
 						
 			for (ObjectName jmsServer : getConn().getChildren(jmsRuntime, JMS_SERVERS)) {
-				
-//String jmsServerName = getConn().getTextAttr(jmsServer, NAME);
-//System.out.println("StatisticCapturerJMXPoll::logDestinationsStats() - JMS server = " + jmsServerName);
-				
+								
 				for (ObjectName destination : getConn().getChildren(jmsServer, DESTINATIONS)) {
 					try {
-						String name = ResourceNameNormaliser.normalise(DESTINATION_RESOURCE_TYPE, getConn().getTextAttr(destination, NAME));
-						
-//System.out.println("   StatisticCapturerJMXPoll::logDestinationsStats() - JMS resources = " + name);
-						
+						String name = ResourceNameNormaliser.normalise(DESTINATION_RESOURCE_TYPE, getConn().getTextAttr(destination, NAME));					
 						String contentLine = constructStatsLine(destination, JMS_DESTINATION_MBEAN_MONITOR_ATTR_LIST);
 						getCSVStats().appendToResourceStatisticsCSV(new Date(), getServerName(), DESTINATION_RESOURCE_TYPE, name, headerLine, contentLine);
 						artifactList.put(name, now);
@@ -178,7 +171,6 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 						AppLog.getLogger().warning("Issue logging " + DESTINATION_RESOURCE_TYPE + ":" + destination.getCanonicalName() + " for server " + getServerName() + ", reason=" + e.getLocalizedMessage());
 					}			
 				}
-//System.out.println("");
 			}
 
 			getCSVStats().appendSavedOneDayResourceNameList(nowDate, DESTINATION_RESOURCE_TYPE, artifactList);			

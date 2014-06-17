@@ -19,6 +19,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -36,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 import static javax.servlet.http.HttpServletResponse.*;
 import domainhealth.backend.retriever.DataRetrievalException;
 import domainhealth.core.env.AppLog;
+import domainhealth.core.env.AppProperties;
 import domainhealth.core.env.AppProperties.PropKey;
 import domainhealth.core.jmx.DomainRuntimeServiceMBeanConnection;
 import domainhealth.core.jmx.WebLogicMBeanConnection;
@@ -44,9 +46,11 @@ import domainhealth.core.jmx.WebLogicMBeanPropConstants;
 import static domainhealth.core.jmx.WebLogicMBeanPropConstants.*;
 import static domainhealth.core.util.DateUtil.*;
 import static domainhealth.core.statistics.MonitorProperties.*;
+import domainhealth.core.statistics.ResourceNameNormaliser;
 import domainhealth.core.statistics.StatisticsStorage;
 import domainhealth.core.util.DateUtil;
 import domainhealth.frontend.data.JMSServerSummaryData;
+import domainhealth.frontend.data.SAFAgentSummaryData;
 import static domainhealth.frontend.display.GraphScopedAttributeUtils.*;
 import static domainhealth.frontend.display.HttpServletUtils.*;
 
@@ -71,6 +75,10 @@ public class ShowPageControllerServlet extends HttpServlet {
 	 */
 	public void init() throws ServletException {
 		statisticsStorage = new StatisticsStorage((String) getServletContext().getAttribute(PropKey.STATS_OUTPUT_PATH_PROP.toString()));
+		
+		// Added by gregoan
+		AppProperties appProps = new AppProperties(getServletContext());
+		componentBlacklist = tokenizeBlacklistText(appProps.getProperty(PropKey.COMPONENT_BLACKLIST_PROP));
 	}
 
 	/**
@@ -218,7 +226,6 @@ public class ShowPageControllerServlet extends HttpServlet {
 		// Added by gregoan
 		} else if (resourceType.equals(JMSSVR_RESOURCE_TYPE)) {
 			
-			//request.setAttribute(RESOURCE_NAME_PARAM, resourceType);
 			request.setAttribute(PAGE_URL_PARAM, request.getContextPath() + URL_PATH_SEPERATOR + resourceType + DASHBOARD_SERVLET_MAPPING_SUFFIX);
 			
 			request.setAttribute(PAGE_TITLE, JMSSRV_DASHBOARD_PAGE_TITLE);
@@ -230,23 +237,43 @@ public class ShowPageControllerServlet extends HttpServlet {
 			// Resource is selected so dashboard should be generated
 			if (resourceName != null)
 			{
-//System.out.println("ShowPageControllerServlet::setResourceRequestAttributes() - JMS Server ResourceName is selected -> " + resourceName);
-
 				request.setAttribute(RESOURCE_NAME_PARAM, resourceName);
 					
-				//Set<JMSServerSummaryData> jmsServerSummaryData = getJMSServerDashboard(conn, serverRuntime, resourceName);
 				Set<JMSServerSummaryData> jmsServerSummaryData = getJMSServerDashboard(conn, resourceName);
 					
 				// Put the dashboard in the HttpRequest
-				//request.setAttribute("jmsServersSummary", jmsServersSummaryData);
 				request.setAttribute("jmsServerSummary", jmsServerSummaryData);
 			}
 			else
 			{
 				// RESOURCE_NAME_PARAM shouldn't be set otherwise "Select resource from left menu" will not be printed (see maindisplay.jsp)
 				//request.setAttribute(RESOURCE_NAME_PARAM, resourceType);
-				
-//System.out.println("ShowPageControllerServlet::setResourceRequestAttributes() - JMS Server ResourceName IS NOT selected");
+			}
+
+		} else if (resourceType.equals(SAFAGENT_RESOURCE_TYPE)) {
+			
+			request.setAttribute(PAGE_URL_PARAM, request.getContextPath() + URL_PATH_SEPERATOR + resourceType + DASHBOARD_SERVLET_MAPPING_SUFFIX);
+			
+			request.setAttribute(PAGE_TITLE, SAFAGENT_DASHBOARD_PAGE_TITLE);
+			request.setAttribute(MENU_TITLE, SAFAGENT_DASHBOARD_MENU_TITLE);
+			request.setAttribute(RESOURCES_LIST_PARAM, getSAFAgentList(conn));
+			
+			String resourceName = HttpServletUtils.getEndPathFromURL(request);
+			
+			// Resource is selected so dashboard should be generated
+			if (resourceName != null)
+			{
+				request.setAttribute(RESOURCE_NAME_PARAM, resourceName);
+					
+				Set<SAFAgentSummaryData> safAgentSummaryData = getSAFAgentDashboard(conn, resourceName);
+
+				// Put the dashboard in the HttpRequest
+				request.setAttribute("safAgentSummary", safAgentSummaryData);
+			}
+			else
+			{
+				// RESOURCE_NAME_PARAM shouldn't be set otherwise "Select resource from left menu" will not be printed (see maindisplay.jsp)
+				//request.setAttribute(RESOURCE_NAME_PARAM, resourceType);
 			}
 		// **************************************************************
 			
@@ -290,38 +317,7 @@ public class ShowPageControllerServlet extends HttpServlet {
 				request.setAttribute(MENU_TITLE, SVRCHNLS_MENU_TITLE);				
 				request.setAttribute(RESOURCES_LIST_PARAM, statisticsStorage.getResourceNamesFromPropsList(endDateTime, SVRCHNL_RESOURCE_TYPE));			
 			
-			// **************************************************************
-			// Added by gregoan
-			}/* else if (resourceType.equals(JMSSVR_RESOURCE_TYPE)) {
-			
-				request.setAttribute(RESOURCE_NAME_PARAM, resourceType);		
-				request.setAttribute(PAGE_URL_PARAM, request.getContextPath() + URL_PATH_SEPERATOR + resourceType + DASHBOARD_SERVLET_MAPPING_SUFFIX);
-				
-				request.setAttribute(PAGE_TITLE, (resourceName == null) ? JMSSRV_DASHBOARD_MENU_TITLE : resourceName + JMSSRV_DASHBOARD_PAGE_TITLE);
-				request.setAttribute(MENU_TITLE, JMSSRV_DASHBOARD_MENU_TITLE);
-				
-				// Add the JMS server list to the request
-				request.setAttribute(RESOURCES_LIST_PARAM, getJMSServersList(conn));
-				
-				// Resource is selected so dashboard should be generated
-				if (resourceName != null)
-				{
-System.out.println("ShowPageControllerServlet::setResourceRequestAttributes() - JMS Server ResourceName is selected -> " + resourceName);
-					
-					//Set<JMSServerSummaryData> jmsServerSummaryData = getJMSServerDashboard(conn, serverRuntime, resourceName);
-					Set<JMSServerSummaryData> jmsServerSummaryData = getJMSServerDashboard(conn, resourceName);
-					
-					// Put the dashboard in the HttpRequest
-					//request.setAttribute("jmsServersSummary", jmsServersSummaryData);
-					request.setAttribute("jmsServersSummary", jmsServerSummaryData);
-				}
-				else
-				{
-System.out.println("ShowPageControllerServlet::setResourceRequestAttributes() - JMS Server ResourceName IS NOT selected");
-				}
-
-			// **************************************************************	
-			} */else {
+			} else {
 				throw new ServletException("Unable to map servlet path '" + request.getServletPath() + "' to a known resource type to show statistics for");
 			}			
 		}
@@ -332,8 +328,12 @@ System.out.println("ShowPageControllerServlet::setResourceRequestAttributes() - 
 		
 		// Added by gregoan the 03/06/2014
 		// JMSDashboard is a table without statistics on metrics so we need to check if there is a MBean or not
-		// TODO : Should check if MBean is available or not -> see StatisticCapturerJMXPoll::logHostMachineStats()
+		// @TODO :
+		//    - Should check if MBean is available or not -> see StatisticCapturerJMXPoll::logHostMachineStats()
+		//    - Should use the web.xml to know if dashboard should be generated
 		request.setAttribute(SHOW_JMSSRV_DASHBOARDS_PARAM, true);
+		request.setAttribute(SHOW_SAFAGENT_DASHBOARDS_PARAM, true);
+		
 	}
 
 	/**
@@ -507,9 +507,13 @@ System.out.println("ShowPageControllerServlet::setResourceRequestAttributes() - 
 	
 	// *************************************************************************
 	// Added by gregoan
+	private final static String DASHBOARD_SERVLET_MAPPING_SUFFIX = "dashboard";
+	
 	private final static String JMSSRV_DASHBOARD_PAGE_TITLE = "JMS Dashboard";
 	private final static String JMSSRV_DASHBOARD_MENU_TITLE = "JMS Dashboard";
-	private final static String DASHBOARD_SERVLET_MAPPING_SUFFIX = "dashboard";
+	
+	private final static String SAFAGENT_DASHBOARD_PAGE_TITLE = "SAF Dashboard";
+	private final static String SAFAGENT_DASHBOARD_MENU_TITLE = "SAF Dashboard";
 	
 	/**
 	 * 
@@ -531,14 +535,19 @@ System.out.println("ShowPageControllerServlet::setResourceRequestAttributes() - 
 					String serverName = "";
 					
 					try {
-			        	serverName = conn.getTextAttr(serverRuntime, NAME);
+			        	serverName = conn.getTextAttr(serverRuntime, NAME);			        	
 			        	ObjectName jmsRuntime = conn.getChild(serverRuntime, JMS_RUNTIME);
 			            ObjectName[] jmsServers = conn.getChildren(jmsRuntime, JMS_SERVERS);
 			            
 			            for (ObjectName jmsServer : jmsServers)
 			            {
-			            	String currentJmsServerName = conn.getTextAttr(jmsServer, NAME);
-							jmsSet.add(currentJmsServerName);
+			            	//String currentJmsServerName = conn.getTextAttr(jmsServer, NAME);
+			            	String currentJmsServerName = ResourceNameNormaliser.normalise(JMSSVR_RESOURCE_TYPE, conn.getTextAttr(jmsServer, NAME));
+
+							if (!getComponentBlacklist().contains(currentJmsServerName)) {
+								jmsSet.add(currentJmsServerName);
+							}			            	
+			            	//jmsSet.add(currentJmsServerName);
 			            }
 			        
 			        } catch (Exception e) {
@@ -558,10 +567,56 @@ System.out.println("ShowPageControllerServlet::setResourceRequestAttributes() - 
 	 * @param conn
 	 * @return
 	 */
-	//public Set<JMSServerSummaryData> getJMSServerDashboard(DomainRuntimeServiceMBeanConnection conn, ObjectName serverRuntime, String jmsServerName){
+	public Set<String> getSAFAgentList(DomainRuntimeServiceMBeanConnection conn){
+		
+		Set<String> safSet = new HashSet<String>();
+		
+		try{
+			ObjectName[] serverRuntimes = conn.getAllServerRuntimes();			
+			
+			//Find the Admin server
+			for (int index = 0; index < serverRuntimes.length; index++){
+				if(DomainRuntimeServiceMBeanConnection.isThisTheAdminServer()){
+					
+					ObjectName serverRuntime = serverRuntimes[index];
+					String serverName = "";
+					
+					try {
+			        	serverName = conn.getTextAttr(serverRuntime, NAME);
+			        	ObjectName safRuntime = conn.getChild(serverRuntime, SAF_RUNTIME);
+			            ObjectName[] safAgents = conn.getChildren(safRuntime, AGENTS);
+			            
+			            for (ObjectName safAgent : safAgents)
+			            {
+			            	//String currentSafAgentName = conn.getTextAttr(safAgent, NAME);		            	
+			            	String currentSafAgentName = ResourceNameNormaliser.normalise(SAFAGENT_RESOURCE_TYPE, conn.getTextAttr(safAgent, NAME));
+			            	
+			            	if (!getComponentBlacklist().contains(currentSafAgentName)) {
+			            		safSet.add(currentSafAgentName);
+							}
+			            	//safSet.add(currentSafAgentName);
+			            }
+			        
+			        } catch (Exception e) {
+						throw new DataRetrievalException("Problem getting " + SAFAGENT_RESOURCE_TYPE + " resources for server " + serverName, e);
+					}
+				}
+			}
+		
+		} catch(Exception ex){
+			System.out.println("ShowPageControllerServlet::getSAFAgentList() - Error to get the SAF agent list");
+		}
+		return safSet;
+	}
+	
+	/**
+	 * 
+	 * @param conn
+	 * @return
+	 */
 	public Set<JMSServerSummaryData> getJMSServerDashboard(DomainRuntimeServiceMBeanConnection conn, String jmsServerName){
 		
-		Set<JMSServerSummaryData> jmsServersSummary = new TreeSet<JMSServerSummaryData>(new JMSServerSummaryData());
+		Set<JMSServerSummaryData> jmsServerSummary = new TreeSet<JMSServerSummaryData>(new JMSServerSummaryData());
 		
 		try {
 			
@@ -572,9 +627,7 @@ System.out.println("ShowPageControllerServlet::setResourceRequestAttributes() - 
 				if(DomainRuntimeServiceMBeanConnection.isThisTheAdminServer()){
 			
 					ObjectName serverRuntime = serverRuntimes[index]; 
-					String serverName = conn.getTextAttr(serverRuntime, NAME);
-			    	ObjectName jmsRuntime = conn.getChild(serverRuntime, JMS_RUNTIME);
-			    	
+			    	ObjectName jmsRuntime = conn.getChild(serverRuntime, JMS_RUNTIME);			    	
 			        ObjectName[] jmsServers = conn.getChildren(jmsRuntime, JMS_SERVERS);
 			        
 			        for (ObjectName jmsServer : jmsServers)
@@ -584,11 +637,16 @@ System.out.println("ShowPageControllerServlet::setResourceRequestAttributes() - 
 			        	if(currentJmsServerName.equals(jmsServerName)){
 			        		
 			        		for (ObjectName destination : conn.getChildren(jmsServer, DESTINATIONS)) {
-			        			
+
+//System.out.println("");
 			        			JMSServerSummaryData jmsSummaryData = new JMSServerSummaryData();
-						    	String destinationName = getRealDestinationName(conn.getTextAttr(destination, NAME));
-						    	destinationName = transformComponentName(destinationName);
 						    	
+			        			//String destinationName = getRealDestinationName(conn.getTextAttr(destination, NAME));
+			        			String destinationName = ResourceNameNormaliser.normalise(JMSSVR_RESOURCE_TYPE, conn.getTextAttr(destination, NAME));
+			        			
+//System.out.println("ShowPageControllerServlet::getJMSServerDashboard() - destinationName = " + conn.getTextAttr(destination, NAME));
+//System.out.println("ShowPageControllerServlet::getJMSServerDashboard() - destinationName = " + destinationName);
+			        									    	
 								jmsSummaryData.setDestinationName(destinationName);
 								jmsSummaryData.setMessagesCurrentCount(new Long((int)conn.getNumberAttr(destination, MESSAGES_CURRENT_COUNT)).toString());
 								jmsSummaryData.setMessagesPendingCount(new Long((int)conn.getNumberAttr(destination, MESSAGES_PENDING_COUNT)).toString());
@@ -599,17 +657,80 @@ System.out.println("ShowPageControllerServlet::setResourceRequestAttributes() - 
 								jmsSummaryData.setConsumersTotalCount(new Long((int)conn.getNumberAttr(destination, CONSUMERS_TOTAL_COUNT)).toString());
 								
 								// Add the information for the JMS server
-								jmsServersSummary.add(jmsSummaryData);
+								jmsServerSummary.add(jmsSummaryData);
 			        		}
 			        	}			    
 			        }
 				}
 			}
-		
 		} catch(Exception ex){
 			System.out.println("ShowPageControllerServlet::getJMSServerDashboard() - Error to genarate the JMS dashboard");
 		}
-		return jmsServersSummary;
+		return jmsServerSummary;
+	}
+	
+	/**
+	 * 
+	 * @param conn
+	 * @return
+	 */
+	public Set<SAFAgentSummaryData> getSAFAgentDashboard(DomainRuntimeServiceMBeanConnection conn, String safAgentName){
+		
+		Set<SAFAgentSummaryData> safAgentSummary = new TreeSet<SAFAgentSummaryData>(new SAFAgentSummaryData());
+		
+		try {
+			
+			ObjectName[] serverRuntimes = conn.getAllServerRuntimes();
+			
+			//Find the Admin server
+			for (int index = 0; index < serverRuntimes.length; index++){
+				if(DomainRuntimeServiceMBeanConnection.isThisTheAdminServer()){
+			
+					ObjectName serverRuntime = serverRuntimes[index]; 
+			    	ObjectName safRuntime = conn.getChild(serverRuntime, SAF_RUNTIME);			    	
+			        ObjectName[] safAgents = conn.getChildren(safRuntime, AGENTS);
+			        
+			        for (ObjectName safAgent : safAgents)
+			        {
+			        	String currentSafAgentName = conn.getTextAttr(safAgent, NAME);
+			        	
+			        	if(currentSafAgentName.equals(safAgentName)){
+			        		
+//System.out.println("");	
+			        		for (ObjectName destination : conn.getChildren(safAgent, REMOTE_END_POINTS)) {
+			        			
+			        			SAFAgentSummaryData safAgentSummaryData = new SAFAgentSummaryData();
+			        			
+						    	//String destinationName = getRealDestinationName(conn.getTextAttr(destination, NAME));
+						    	String destinationName = ResourceNameNormaliser.normalise(SAFAGENT_RESOURCE_TYPE, conn.getTextAttr(destination, NAME));
+						    	
+//System.out.println("ShowPageControllerServlet::getSAFAgentDashboard() - destinationName = " + conn.getTextAttr(destination, NAME));
+//System.out.println("ShowPageControllerServlet::getSAFAgentDashboard() - destinationName = " + destinationName);
+						    							    	
+						    	safAgentSummaryData.setDestinationName(destinationName);
+						    	safAgentSummaryData.setMessagesCurrentCount(new Long((int)conn.getNumberAttr(destination, MESSAGES_CURRENT_COUNT)).toString());
+						    	safAgentSummaryData.setMessagesPendingCount(new Long((int)conn.getNumberAttr(destination, MESSAGES_PENDING_COUNT)).toString());
+								safAgentSummaryData.setMessagesReceivedCount(new Long((int)conn.getNumberAttr(destination, MESSAGES_RECEIVED_COUNT)).toString());
+								safAgentSummaryData.setMessagesHighCount(new Long((int)conn.getNumberAttr(destination, MESSAGES_HIGH_COUNT)).toString());
+								
+								safAgentSummaryData.setDowntimeHigh(new Long((int)conn.getNumberAttr(destination, DOWNTIME_HIGH)).toString());
+								safAgentSummaryData.setDowntimeTotal(new Long((int)conn.getNumberAttr(destination, DOWNTIME_TOTAL)).toString());
+								safAgentSummaryData.setUptimeHigh(new Long((int)conn.getNumberAttr(destination, UPTIME_HIGH)).toString());
+								safAgentSummaryData.setUptimeTotal(new Long((int)conn.getNumberAttr(destination, UPTIME_TOTAL)).toString());
+								
+								safAgentSummaryData.setFailedMessagesTotal(new Long((int)conn.getNumberAttr(destination, FAILED_MESSAGES_TOTAL)).toString());
+								
+								// Add the information for the SAF agent
+								safAgentSummary.add(safAgentSummaryData);
+			        		}
+			        	}			    
+			        }
+				}
+			}
+		} catch(Exception ex){
+			System.out.println("ShowPageControllerServlet::getJMSServerDashboard() - Error to genarate the JMS dashboard");
+		}
+		return safAgentSummary;
 	}
     
     /**
@@ -647,7 +768,43 @@ System.out.println("ShowPageControllerServlet::setResourceRequestAttributes() - 
 		return componentName.replace("/", ".");
 	}
 	
+	/**
+	 * Gets list of names of web-app and ejb components which should not have 
+	 * statistics collected and shown.
+	 * 
+	 * @param blacklistText The text containing comma separated list of names to ignore
+	 * @return A strongly type list of names to ignore
+	 */
+	private List<String> tokenizeBlacklistText(String blacklistText) {
+		List<String> blacklist = new ArrayList<String>();
+		String[] blacklistArray = null;
+		
+		if (blacklistText != null) {
+			blacklistArray = blacklistText.split(BLACKLIST_TOKENIZER_PATTERN);
+		}
+		
+		if ((blacklistArray != null) && (blacklistArray.length > 0)) {
+			blacklist = Arrays.asList(blacklistArray);
+		} else {
+			blacklist = new ArrayList<String>();
+		}
+				
+		return blacklist;
+	}
+	
+	/**
+	 * Returns the list of component names to be ignored (the blacklist) 
+	 * 
+	 * @return The blacklist of component names
+	 */
+	protected List<String> getComponentBlacklist() {
+		return componentBlacklist;
+	}
+	private final static String BLACKLIST_TOKENIZER_PATTERN = ",\\s*";
+	private List<String> componentBlacklist;
+	
 	private static final char DESTINATION_MODULE_PHYSICALDEST = '@';
 	private static final char DESTINATION_SERVER_MODULE_SEPARATOR = '!';
+	
 	// ********************************************************************************************
 }

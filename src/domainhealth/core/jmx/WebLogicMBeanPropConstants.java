@@ -540,7 +540,7 @@ public interface WebLogicMBeanPropConstants {
 	/**
 	 * 'FailedReserveRequestCount' MBean property
 	 */
-	public final static String FAILED_RESERIVE_REQUEST_COUNT = "FailedReserveRequestCount"; 
+	public final static String FAILED_RESERVE_REQUEST_COUNT = "FailedReserveRequestCount"; 
 	
 	/**
 	 * 'FailuresToReconnectCount' MBean property
@@ -811,4 +811,36 @@ public interface WebLogicMBeanPropConstants {
 	 * 'TcpTimeWaitCount' MBean property
 	 */
 	public final static String TCP_TIME_WAIT_COUNT = "TcpTimeWaitCount";
+	
+	// -----------------------------------------------------------
+	// Added by gregoan
+	/**
+	 * 'RemoteEndpoints' MBean property
+	 */
+	public final static String REMOTE_END_POINTS = "RemoteEndpoints";
+	
+	/**
+	 * 'DowntimeHigh' MBean property
+	 */
+	public final static String DOWNTIME_HIGH = "DowntimeHigh"; 
+	
+	/**
+	 * 'DowntimeTotal' MBean property
+	 */
+	public final static String DOWNTIME_TOTAL = "DowntimeTotal";
+	
+	/**
+	 * 'UptimeHigh' MBean property
+	 */
+	public final static String UPTIME_HIGH = "UptimeHigh";
+	
+	/**
+	 * 'UptimeTotal' MBean property
+	 */
+	public final static String UPTIME_TOTAL = "UptimeTotal";
+	
+	/**
+	 * 'FailedMessagesTotal' MBean property
+	 */
+	public final static String FAILED_MESSAGES_TOTAL = "FailedMessagesTotal";
 }
