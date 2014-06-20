@@ -28,7 +28,6 @@ import javax.naming.NamingException;
 
 import commonj.work.WorkItem;
 import commonj.work.WorkManager;
-
 import domainhealth.backend.jmxpoll.StatisticCapturerJMXPoll;
 import domainhealth.backend.wldfcapture.HarvesterWLDFModuleCreator;
 import domainhealth.backend.wldfcapture.StatisticCapturerWLDFQuery;
@@ -39,6 +38,7 @@ import domainhealth.core.env.ContextAwareWork;
 import domainhealth.core.jmx.DomainRuntimeServiceMBeanConnection;
 import domainhealth.core.jmx.WebLogicMBeanException;
 import domainhealth.core.statistics.StatisticsStorage;
+import domainhealth.core.util.BlacklistUtil;
 import domainhealth.core.util.FileUtil;
 import domainhealth.core.util.ProductVersionUtil;
 
@@ -74,8 +74,13 @@ public class RetrieverBackgroundService {
 
 		queryIntervalMillis = queryIntervalSecs * ONE_SECOND_MILLIS;
 		minPollIntervalMillis = (int) (MIN_POLL_FACTOR * queryIntervalMillis);
-		maxPollIntervalMillis = (int) (MAX_POLL_FACTOR * queryIntervalMillis);		
-		componentBlacklist = tokenizeBlacklistText(appProps.getProperty(PropKey.COMPONENT_BLACKLIST_PROP));
+		maxPollIntervalMillis = (int) (MAX_POLL_FACTOR * queryIntervalMillis);
+		
+		// Updated by gregoan
+		//componentBlacklist = tokenizeBlacklistText(appProps.getProperty(PropKey.COMPONENT_BLACKLIST_PROP));
+		BlacklistUtil blacklistUtil = new BlacklistUtil(appProps);
+		componentBlacklist = blacklistUtil.getComponentBlacklist();
+		
 		WorkManager localCaptureThreadsWkMgr = null;
 		
 		try {
@@ -216,15 +221,28 @@ public class RetrieverBackgroundService {
 				useWLDFHarvester = true;					
 				harvesterModule.createIfNeeded();
 			} else {
-				useWLDFHarvester = false;					
+				useWLDFHarvester = false;
+				
+				AppLog.getLogger().notice("");
+				AppLog.getLogger().notice("---------------------------------------------------------------------------------------------------------");
 				AppLog.getLogger().warning("WLDF module creation problems occurred. WLDF Capture mode can't be used - must use JMX Poll mode instead");
+				AppLog.getLogger().notice("---------------------------------------------------------------------------------------------------------");
+				AppLog.getLogger().notice("");
 			}
 		} 
 		
-		if (useWLDFHarvester) {				
+		if (useWLDFHarvester) {
+			AppLog.getLogger().notice("");
+			AppLog.getLogger().notice("-------------------------------------------------------------");
 			AppLog.getLogger().notice("Server statistics retrieval mode: WLDF Harvested Data Capture");
+			AppLog.getLogger().notice("-------------------------------------------------------------");
+			AppLog.getLogger().notice("");
 		} else {
+			AppLog.getLogger().notice("");
+			AppLog.getLogger().notice("-------------------------------------------------------------");
 			AppLog.getLogger().notice("Server statistics retrieval mode: JMX MBean Attribute Polling");
+			AppLog.getLogger().notice("-------------------------------------------------------------");
+			AppLog.getLogger().notice("");
 		}
 
 		AppLog.getLogger().info("Statistics Retriever Background Service first time processing initialisation steps finished successfully");
@@ -358,6 +376,7 @@ public class RetrieverBackgroundService {
 	 * @param blacklistText The text containing comma separated list of names to ignore
 	 * @return A strongly type list of names to ignore
 	 */
+/*
 	private List<String> tokenizeBlacklistText(String blacklistText) {
 		List<String> blacklist = new ArrayList<String>();
 		String[] blacklistArray = null;
@@ -374,6 +393,7 @@ public class RetrieverBackgroundService {
 				
 		return blacklist;
 	}
+*/
 	
 	/**
 	 * Clean up the old day statistics directories according to number of days

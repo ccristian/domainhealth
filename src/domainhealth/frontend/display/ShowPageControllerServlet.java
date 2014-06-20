@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -48,6 +49,7 @@ import static domainhealth.core.util.DateUtil.*;
 import static domainhealth.core.statistics.MonitorProperties.*;
 import domainhealth.core.statistics.ResourceNameNormaliser;
 import domainhealth.core.statistics.StatisticsStorage;
+import domainhealth.core.util.BlacklistUtil;
 import domainhealth.core.util.DateUtil;
 import domainhealth.frontend.data.JMSServerSummaryData;
 import domainhealth.frontend.data.SAFAgentSummaryData;
@@ -65,6 +67,9 @@ import static domainhealth.frontend.display.HttpServletUtils.*;
  * by the LineChartImageGeneratorServlet. 
  */
 public class ShowPageControllerServlet extends HttpServlet {
+	
+	private List<String> componentBlacklist;
+	
 	/**
 	 * Servlet initialiser which establishes the root path of the collected 
 	 * statistics directories 
@@ -74,11 +79,13 @@ public class ShowPageControllerServlet extends HttpServlet {
 	 * @see javax.servlet.GenericServlet#init()
 	 */
 	public void init() throws ServletException {
+		
 		statisticsStorage = new StatisticsStorage((String) getServletContext().getAttribute(PropKey.STATS_OUTPUT_PATH_PROP.toString()));
 		
 		// Added by gregoan
 		AppProperties appProps = new AppProperties(getServletContext());
-		componentBlacklist = tokenizeBlacklistText(appProps.getProperty(PropKey.COMPONENT_BLACKLIST_PROP));
+		BlacklistUtil blacklistUtil = new BlacklistUtil(appProps);
+		componentBlacklist = blacklistUtil.getComponentBlacklist();
 	}
 
 	/**
@@ -527,7 +534,7 @@ public class ShowPageControllerServlet extends HttpServlet {
 		try{
 			ObjectName[] serverRuntimes = conn.getAllServerRuntimes();			
 			
-			//Find the Admin server
+			// Find the Admin server
 			for (int index = 0; index < serverRuntimes.length; index++){
 				if(DomainRuntimeServiceMBeanConnection.isThisTheAdminServer()){
 					
@@ -541,15 +548,32 @@ public class ShowPageControllerServlet extends HttpServlet {
 			            
 			            for (ObjectName jmsServer : jmsServers)
 			            {
-			            	//String currentJmsServerName = conn.getTextAttr(jmsServer, NAME);
 			            	String currentJmsServerName = ResourceNameNormaliser.normalise(JMSSVR_RESOURCE_TYPE, conn.getTextAttr(jmsServer, NAME));
-
-							if (!getComponentBlacklist().contains(currentJmsServerName)) {
+			            	
+			            	/*
+			            	if (!componentBlacklist.contains(currentJmsServerName)) {
 								jmsSet.add(currentJmsServerName);
-							}			            	
-			            	//jmsSet.add(currentJmsServerName);
+							}
+			            	*/
+			            	
+			            	Iterator<String> iteratorBlacklist = componentBlacklist.iterator();
+			            	boolean blacklist = false;
+			            	
+			            	while(iteratorBlacklist.hasNext()){
+			            		String element = iteratorBlacklist.next();
+			            		
+ 								if(currentJmsServerName.contains(element)){
+									
+//System.out.println("ShowPageControllerServlet::getJMSServersList() - A part of the element " + currentJmsServerName + " is blacklisted [" + element + "]");
+									blacklist = true;
+									break;
+								}
+							}
+								
+							if (!blacklist) {
+								jmsSet.add(currentJmsServerName);
+							}
 			            }
-			        
 			        } catch (Exception e) {
 						throw new DataRetrievalException("Problem getting " + JMSSVR_RESOURCE_TYPE + " resources for server " + serverName, e);
 					}
@@ -574,7 +598,7 @@ public class ShowPageControllerServlet extends HttpServlet {
 		try{
 			ObjectName[] serverRuntimes = conn.getAllServerRuntimes();			
 			
-			//Find the Admin server
+			// Find the Admin server
 			for (int index = 0; index < serverRuntimes.length; index++){
 				if(DomainRuntimeServiceMBeanConnection.isThisTheAdminServer()){
 					
@@ -588,15 +612,33 @@ public class ShowPageControllerServlet extends HttpServlet {
 			            
 			            for (ObjectName safAgent : safAgents)
 			            {
-			            	//String currentSafAgentName = conn.getTextAttr(safAgent, NAME);		            	
 			            	String currentSafAgentName = ResourceNameNormaliser.normalise(SAFAGENT_RESOURCE_TYPE, conn.getTextAttr(safAgent, NAME));
 			            	
-			            	if (!getComponentBlacklist().contains(currentSafAgentName)) {
+			            	/*
+			            	if (!componentBlacklist.contains(currentSafAgentName)) {
 			            		safSet.add(currentSafAgentName);
 							}
-			            	//safSet.add(currentSafAgentName);
+							*/
+			            	
+			            	Iterator<String> iteratorBlacklist = componentBlacklist.iterator();
+			            	boolean blacklist = false;
+			            	
+			            	while(iteratorBlacklist.hasNext()){
+			            		String element = iteratorBlacklist.next();
+			            		
+			            		if(currentSafAgentName.contains(element)){
+			            			
+//System.out.println("ShowPageControllerServlet::getSAFAgentList() - A part of the element " + currentSafAgentName + " is blacklisted [" + element + "]");
+			            			
+			            			blacklist = true;
+			            			break;
+			            		}
+			            	}
+			            	
+			            	if (!blacklist) {
+			            		safSet.add(currentSafAgentName);
+							}
 			            }
-			        
 			        } catch (Exception e) {
 						throw new DataRetrievalException("Problem getting " + SAFAGENT_RESOURCE_TYPE + " resources for server " + serverName, e);
 					}
@@ -742,6 +784,7 @@ public class ShowPageControllerServlet extends HttpServlet {
 	 * @param destinationName The full name of the queue/topic hosted on a server
 	 * @return The real queue/topic name
 	 */
+	/*
 	private String getRealDestinationName(String destinationName)
 	{
 		String realName = destinationName;
@@ -759,52 +802,15 @@ public class ShowPageControllerServlet extends HttpServlet {
 		
 		return transformComponentName(realName);
 	}
-    
-    /*
-	*/
+	
 	private String transformComponentName(String componentName)
 	{
 		// Replace "/" with "."
 		return componentName.replace("/", ".");
 	}
 	
-	/**
-	 * Gets list of names of web-app and ejb components which should not have 
-	 * statistics collected and shown.
-	 * 
-	 * @param blacklistText The text containing comma separated list of names to ignore
-	 * @return A strongly type list of names to ignore
-	 */
-	private List<String> tokenizeBlacklistText(String blacklistText) {
-		List<String> blacklist = new ArrayList<String>();
-		String[] blacklistArray = null;
-		
-		if (blacklistText != null) {
-			blacklistArray = blacklistText.split(BLACKLIST_TOKENIZER_PATTERN);
-		}
-		
-		if ((blacklistArray != null) && (blacklistArray.length > 0)) {
-			blacklist = Arrays.asList(blacklistArray);
-		} else {
-			blacklist = new ArrayList<String>();
-		}
-				
-		return blacklist;
-	}
-	
-	/**
-	 * Returns the list of component names to be ignored (the blacklist) 
-	 * 
-	 * @return The blacklist of component names
-	 */
-	protected List<String> getComponentBlacklist() {
-		return componentBlacklist;
-	}
-	private final static String BLACKLIST_TOKENIZER_PATTERN = ",\\s*";
-	private List<String> componentBlacklist;
-	
 	private static final char DESTINATION_MODULE_PHYSICALDEST = '@';
 	private static final char DESTINATION_SERVER_MODULE_SEPARATOR = '!';
-	
+	*/
 	// ********************************************************************************************
 }

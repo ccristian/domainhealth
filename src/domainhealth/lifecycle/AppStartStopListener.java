@@ -58,6 +58,7 @@ public class AppStartStopListener extends GenericServlet {
 	 */
 	public void init() throws ServletException {		
 		AppLog.getLogger().notice("Starting DomainHealth application");
+		
 		AppProperties appProps = new AppProperties(getServletContext());
 		String outputPath = appProps.getProperty(PropKey.STATS_OUTPUT_PATH_PROP);		
 		

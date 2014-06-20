@@ -252,8 +252,32 @@ else{
 }
 */
 				// Skip resources which are on blacklist (unless this is for the WLHostMachine resource type in which case allow anyway)
+				/*
 				if ((resourceType.equals(HOSTMACHINE_RESOURCE_TYPE)) || (!getComponentBlacklist().contains(name))) {										
 					String contentLine = constructStatsLine(objectRecords.get(name), monitorAttrList);
+					getCSVStats().appendToResourceStatisticsCSV(nowDate, getServerName(), resourceType, name, headerLine, contentLine);
+					artifactList.put(name, now);
+				}
+				*/
+				
+				Iterator<String> iteratorBlacklist = getComponentBlacklist().iterator();
+				boolean blacklist = false;
+				
+            	while(iteratorBlacklist.hasNext()){
+            		String element = iteratorBlacklist.next();
+            		
+            		if (name.contains(element)){
+            			
+//System.out.println("StatisticCapturerWLDFQuery::logResourceStats() - A part of the element " + name + " is blacklisted [" + element + "]");
+
+            			blacklist = true;
+						break;
+            		}
+            	}
+            	
+            	if ((resourceType.equals(HOSTMACHINE_RESOURCE_TYPE)) || !blacklist) {
+            		
+            		String contentLine = constructStatsLine(objectRecords.get(name), monitorAttrList);
 					getCSVStats().appendToResourceStatisticsCSV(nowDate, getServerName(), resourceType, name, headerLine, contentLine);
 					artifactList.put(name, now);
 				}

@@ -238,7 +238,7 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 							if (componentType.equals(WEBAPP_COMPONENT_RUNTIME)) {
 								String name = ResourceNameNormaliser.normalise(WEBAPP_RESOURCE_TYPE, getConn().getTextAttr(componentRuntime, NAME));
 								
-								if (!getComponentBlacklist().contains(name)) {						
+								if (!getComponentBlacklist().contains(name)) {
 									String contentLine = constructStatsLine(componentRuntime, WEBAPP_MBEAN_MONITOR_ATTR_LIST);
 									getCSVStats().appendToResourceStatisticsCSV(nowDate, getServerName(), WEBAPP_RESOURCE_TYPE, name, headerLine, contentLine);
 									artifactList.put(name, now);
