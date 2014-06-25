@@ -20,6 +20,7 @@ import static domainhealth.core.jmx.WebLogicMBeanPropConstants.NAME;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.management.ObjectName;
@@ -76,11 +77,26 @@ public class RetrieverBackgroundService {
 		minPollIntervalMillis = (int) (MIN_POLL_FACTOR * queryIntervalMillis);
 		maxPollIntervalMillis = (int) (MAX_POLL_FACTOR * queryIntervalMillis);
 		
+		// ************************************************************
 		// Updated by gregoan
 		//componentBlacklist = tokenizeBlacklistText(appProps.getProperty(PropKey.COMPONENT_BLACKLIST_PROP));
-		BlacklistUtil blacklistUtil = new BlacklistUtil(appProps);
-		componentBlacklist = blacklistUtil.getComponentBlacklist();
+		componentBlacklist = new BlacklistUtil(appProps).getComponentBlacklist();
 		
+		// Print the blacklisted elements
+		Iterator<String> iteratorBlacklist = componentBlacklist.iterator();
+		
+		AppLog.getLogger().notice("");
+		AppLog.getLogger().notice("-------------------------------------------------------------");
+		AppLog.getLogger().notice("The following elements will be blacklisted (see web.xml file)");
+		
+		while(iteratorBlacklist.hasNext()){
+			String element = iteratorBlacklist.next();
+			AppLog.getLogger().notice("\t[" + element + "]");			
+		}
+		AppLog.getLogger().notice("-------------------------------------------------------------");
+		AppLog.getLogger().notice("");
+		// ************************************************************
+    	
 		WorkManager localCaptureThreadsWkMgr = null;
 		
 		try {
@@ -223,11 +239,11 @@ public class RetrieverBackgroundService {
 			} else {
 				useWLDFHarvester = false;
 				
-				AppLog.getLogger().notice("");
-				AppLog.getLogger().notice("---------------------------------------------------------------------------------------------------------");
+				AppLog.getLogger().warning("");
+				AppLog.getLogger().warning("---------------------------------------------------------------------------------------------------------");
 				AppLog.getLogger().warning("WLDF module creation problems occurred. WLDF Capture mode can't be used - must use JMX Poll mode instead");
-				AppLog.getLogger().notice("---------------------------------------------------------------------------------------------------------");
-				AppLog.getLogger().notice("");
+				AppLog.getLogger().warning("---------------------------------------------------------------------------------------------------------");
+				AppLog.getLogger().warning("");
 			}
 		} 
 		
@@ -245,7 +261,7 @@ public class RetrieverBackgroundService {
 			AppLog.getLogger().notice("");
 		}
 
-		AppLog.getLogger().info("Statistics Retriever Background Service first time processing initialisation steps finished successfully");
+		AppLog.getLogger().debug("Statistics Retriever Background Service first time processing initialisation steps finished successfully");
 	}
 
 	/**

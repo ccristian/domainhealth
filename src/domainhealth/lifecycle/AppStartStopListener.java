@@ -60,7 +60,7 @@ public class AppStartStopListener extends GenericServlet {
 		AppLog.getLogger().notice("Starting DomainHealth application");
 		
 		AppProperties appProps = new AppProperties(getServletContext());
-		String outputPath = appProps.getProperty(PropKey.STATS_OUTPUT_PATH_PROP);		
+		String outputPath = appProps.getProperty(PropKey.STATS_OUTPUT_PATH_PROP);
 		
 		if (outputPath == null) {
 			throw new ServletException("Neither a JVM start-up '-D parameter nor a web.xml context-param has been defined for parameter '" + PropKey.STATS_OUTPUT_PATH_PROP + "' to specify the root path of the CSV output path");

@@ -243,14 +243,6 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
 			while (names.hasNext()) {
 				String name = (String) names.next();
 				
-/*
-if(getComponentBlacklist().contains(name)){
-	System.out.println("StatisticCapturerWLDFQuery::logResourceStats() - The element " + name + " is blacklisted ...");
-}
-else{
-	System.out.println("StatisticCapturerWLDFQuery::logResourceStats() - The element " + name + " is not blacklisted");
-}
-*/
 				// Skip resources which are on blacklist (unless this is for the WLHostMachine resource type in which case allow anyway)
 				/*
 				if ((resourceType.equals(HOSTMACHINE_RESOURCE_TYPE)) || (!getComponentBlacklist().contains(name))) {										
@@ -343,8 +335,35 @@ else{
 			while (poolObjectNames.hasNext()) {
 				String name = (String) poolObjectNames.next();
 				
+				/*
 				if (!getComponentBlacklist().contains(name)) {										
 					InstanceDataRecord poolObjRecord = poolObjectRecords.get(name);
+					InstanceDataRecord txObjRecord = txObjectRecords.get(name);
+					StringBuilder contentLine = new StringBuilder(constructStatsLine(poolObjRecord, EJB_POOL_MBEAN_MONITOR_ATTR_LIST));
+					appendToStatsLine(contentLine, txObjRecord, EJB_TRANSACTION_MBEAN_MONITOR_ATTR_LIST);
+					getCSVStats().appendToResourceStatisticsCSV(nowDate, getServerName(), EJB_RESOURCE_TYPE, name, headerLine, contentLine.toString());
+					artifactList.put(name, now);
+				}
+				*/
+				
+				Iterator<String> iteratorBlacklist = getComponentBlacklist().iterator();
+				boolean blacklist = false;
+				
+            	while(iteratorBlacklist.hasNext()){
+            		String element = iteratorBlacklist.next();
+            		
+            		if (name.contains(element)){
+            			
+//System.out.println("StatisticCapturerWLDFQuery::logResourceEJBStats() - A part of the element " + name + " is blacklisted [" + element + "]");
+
+            			blacklist = true;
+						break;
+            		}
+            	}
+            	
+            	if (!blacklist) {
+            		
+            		InstanceDataRecord poolObjRecord = poolObjectRecords.get(name);
 					InstanceDataRecord txObjRecord = txObjectRecords.get(name);
 					StringBuilder contentLine = new StringBuilder(constructStatsLine(poolObjRecord, EJB_POOL_MBEAN_MONITOR_ATTR_LIST));
 					appendToStatsLine(contentLine, txObjRecord, EJB_TRANSACTION_MBEAN_MONITOR_ATTR_LIST);

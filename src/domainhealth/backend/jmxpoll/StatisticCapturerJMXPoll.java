@@ -16,6 +16,7 @@ package domainhealth.backend.jmxpoll;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -130,10 +131,35 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 	
 			for (ObjectName ds : getConn().getChildren(jdbcRuntime, JDBC_DATA_SOURCE_RUNTIMES)) {
 				try {
+					
+					/*
 					String name = ResourceNameNormaliser.normalise(DATASOURCE_RESOURCE_TYPE, getConn().getTextAttr(ds, NAME));
 					String contentLine = constructStatsLine(ds, JDBC_MBEAN_MONITOR_ATTR_LIST);
 					getCSVStats().appendToResourceStatisticsCSV(new Date(), getServerName(), DATASOURCE_RESOURCE_TYPE, name, headerLine, contentLine);
 					artifactList.put(name, now);
+					*/
+					
+					String name = ResourceNameNormaliser.normalise(DATASOURCE_RESOURCE_TYPE, getConn().getTextAttr(ds, NAME));
+					Iterator<String> iteratorBlacklist = getComponentBlacklist().iterator();
+	            	boolean blacklist = false;
+	            	
+	            	while(iteratorBlacklist.hasNext()){
+	            		String element = iteratorBlacklist.next();
+	            		
+							if(name.contains(element)){
+							
+//System.out.println("StatisticCapturerJMXPool::logDataSourcesStats() - A part of the element " + name + " is blacklisted [" + element + "]");
+							blacklist = true;
+							break;
+						}
+					}
+						
+					if (!blacklist) {
+						String contentLine = constructStatsLine(ds, JDBC_MBEAN_MONITOR_ATTR_LIST);
+						getCSVStats().appendToResourceStatisticsCSV(new Date(), getServerName(), DATASOURCE_RESOURCE_TYPE, name, headerLine, contentLine);
+						artifactList.put(name, now);
+					}
+					
 				} catch (Exception e) {
 					AppLog.getLogger().warning("Issue logging " + DATASOURCE_RESOURCE_TYPE + ":" + ds.getCanonicalName() + " for server " + getServerName() + ", reason=" + e.getLocalizedMessage());
 				}
@@ -163,10 +189,34 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 								
 				for (ObjectName destination : getConn().getChildren(jmsServer, DESTINATIONS)) {
 					try {
-						String name = ResourceNameNormaliser.normalise(DESTINATION_RESOURCE_TYPE, getConn().getTextAttr(destination, NAME));					
+						
+						/*
+						String name = ResourceNameNormaliser.normalise(DESTINATION_RESOURCE_TYPE, getConn().getTextAttr(destination, NAME));
 						String contentLine = constructStatsLine(destination, JMS_DESTINATION_MBEAN_MONITOR_ATTR_LIST);
 						getCSVStats().appendToResourceStatisticsCSV(new Date(), getServerName(), DESTINATION_RESOURCE_TYPE, name, headerLine, contentLine);
 						artifactList.put(name, now);
+						*/
+						
+						String name = ResourceNameNormaliser.normalise(DESTINATION_RESOURCE_TYPE, getConn().getTextAttr(destination, NAME));		
+						Iterator<String> iteratorBlacklist = getComponentBlacklist().iterator();
+		            	boolean blacklist = false;
+		            	
+		            	while(iteratorBlacklist.hasNext()){
+		            		String element = iteratorBlacklist.next();
+		            		
+								if(name.contains(element)){
+								
+//System.out.println("StatisticCapturerJMXPool::logDestinationsStats() - A part of the element " + name + " is blacklisted [" + element + "]");
+								blacklist = true;
+								break;
+							}
+						}
+							
+						if (!blacklist) {
+							String contentLine = constructStatsLine(destination, JMS_DESTINATION_MBEAN_MONITOR_ATTR_LIST);
+							getCSVStats().appendToResourceStatisticsCSV(new Date(), getServerName(), DESTINATION_RESOURCE_TYPE, name, headerLine, contentLine);
+							artifactList.put(name, now);
+						}
 					} catch (Exception e) {
 						AppLog.getLogger().warning("Issue logging " + DESTINATION_RESOURCE_TYPE + ":" + destination.getCanonicalName() + " for server " + getServerName() + ", reason=" + e.getLocalizedMessage());
 					}			
@@ -196,10 +246,34 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 				
 			for (ObjectName safAgent : getConn().getChildren(safRuntime, AGENTS)) { 
 					try {
+						
+						/*
 						String name = ResourceNameNormaliser.normalise(SAF_RESOURCE_TYPE, getConn().getTextAttr(safAgent, NAME));
 						String contentLine = constructStatsLine(safAgent, SAF_AGENT_MBEAN_MONITOR_ATTR_LIST);
 						getCSVStats().appendToResourceStatisticsCSV(new Date(), getServerName(), SAF_RESOURCE_TYPE, name, headerLine, contentLine);
 						artifactList.put(name, now);
+						*/
+						
+						String name = ResourceNameNormaliser.normalise(SAF_RESOURCE_TYPE, getConn().getTextAttr(safAgent, NAME));		
+						Iterator<String> iteratorBlacklist = getComponentBlacklist().iterator();
+		            	boolean blacklist = false;
+		            	
+		            	while(iteratorBlacklist.hasNext()){
+		            		String element = iteratorBlacklist.next();
+		            		
+								if(name.contains(element)){
+								
+//System.out.println("StatisticCapturerJMXPool::logSafAgentStats() - A part of the element " + name + " is blacklisted [" + element + "]");
+								blacklist = true;
+								break;
+							}
+						}
+							
+						if (!blacklist) {
+							String contentLine = constructStatsLine(safAgent, SAF_AGENT_MBEAN_MONITOR_ATTR_LIST);
+							getCSVStats().appendToResourceStatisticsCSV(new Date(), getServerName(), SAF_RESOURCE_TYPE, name, headerLine, contentLine);
+							artifactList.put(name, now);
+						}
 					} catch (Exception e) {
 						AppLog.getLogger().warning("Issue logging " + SAF_RESOURCE_TYPE + ":" + safAgent.getCanonicalName() + " for server " + getServerName() + ", reason=" + e.getLocalizedMessage());
 					}						
@@ -238,7 +312,29 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 							if (componentType.equals(WEBAPP_COMPONENT_RUNTIME)) {
 								String name = ResourceNameNormaliser.normalise(WEBAPP_RESOURCE_TYPE, getConn().getTextAttr(componentRuntime, NAME));
 								
+								/*
 								if (!getComponentBlacklist().contains(name)) {
+									String contentLine = constructStatsLine(componentRuntime, WEBAPP_MBEAN_MONITOR_ATTR_LIST);
+									getCSVStats().appendToResourceStatisticsCSV(nowDate, getServerName(), WEBAPP_RESOURCE_TYPE, name, headerLine, contentLine);
+									artifactList.put(name, now);
+								}
+								*/
+								
+								Iterator<String> iteratorBlacklist = getComponentBlacklist().iterator();
+				            	boolean blacklist = false;
+				            	
+				            	while(iteratorBlacklist.hasNext()){
+				            		String element = iteratorBlacklist.next();
+				            		
+										if(name.contains(element)){
+										
+//System.out.println("StatisticCapturerJMXPool::logWebAppStats() - A part of the element " + name + " is blacklisted [" + element + "]");
+										blacklist = true;
+										break;
+									}
+								}
+									
+								if (!blacklist) {
 									String contentLine = constructStatsLine(componentRuntime, WEBAPP_MBEAN_MONITOR_ATTR_LIST);
 									getCSVStats().appendToResourceStatisticsCSV(nowDate, getServerName(), WEBAPP_RESOURCE_TYPE, name, headerLine, contentLine);
 									artifactList.put(name, now);
@@ -287,7 +383,32 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 									try { 
 										String name = ResourceNameNormaliser.normalise(EJB_RESOURCE_TYPE, getConn().getTextAttr(ejbRuntime, NAME));
 			
+										/*
 										if (!getComponentBlacklist().contains(name)) {													
+											ObjectName poolRuntime = getConn().getChild(ejbRuntime, POOL_RUNTIME);
+											ObjectName txRuntime = getConn().getChild(ejbRuntime, TRANSACTION_RUNTIME);
+											StringBuilder contentLine = new StringBuilder(constructStatsLine(poolRuntime, EJB_POOL_MBEAN_MONITOR_ATTR_LIST));
+											appendToStatsLine(contentLine, txRuntime, EJB_TRANSACTION_MBEAN_MONITOR_ATTR_LIST);							
+											getCSVStats().appendToResourceStatisticsCSV(new Date(), getServerName(), EJB_RESOURCE_TYPE, name, headerLine, contentLine.toString());
+											artifactList.put(name, now);
+										}
+										*/
+										
+										Iterator<String> iteratorBlacklist = getComponentBlacklist().iterator();
+						            	boolean blacklist = false;
+						            	
+						            	while(iteratorBlacklist.hasNext()){
+						            		String element = iteratorBlacklist.next();
+						            		
+												if(name.contains(element)){
+												
+//System.out.println("StatisticCapturerJMXPool::logEJBStats() - A part of the element " + name + " is blacklisted [" + element + "]");
+												blacklist = true;
+												break;
+											}
+										}
+											
+										if (!blacklist) {
 											ObjectName poolRuntime = getConn().getChild(ejbRuntime, POOL_RUNTIME);
 											ObjectName txRuntime = getConn().getChild(ejbRuntime, TRANSACTION_RUNTIME);
 											StringBuilder contentLine = new StringBuilder(constructStatsLine(poolRuntime, EJB_POOL_MBEAN_MONITOR_ATTR_LIST));
