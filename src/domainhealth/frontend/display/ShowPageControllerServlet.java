@@ -68,7 +68,9 @@ import static domainhealth.frontend.display.HttpServletUtils.*;
  */
 public class ShowPageControllerServlet extends HttpServlet {
 	
+	// Added by gregoan
 	private List<String> componentBlacklist;
+	private AppProperties appProps;
 	
 	/**
 	 * Servlet initialiser which establishes the root path of the collected 
@@ -83,9 +85,9 @@ public class ShowPageControllerServlet extends HttpServlet {
 		statisticsStorage = new StatisticsStorage((String) getServletContext().getAttribute(PropKey.STATS_OUTPUT_PATH_PROP.toString()));
 		
 		// Added by gregoan
-		AppProperties appProps = new AppProperties(getServletContext());
+		this.appProps = new AppProperties(getServletContext());
 		BlacklistUtil blacklistUtil = new BlacklistUtil(appProps);
-		componentBlacklist = blacklistUtil.getComponentBlacklist();
+		this.componentBlacklist = blacklistUtil.getComponentBlacklist();
 	}
 
 	/**
@@ -334,13 +336,10 @@ public class ShowPageControllerServlet extends HttpServlet {
 		request.setAttribute(SHOW_HOSTS_PARAM, ((hostmachinesSet != null) && (!hostmachinesSet.isEmpty())));
 		
 		// Added by gregoan the 03/06/2014
-		// JMSDashboard is a table without statistics on metrics so we need to check if there is a MBean or not
-		// @TODO :
-		//    - Should check if MBean is available or not -> see StatisticCapturerJMXPoll::logHostMachineStats()
-		//    - Should use the web.xml to know if dashboard should be generated
-		request.setAttribute(SHOW_JMSSRV_DASHBOARDS_PARAM, true);
-		request.setAttribute(SHOW_SAFAGENT_DASHBOARDS_PARAM, true);
-		
+		boolean showDashboard = appProps.getBoolProperty(PropKey.SHOW_DASHBOARD_PROP);
+		if(showDashboard){
+			request.setAttribute(SHOW_DASHBOARDS_PARAM, true);
+		}
 	}
 
 	/**

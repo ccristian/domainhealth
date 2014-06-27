@@ -75,18 +75,11 @@ public class GraphScopedAttributeUtils {
 	public final static String SHOW_HOSTS_PARAM = "showhosts";
 	
 	/**
-	 * The 'showjmssrvdashboards' pamameter to indicate whether to show the 'JMS Dashboard' link 
+	 * The 'showdashboards' pamameter to indicate whether to show the 'JMS Dashboard' link 
 	 * in the top menu.
 	 */
 	// Added by gregoan
-	public final static String SHOW_JMSSRV_DASHBOARDS_PARAM = "showjmssrvdashboards";
-	
-	/**
-	 * The 'showsafagentdashboards' pamameter to indicate whether to show the 'SAF Dashboard' link 
-	 * in the top menu.
-	 */
-	// Added by gregoan
-	public final static String SHOW_SAFAGENT_DASHBOARDS_PARAM = "showsafagentdashboards";
+	public final static String SHOW_DASHBOARDS_PARAM = "showdashboards";
 
 	/**
 	 * The list of names of all servers in domain attribute/parameter

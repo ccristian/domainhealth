@@ -70,7 +70,13 @@ public class AppProperties extends Properties {
 		/**
 		 * The domain health version date property name ("dh_version_date")
 		 */
-		VERSION_DATE_PROP { public String toString() { return "dh_version_date"; } } 
+		VERSION_DATE_PROP { public String toString() { return "dh_version_date"; } },
+		
+		/**
+		 * The domain health version date property name ("dh_version_date")
+		 */
+		// Added by gregoan
+		SHOW_DASHBOARD_PROP { public String toString() { return "dh_showdashboard"; } }
 	};
 
 	/**

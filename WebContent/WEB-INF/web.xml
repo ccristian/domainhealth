@@ -40,6 +40,14 @@
 		<param-value>60</param-value>
 	</context-param>
 	
+	<!-- Added by gregoan -->
+	<context-param>
+		<param-name>dh_showdashboard</param-name>
+		
+		<!--  By default dashboard are visible -->
+		<param-value>true</param-value>
+	</context-param>
+	
 	<servlet>
 		<servlet-name>AppStartStopListener</servlet-name>
 		<servlet-class>domainhealth.lifecycle.AppStartStopListener</servlet-class>
