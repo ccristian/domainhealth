@@ -10,7 +10,7 @@
 		<td class="datarow" align="right" width="50%"><img src='<c:out value="${contexturl}"/>/charts/<c:out value="${resourcetype}"/>/<c:out value="${resourcename}"/>/<%=WebLogicMBeanPropConstants.CONNECTION_DELAY_TIME%>.png?<dh:link-ctx-params/>'/></td>							
 	</tr>							
 	<tr>
-		<td class="datarow" align="left" width="50%"><img src='<c:out value="${contexturl}"/>/charts/<c:out value="${resourcetype}"/>/<c:out value="${resourcename}"/>/<%=WebLogicMBeanPropConstants.FAILED_RESERIVE_REQUEST_COUNT%>.png?<dh:link-ctx-params/>'/></td>
+		<td class="datarow" align="left" width="50%"><img src='<c:out value="${contexturl}"/>/charts/<c:out value="${resourcetype}"/>/<c:out value="${resourcename}"/>/<%=WebLogicMBeanPropConstants.FAILED_RESERVE_REQUEST_COUNT%>.png?<dh:link-ctx-params/>'/></td>
 		<td class="datarow" align="right" width="50%"><img src='<c:out value="${contexturl}"/>/charts/<c:out value="${resourcetype}"/>/<c:out value="${resourcename}"/>/<%=WebLogicMBeanPropConstants.FAILURES_TO_RECONNECT_COUNT%>.png?<dh:link-ctx-params/>'/></td>							
 	</tr>	
 	<tr>
