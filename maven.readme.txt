@@ -1,0 +1,36 @@
+Populating the Maven Repository Manager
+
+Oracle Fusion Middleware 12c provides a Maven Synchronization plug-in that simplifies the process of setting up repositories
+and completely eliminates the need to know what patches are installed in a particular environment.
+This plug-in enables you to populate a Maven repository from a given Oracle home.
+After you patch your Oracle home, you should run this plug-in to ensure that your Maven repository matches Oracle home.
+This ensures that your builds use correct versions of all artifacts in that particular environment.
+The Oracle Maven Synchronization Plug-in is included in the Oracle WebLogic Server,
+
+
+Installing Oracle Maven Synchronization Plug-In
+
+
+The Maven Project Object Model (POM) file that describes the plug-in, which is located at:
+ORACLE_HOME/oracle_common/plugins/maven/com/oracle/maven/oracle-maven-sync/12.1.2/oracle-maven-sync.12.1.2.pom
+
+The JAR file that contains the plug-in, which is located at:
+ORACLE_HOME/oracle_common/plugins/maven/com/oracle/maven/oracle-maven-sync/12.1.2/oracle-maven-sync.12.1.2.jar
+
+To install the plug-in into your local Maven repository, run the following command from the
+ORACLE_COMMON/oracle_common/plugins/maven/com/oracle/maven/oracle-maven-sync/12.1.2 directory:
+
+mvn install:install-file -DpomFile=oracle-maven-sync.12.1.2.pom -Dfile=oracle-maven-sync.12.1.2.jar
+
+
+The simplest way deploy the plug-in into a shared internal repository, use the web user interface provided by your
+Maven Repository Manager to upload the JAR file into the repository.
+
+An alternative method is to use the deploy plug-in, which you can do by using a command like the following from the
+ORACLE_COMMON/oracle_common/plugins/maven/com/oracle/maven/oracle-maven-sync/12.1.2 directory:
+mvn deploy:deploy-file -DpomFile=oracle-maven-sync-12.1.2.pom -Dfile=oracle-maven-sync-12.1.2.jar
+-Durl=http://servername/archiva/repositories/internal -DrepositoryId=internal
+
+
+
+http://docs.oracle.com/middleware/1212/core/MAVEN/config_maven.htm#MAVEN311
