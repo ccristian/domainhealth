@@ -1,3 +1,8 @@
+
+To install the plug-in into your local Maven repository, run the following command from the
+ORACLE_COMMON/oracle_common/plugins/maven/com/oracle/maven/oracle-maven-sync/12.1.2 directory:
+mvn com.oracle.maven:oracle-maven-sync:push -Doracle-maven-sync.oracleHome=c:\Oracle\Middleware\Oracle_Home_12c -Doracle-maven-sync.testingOnly=false
+
 Populating the Maven Repository Manager
 
 Oracle Fusion Middleware 12c provides a Maven Synchronization plug-in that simplifies the process of setting up repositories
@@ -31,6 +36,67 @@ ORACLE_COMMON/oracle_common/plugins/maven/com/oracle/maven/oracle-maven-sync/12.
 mvn deploy:deploy-file -DpomFile=oracle-maven-sync-12.1.2.pom -Dfile=oracle-maven-sync-12.1.2.jar
 -Durl=http://servername/archiva/repositories/internal -DrepositoryId=internal
 
+
+Running the Oracle Maven Synchronization Plug-In
+
+The Oracle Maven Synchronization Plug-in supports two Maven goals:
+
+Help, which prints out help information
+Push, which is used to populate a repository
+
+You can execute the help goal by running the following command:
+
+mvn com.oracle.maven:oracle-maven-sync:help
+
+Populating Your Maven Repository
+
+To populate your repository, you must use the push goal. You can specify the parameters given in Table 5-1 on the command line or in your Project Object Model file.
+
+This section contains the following topics:
+
+Populating a Local Repository
+Populating a Remote Repository
+5.3.5.1 Populating a Local Repository
+
+If you are populating your local repository, you only need to specify oracleHome and testingOnly=false.
+
+For example:
+
+mvn com.oracle.maven:oracle-maven-sync:push
+ -DoracleHome=/path/to/oracleHome
+ -Doracle-maven-sync.testingOnly=false
+
+ ex:
+
+mvn com.oracle.maven:oracle-maven-sync:push -Doracle-maven-sync.oracleHome=c:\Oracle\Middleware\Oracle_Home_12c -Doracle-maven-sync.testingOnly=false
+
+The localRepository element in your settings.xml file indicates the location of your local Maven repository. If you exclude the localRepository element in settings.xml, the default location is in the ${HOME}/.m2/repository directory.
+
+If you want to override the localRepository value, then you must specify the override location on the command line as a Maven option.
+
+For example:
+
+mvn com.oracle.maven:oracle-maven-sync:push
+ -Doracle-maven-sync.oracleHome=/path/to/oracleHome
+ -Dmaven.repo.local=/alternate/path
+
+
+
+ To specify the parameters in your Project Object Model file, you must add a plug-in entry similar to the following in your Project Object Model file:
+
+<plugin>
+   <groupId>com.oracle.maven</groupId>
+   <artifactId>oracle-maven-sync</artifactId>
+   <version>12.1.2</version>
+   <configuration>
+     <oracleHome>/path/to/oracleHome</oracleHome>
+     <testOnly>false</testOnly>
+   </configuration>
+</plugin>
+
+After adding the plug-in, execute Maven by running the following command on the command line:
+
+mvn com.oracle.maven:oracle-maven-sync:push
 
 
 http://docs.oracle.com/middleware/1212/core/MAVEN/config_maven.htm#MAVEN311
