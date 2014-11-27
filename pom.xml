@@ -35,11 +35,6 @@
     </dependency>
     <dependency>
       <groupId>com.oracle.weblogic</groupId>
-      <artifactId>com.bea.core.i18n_2.1.0.0</artifactId>
-      <version>12.1.2-0-0</version>
-    </dependency>
-    <dependency>
-      <groupId>com.oracle.weblogic</groupId>
       <artifactId>weblogic.server.merged</artifactId>
       <version>12.1.2-0-0</version>
     </dependency>
