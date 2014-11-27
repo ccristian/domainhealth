@@ -36,9 +36,12 @@
     <dependency>
       <groupId>com.oracle.weblogic</groupId>
       <artifactId>weblogic.server.merged</artifactId>
-      <version>12.1.2-0-0</version>
+      <version>${weblogic.server.merged.version}</version>
     </dependency>
   </dependencies>
+  <properties>
+    <weblogic.server.merged.version>12.1.2-0-0</weblogic.server.merged.version>
+  </properties>
   <build>
     <finalName>domainhealth</finalName>
     <plugins>
@@ -62,7 +65,7 @@
       <plugin>
         <groupId>com.oracle.weblogic</groupId> 
         <artifactId>weblogic-maven-plugin</artifactId> 
-        <version>12.1.2-0-0</version> 
+        <version>${weblogic.server.merged.version}</version>
         <!--
         You can find and redefine the following variables in the parent pom file.
   
