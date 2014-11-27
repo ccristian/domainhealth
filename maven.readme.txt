@@ -1,6 +1,9 @@
 
 To install the plug-in into your local Maven repository, run the following command from the
 ORACLE_COMMON/oracle_common/plugins/maven/com/oracle/maven/oracle-maven-sync/12.1.2 directory:
+mvn install:install-file -DpomFile=oracle-maven-sync.12.1.2.pom -Dfile=oracle-maven-sync.12.1.2.jar
+$ mvn install:install-file -DpomFile=oracle-maven-sync-12.1.3.pom -Dfile=oracle-maven-sync-12.1.3.jar
+
 mvn com.oracle.maven:oracle-maven-sync:push -Doracle-maven-sync.oracleHome=c:\Oracle\Middleware\Oracle_Home_12c -Doracle-maven-sync.testingOnly=false
 
 Populating the Maven Repository Manager
