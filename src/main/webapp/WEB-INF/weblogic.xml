@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<weblogic-web-app xmlns="http://www.bea.com/ns/weblogic/90">
+	<security-role-assignment>
+		<role-name>Administrators</role-name>
+		<principal-name>Administrators</principal-name>
+		
+		<!-- Added by gregoan the 04/06/2014 -->
+		<principal-name>Monitors</principal-name>
+	</security-role-assignment>	
+
+	<run-as-role-assignment>
+		<role-name>SystemAdministrator</role-name>
+		
+		<!--
+		<run-as-principal-name>weblogic</run-as-principal-name>
+		-->
+		<!-- Updated by gregoan the 04/06/2014 -->
+		<run-as-principal-name>system</run-as-principal-name>
+	</run-as-role-assignment>
+	
+	<context-root>/domainhealth</context-root>	
+
+	<work-manager>
+		<name>DomainHealth_IndividualServerStatCapturerWorkMngr</name> 
+		<max-threads-constraint>
+			<name>StatPollerMultiMaxThreadConstraint</name>
+			<count>12</count>
+		</max-threads-constraint>
+	</work-manager>
+	
+    <session-descriptor>
+    	<!--
+    	<timeout-secs>20</timeout-secs>
+    	-->
+		<timeout-secs>600</timeout-secs>
+	</session-descriptor>
+</weblogic-web-app>

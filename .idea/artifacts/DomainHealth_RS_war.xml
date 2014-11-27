@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="DomainHealth-RS:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="domainhealth.war">
+      <element id="artifact" artifact-name="DomainHealth-RS:war exploded" />
+    </root>
+  </artifact>
+</component>

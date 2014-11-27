@@ -1,0 +1,5 @@
+### Domain Health Version (format examples: 0.9.0, 0.8.0b, 0.8.0b2, 0.8.0alpha03)
+dh_version_number=1.1.2
+
+### Domain Health Build Date (format: "dd-Mmm-yyyy")
+dh_version_date=27-Jun-2014
