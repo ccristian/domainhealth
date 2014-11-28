@@ -10,12 +10,12 @@
 
 	<run-as-role-assignment>
 		<role-name>SystemAdministrator</role-name>
-		
-		<!--
+
+
 		<run-as-principal-name>weblogic</run-as-principal-name>
-		-->
+
 		<!-- Updated by gregoan the 04/06/2014 -->
-		<run-as-principal-name>system</run-as-principal-name>
+		<!--run-as-principal-name>system</run-as-principal-name-->
 	</run-as-role-assignment>
 	
 	<context-root>/domainhealth</context-root>	

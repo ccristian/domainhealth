@@ -11,6 +11,12 @@
     <artifactId>wls-common</artifactId>
     <version>12.1.3-0-0</version>
   </parent>
+  <properties>
+    <oracleMiddlewareHome>/Users/cristianchiovari/Oracle/Middleware/Oracle_Home</oracleMiddlewareHome>
+    <oracleUsername>weblogic</oracleUsername>
+    <oraclePassword>weblogic1</oraclePassword>
+    <weblogic.server.merged.version>12.1.3-0-0</weblogic.server.merged.version>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>javax</groupId>
@@ -36,9 +42,7 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
-  <properties>
-    <weblogic.server.merged.version>12.1.3-0-0</weblogic.server.merged.version>
-  </properties>
+
   <build>
     <finalName>domainhealth</finalName>
     <plugins>
