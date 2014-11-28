@@ -14,16 +14,9 @@
 //POSSIBILITY OF SUCH DAMAGE.
 package domainhealth.frontend.graphics;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Iterator;
-import java.util.List;
-
+import domainhealth.core.statistics.MonitorProperties;
+import domainhealth.frontend.data.DateAmountDataItem;
+import domainhealth.frontend.data.DateAmountDataSet;
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
@@ -36,10 +29,14 @@ import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import domainhealth.core.statistics.MonitorProperties;
-import domainhealth.frontend.data.DateAmountDataItem;
-import domainhealth.frontend.data.DateAmountDataSet;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Iterator;
+import java.util.List;
+
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.DATE_TIME;
 
 
 /**
