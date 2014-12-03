@@ -14,12 +14,14 @@
 //POSSIBILITY OF SUCH DAMAGE.
 package domainhealth.frontend.data;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
 
 /**
  * Structure for holding a simple Date-Number pair (typically, but not 
  * necessarily exclusively, used to identify an x,y point on a graph).
  */
+@XmlRootElement
 public class DateAmountDataItem {
 	/**
 	 * Create date-number pair.

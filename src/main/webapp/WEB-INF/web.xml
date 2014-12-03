@@ -165,5 +165,16 @@
 	<security-role>
 		<role-name>Administrators</role-name>
 	</security-role>
+
+	<servlet>
+		<display-name>DH</display-name>
+		<servlet-name>DHApp</servlet-name>
+		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DHApp</servlet-name>
+		<url-pattern>/rest/*</url-pattern>
+	</servlet-mapping>
+
 		
 </web-app>
