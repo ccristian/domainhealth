@@ -14,6 +14,7 @@
 //POSSIBILITY OF SUCH DAMAGE.
 package domainhealth.frontend.data;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
@@ -23,6 +24,8 @@ import java.util.TreeSet;
  * Set to hold a unique collection of data-time/amount pairs (typically, but 
  * not necessarily exclusively, used to identify an x,y point on a graph).
  */
+
+@XmlRootElement
 public class DateAmountDataSet {
 	/**
 	 * Add a date-time/amount pair to the set. 
@@ -64,4 +67,11 @@ public class DateAmountDataSet {
 			}
 		}
 	});
+
+	@Override
+	public String toString() {
+		return "DateAmountDataSet{" +
+				"items=" + items +
+				'}';
+	}
 }

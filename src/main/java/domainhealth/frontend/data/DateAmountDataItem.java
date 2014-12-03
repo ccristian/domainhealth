@@ -55,4 +55,12 @@ public class DateAmountDataItem {
 	// Members
 	private Date dateTime = null;
 	private double amount = 0;
+
+	@Override
+	public String toString() {
+		return "DateAmountDataItem{" +
+				"dateTime=" + dateTime +
+				", amount=" + amount +
+				'}';
+	}
 }
