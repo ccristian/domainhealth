@@ -84,6 +84,17 @@ public class DomainRuntimeServiceMBeanConnection extends WebLogicMBeanConnection
 		}
 	}
 
+	public String getDomainName() throws WebLogicMBeanException {
+		try {
+			return (String)getConn().getAttribute(getDomainConfiguration(), "Name");
+		} catch (Exception e) {
+			throw new WebLogicMBeanException(e.toString(), e);
+		}
+
+
+
+	}
+
 	/**
 	 * Gets the list of all Servers' root Runtime MBeans
 	 * 
