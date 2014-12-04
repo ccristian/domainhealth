@@ -192,7 +192,7 @@ public class StatisticsStorage {
 	 * @return Zero based index of the property name position
 	 * @throws IOException Indicates problem accessing statistics directories/files
 	 */
-	public int getPropertyPositionInStatsFile(String resourceType, String resourceName, Date dateTime, String serverName, String property) throws IOException {		
+	public int getPropertyPositionInStatsFile(String resourceType, String resourceName, Date dateTime, String serverName, String property) throws IOException {
 		int propertyPosition = -1;
 		BufferedReader in = null;
 		

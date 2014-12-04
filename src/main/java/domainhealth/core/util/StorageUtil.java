@@ -3,6 +3,7 @@ package domainhealth.core.util;
 import domainhealth.core.env.AppLog;
 import domainhealth.core.statistics.StatisticsStorage;
 import domainhealth.frontend.data.DateAmountDataSet;
+import domainhealth.frontend.data.ResourceType;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Enumeration;
 
 import static domainhealth.core.statistics.StatisticsStorage.CRG_RETURN;
 import static domainhealth.core.statistics.StatisticsStorage.NEW_LINE;
@@ -21,6 +23,55 @@ import static domainhealth.core.util.DateUtil.DISPLAY_DATETIME_FORMAT;
  * Created by chiovcr on 03/12/2014.
  */
 public class StorageUtil {
+
+
+
+
+    /**
+     * Collects the required statistics for a given server instance's resource
+     * property, adding the retrieved series of data-time/amount data values to
+     * the graph for the server
+     *
+     * @param endDateTime      The end date-time of the window of statistics to plot
+     * @param durationMins     The duration of minutes of the window of statistics to plot
+     * @param serverName       The name of the WebLogic server to retrieve and process results for
+     * @param resourceType     The type of resource to plot (ie. core, data-source or destination)
+     * @param resourceNames     The name of the core/data-source/destination resource to plot
+     * @param resourceProperty The property of the core/data-source/destination resource to plot
+     * @return The series of date-time/amount data items to be plotted as a line on a graph for a specific server
+     * @throws java.io.IOException Indicates a problem in collecting and processing the resource results
+     */
+    public static DateAmountDataSet getPropertiesData(StatisticsStorage statisticsStorage, String resourceType, String resourceName, String resourceProperty, Date endDateTime, int durationMins, String serverName) throws IOException {
+
+
+        DateAmountDataSet resultDataSet = null;
+        //StorageUtil.getPropertyData(statisticsStorage,"core",null,"HeapUsedCurrent",new Date(),1,"AdminServer");
+        //
+        Date startDateTime = DateUtil.getEarlierTime(endDateTime, durationMins);
+        File file = statisticsStorage.getResourceStatisticsCSV(endDateTime, serverName, resourceType, resourceName);
+        if ((file == null) || (!file.exists())) {
+            return new DateAmountDataSet();
+        }
+        int propertyPosition = statisticsStorage.getPropertyPositionInStatsFile(resourceType, resourceName, endDateTime, serverName, resourceProperty);
+        if (propertyPosition < 0) {
+            return new DateAmountDataSet();
+        }
+        BufferedReader in = null;
+
+        try {
+            in = new BufferedReader(new FileReader(file));
+            resultDataSet = generatePropertyDataSet(in, startDateTime, endDateTime, propertyPosition);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (Exception e) {
+                }
+            }
+        }
+
+        return resultDataSet;
+    }
 
 
     /**
@@ -45,7 +96,6 @@ public class StorageUtil {
             return new DateAmountDataSet();
         }
         int propertyPosition = statisticsStorage.getPropertyPositionInStatsFile(resourceType, resourceName, endDateTime, serverName, resourceProperty);
-
         if (propertyPosition < 0) {
             return new DateAmountDataSet();
         }
@@ -65,6 +115,10 @@ public class StorageUtil {
 
         return resultDataSet;
     }
+
+
+
+
 
     /**
      * For a given property column in a CSV file, collects together all
