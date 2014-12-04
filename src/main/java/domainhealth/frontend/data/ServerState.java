@@ -25,4 +25,13 @@ public enum ServerState {
         return this.value;
     }
 
+    public static int getValueForState(String state) {
+        for (ServerState type: values()) {
+            if (type.toString().equals(state)) {
+                return type.value;
+            }
+        }
+        return -1;
+    }
+
 }
