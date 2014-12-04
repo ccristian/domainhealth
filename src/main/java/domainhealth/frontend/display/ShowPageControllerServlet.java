@@ -292,7 +292,8 @@ public class ShowPageControllerServlet extends HttpServlet {
 			String pageURL = request.getContextPath() + URL_PATH_SEPERATOR + resourceType + STATS_SERVLET_MAPPING_SUFFIX;
 			
 			if (resourceName != null) {
-				pageURL += URL_PATH_SEPERATOR + resourceName;
+				//seems like this was a bug !!!
+				//pageURL += URL_PATH_SEPERATOR + resourceName;
 			}
 
 			request.setAttribute(PAGE_URL_PARAM, pageURL);
@@ -324,7 +325,7 @@ public class ShowPageControllerServlet extends HttpServlet {
 			} else if (resourceType.equals(SVRCHNL_RESOURCE_TYPE)) {
 				request.setAttribute(PAGE_TITLE, (resourceName == null) ? SVRCHNLS_MENU_TITLE : resourceName + SVRCHNL_PAGE_TITLE);
 				request.setAttribute(MENU_TITLE, SVRCHNLS_MENU_TITLE);				
-				request.setAttribute(RESOURCES_LIST_PARAM, statisticsStorage.getResourceNamesFromPropsList(endDateTime, SVRCHNL_RESOURCE_TYPE));			
+				request.setAttribute(RESOURCES_LIST_PARAM, statisticsStorage.getResourceNamesFromPropsList(endDateTime, SVRCHNL_RESOURCE_TYPE));
 			
 			} else {
 				throw new ServletException("Unable to map servlet path '" + request.getServletPath() + "' to a known resource type to show statistics for");

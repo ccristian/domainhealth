@@ -27,6 +27,7 @@ import javax.management.ObjectName;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import com.sun.management.OperatingSystemMXBean;
 import commonj.work.WorkItem;
 import commonj.work.WorkManager;
 import domainhealth.backend.jmxpoll.StatisticCapturerJMXPoll;
@@ -84,7 +85,7 @@ public class RetrieverBackgroundService {
 		
 		// Print the blacklisted elements
 		Iterator<String> iteratorBlacklist = componentBlacklist.iterator();
-		
+
 		AppLog.getLogger().notice("");
 		AppLog.getLogger().notice("-------------------------------------------------------------");
 		AppLog.getLogger().notice("The following elements will be blacklisted (see web.xml file)");
@@ -203,6 +204,17 @@ public class RetrieverBackgroundService {
 			long lagMillis = Math.max(System.currentTimeMillis() - startWorkTime - sleepPeriodMillis, 0);
 			sleepPeriodMillis = Math.max(minPollIntervalMillis, newSleepIntervalMillis - lagMillis);
 		}
+
+
+
+		/*
+		TODO adding later some cpu stats (wlhostmachine or ...)
+		OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(
+		OperatingSystemMXBean.class);
+		// What % CPU load this current JVM is taking, from 0.0-1.0
+		System.out.println(osBean.getProcessCpuLoad());
+		// What % load the overall system is at, from 0.0-1.0
+		System.out.println(osBean.getSystemCpuLoad());*/
 	}
 
 	/**
