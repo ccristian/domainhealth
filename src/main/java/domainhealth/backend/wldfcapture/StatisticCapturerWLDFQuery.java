@@ -97,9 +97,9 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
             line.append(formatSecondsDateTime(serverObjectRecord.getTimestamp()) + SEPARATOR);
 
             for (String attr : SERVER_MBEAN_MONITOR_ATTR_LIST) {
-                if (attr.equals(WebLogicMBeanPropConstants.SERVER_STATE)) {
-                    line.append(ServerState.getValueForState(serverObjectRecord.getAttrValue(attr)) + SEPARATOR);
-                } else
+                //if (attr.equals(WebLogicMBeanPropConstants.SERVER_STATE)) {
+                //line.append(ServerState.getValueForState(serverObjectRecord.getAttrValue(attr)) + SEPARATOR);
+                //} else
                     line.append(serverObjectRecord.getAttrValue(attr) + SEPARATOR);
             }
 
