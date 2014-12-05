@@ -37,8 +37,10 @@ import domainhealth.backend.wldfcapture.data.InstanceDataRecord;
 import domainhealth.backend.wldfcapture.data.TypeDataRecord;
 import domainhealth.core.jmx.WebLogicMBeanConnection;
 import domainhealth.core.jmx.WebLogicMBeanException;
+import domainhealth.core.jmx.WebLogicMBeanPropConstants;
 import domainhealth.core.statistics.StatisticsStorage;
 import domainhealth.core.statistics.ResourceNameNormaliser;
+import domainhealth.frontend.data.rest.ServerState;
 
 /**
  * Enables a specific WebLogic server's Core, JDBC and JMS related statistics
@@ -94,9 +96,9 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
             line.append(formatSecondsDateTime(serverObjectRecord.getTimestamp()) + SEPARATOR);
 
             for (String attr : SERVER_MBEAN_MONITOR_ATTR_LIST) {
-                //if (attr.equals(WebLogicMBeanPropConstants.SERVER_STATE)) {
-                //line.append(ServerState.getValueForState(serverObjectRecord.getAttrValue(attr)) + SEPARATOR);
-                //} else
+                if (attr.equals(WebLogicMBeanPropConstants.SERVER_STATE)) {
+                line.append(ServerState.getValueForState(serverObjectRecord.getAttrValue(attr)) + SEPARATOR);
+                } else
                     line.append(serverObjectRecord.getAttrValue(attr) + SEPARATOR);
             }
 

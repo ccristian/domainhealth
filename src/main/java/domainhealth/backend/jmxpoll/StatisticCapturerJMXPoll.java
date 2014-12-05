@@ -29,6 +29,8 @@ import domainhealth.core.jmx.WebLogicMBeanConnection;
 import domainhealth.core.jmx.WebLogicMBeanException;
 import domainhealth.core.statistics.StatisticsStorage;
 import domainhealth.core.statistics.ResourceNameNormaliser;
+import domainhealth.frontend.data.rest.ServerState;
+
 import static domainhealth.core.jmx.WebLogicMBeanPropConstants.*;
 import static domainhealth.core.statistics.StatisticsStorage.*;
 import static domainhealth.core.statistics.MonitorProperties.*;
@@ -83,7 +85,8 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 
 		// Server attributes (not looping because state attr is not a num unlike all other attrs)
 		ObjectName serverRuntime = getServerRuntime();
-		line.append(getConn().getTextAttr(serverRuntime, SERVER_STATE) + SEPARATOR);
+
+		line.append(ServerState.getValueForState(getConn().getTextAttr(serverRuntime, SERVER_STATE)) + SEPARATOR);
 		line.append(getConn().getNumberAttr(serverRuntime, OPEN_SOCKETS) + SEPARATOR);
 		
 		// JVM attributes (got to do these separately because changing some figures to MegaBytes and calculate heap size current)
@@ -480,8 +483,7 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 	 * names.
 	 * 
 	 * @param objectName MBean object name to query the statistics from
-	 * @param attrList List of attributes
-	 * @param estLength Approximate length of line
+	 * @param attrList List of attributes*
 	 * @return The new statistics text line
 	 * @throws WebLogicMBeanException Indicates problem occurred retrieving MBean properties
 	 */
