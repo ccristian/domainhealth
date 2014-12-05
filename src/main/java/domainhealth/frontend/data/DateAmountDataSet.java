@@ -27,6 +27,23 @@ import java.util.TreeSet;
 
 @XmlRootElement
 public class DateAmountDataSet {
+
+
+	private String resourceType;
+	private String resourceName;
+	private String resourceProperty;
+
+
+	public DateAmountDataSet() {
+	}
+
+
+	public DateAmountDataSet(String resourceType, String resourceName, String resourceProperty) {
+		this.resourceType = resourceType;
+		this.resourceName = resourceName;
+		this.resourceProperty = resourceProperty;
+	}
+
 	/**
 	 * Add a date-time/amount pair to the set. 
 	 * 
@@ -67,6 +84,30 @@ public class DateAmountDataSet {
 			}
 		}
 	});
+
+	public String getResourceType() {
+		return resourceType;
+	}
+
+	public void setResourceType(String resourceType) {
+		this.resourceType = resourceType;
+	}
+
+	public String getResourceName() {
+		return resourceName;
+	}
+
+	public void setResourceName(String resourceName) {
+		this.resourceName = resourceName;
+	}
+
+	public String getResourceProperty() {
+		return resourceProperty;
+	}
+
+	public void setResourceProperty(String resourceProperty) {
+		this.resourceProperty = resourceProperty;
+	}
 
 	@Override
 	public String toString() {

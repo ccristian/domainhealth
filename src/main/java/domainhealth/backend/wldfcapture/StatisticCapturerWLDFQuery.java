@@ -37,11 +37,8 @@ import domainhealth.backend.wldfcapture.data.InstanceDataRecord;
 import domainhealth.backend.wldfcapture.data.TypeDataRecord;
 import domainhealth.core.jmx.WebLogicMBeanConnection;
 import domainhealth.core.jmx.WebLogicMBeanException;
-import domainhealth.core.jmx.WebLogicMBeanPropConstants;
-import domainhealth.core.statistics.MonitorProperties;
 import domainhealth.core.statistics.StatisticsStorage;
 import domainhealth.core.statistics.ResourceNameNormaliser;
-import domainhealth.frontend.data.ServerState;
 
 /**
  * Enables a specific WebLogic server's Core, JDBC and JMS related statistics

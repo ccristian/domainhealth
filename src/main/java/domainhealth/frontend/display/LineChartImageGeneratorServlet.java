@@ -44,7 +44,6 @@ import static domainhealth.core.statistics.MonitorProperties.*;
 import static domainhealth.core.util.DateUtil.*;
 import domainhealth.core.statistics.StatisticsStorage;
 import domainhealth.core.util.DateUtil;
-import domainhealth.core.util.StorageUtil;
 import domainhealth.frontend.data.DateAmountDataSet;
 import domainhealth.frontend.graphics.JFreeChartGraphImpl;
 
@@ -212,7 +211,7 @@ public class LineChartImageGeneratorServlet extends HttpServlet {
 				
 				for (ObjectName server : servers) {
 					String serverName = conn.getTextAttr(server, NAME);
-					graph.addDataSeries(serverName, StorageUtil.getPropertyData(statisticsStorage, resourceType, resourceName, resourceProperty, endDateTime, durationMins, serverName));
+					graph.addDataSeries(serverName, StatisticsStorage.getPropertyData(statisticsStorage, resourceType, resourceName, resourceProperty, endDateTime, durationMins, serverName));
 				}		
 				
 				return servers.length;
@@ -222,7 +221,7 @@ public class LineChartImageGeneratorServlet extends HttpServlet {
 				}
 			}
 		} else {
-			graph.addDataSeries(serverScope, StorageUtil.getPropertyData(statisticsStorage,resourceType, resourceName, resourceProperty, endDateTime, durationMins, serverScope));
+			graph.addDataSeries(serverScope, StatisticsStorage.getPropertyData(statisticsStorage,resourceType, resourceName, resourceProperty, endDateTime, durationMins, serverScope));
 			return 1;
 		}
 	}
