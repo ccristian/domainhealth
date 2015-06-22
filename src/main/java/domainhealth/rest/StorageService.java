@@ -1,15 +1,13 @@
 package domainhealth.rest;
 
 
-import commonj.work.WorkItem;
-import domainhealth.backend.retriever.StatisticCapturer;
 import domainhealth.core.env.AppLog;
 import domainhealth.core.env.AppProperties;
-import domainhealth.core.env.ContextAwareWork;
 import domainhealth.core.jmx.DomainRuntimeServiceMBeanConnection;
 import domainhealth.core.statistics.StatisticsStorage;
-import domainhealth.core.util.StorageUtil;
 import domainhealth.frontend.data.DateAmountDataSet;
+import domainhealth.frontend.data.rest.Domain;
+import domainhealth.frontend.data.rest.Server;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
@@ -20,10 +18,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+
+import java.util.*;
 
 import static domainhealth.core.jmx.WebLogicMBeanPropConstants.NAME;
 
@@ -31,7 +27,6 @@ import static domainhealth.core.jmx.WebLogicMBeanPropConstants.NAME;
  * Created by chiovcr on 02/12/2014.
  */
 @Path("/statistics")
-@Stateless
 public class StorageService {
 
     @Context
@@ -53,7 +48,9 @@ public class StorageService {
     @GET
     // The Java method will produce content identified by the MIME Media type "text/plain"
     @Produces({MediaType.APPLICATION_JSON})
-    public DateAmountDataSet getSnapshot() {
+    public Domain getSnapshot() {
+
+        Domain domain;
         DomainRuntimeServiceMBeanConnection conn = null;
         //get all servers from the domain !
         try {
@@ -63,17 +60,49 @@ public class StorageService {
             String domainName  = conn.getDomainName();
 
 
-
+            domain = new Domain(domainName);
 
 
            ObjectName[] serverRuntimes = conn.getAllServerRuntimes();
+
+
             int length = serverRuntimes.length;
+
             for (int i = 0; i < length; i++) {
+
                 final String serverName = conn.getTextAttr(serverRuntimes[i], NAME);
+                Server server = new Server(serverName);
+                domain.addServer(server);
+                List<String> resCore = new ArrayList<String>();
+                resCore.add("State");
+                resCore.add("OpenSocketsCurrentCount");
+                resCore.add("HeapSizeCurrent");
+                resCore.add("HeapFreeCurrent");
+                resCore.add("HoggingThreadCount");
+                resCore.add("PendingUserRequestCount");
+                resCore.add("TransactionRolledBackTotalCount");
+
+                server.getStatistics().addAll(StatisticsStorage.getPropertiesData(statisticsStorage, "core", null, resCore, new Date(), 1, "AdminServer"));
+
+                Properties props = statisticsStorage.retrieveOneDayResoureNameList(new Date(),"datasource");
+                List<String> resDatasource = new ArrayList<String>();
+                resDatasource.add("ActiveConnectionsCurrentCount");
+                resDatasource.add("FailedReserveRequestCount");
+                resDatasource.add("WaitingForConnectionCurrentCount");
+
+                for (Object property:props.keySet()){
+                    List<DateAmountDataSet> res = StatisticsStorage.getPropertiesData(statisticsStorage, "datasource", (String) property, resDatasource, new Date(), 1, "AdminServer");
+                    server.getStatistics().addAll(res);
+                }
+
+
+
+
 
 
             }
-
+            System.out.println(domain);
+            return domain;
         } catch (Exception e) {
             AppLog.getLogger().error(e.toString());
             e.printStackTrace();
@@ -85,11 +114,7 @@ public class StorageService {
         }
 
 
-        try {
-            return StorageUtil.getPropertyData(statisticsStorage, "core", null, "State", new Date(), 1, "AdminServer");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
         return null;
     }
 

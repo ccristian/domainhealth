@@ -1,4 +1,4 @@
-package domainhealth.frontend.data;
+package domainhealth.frontend.data.rest;
 
 /**
  * Created by chiovcr on 04/12/2014.
