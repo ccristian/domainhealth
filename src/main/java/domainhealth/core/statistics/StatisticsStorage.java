@@ -122,8 +122,8 @@ public class StatisticsStorage {
 	 * @param serverName The name of the server to set the properties for
 	 * @param resourceType The type of resource (eg. core, datasource)
 	 * @param resourceName The name of the resource
-	 * @param header Provider of the header text to add as first row to CSV file (if CSV file is currently empty)
-	 * @param contentProvider Provider of the resut row text to append to the CSV 
+	 * @param headerLine Provider of the header text to add as first row to CSV file (if CSV file is currently empty)
+	 * @param contentLine Provider of the result row text to append to the CSV
 	 * @throws IOException Indicates problem writing to the CSV file.
 	 * @throws WebLogicMBeanException Indicates a problem with the content provider retrieving the row data
 	 */	
@@ -349,7 +349,7 @@ public class StatisticsStorage {
 		while (keysEnum.hasMoreElements()) {
 			resourceKeys.add((String) keysEnum.nextElement());
 		}
-		
+		System.out.println(resourceKeys);
 		return resourceKeys;
 	}
 
@@ -549,7 +549,7 @@ public class StatisticsStorage {
 	private final static String CSV_SUFFIX = ".csv";
 	private final static String PROPS_SUFFIX = ".props";
 	private final static String RESOURCE_LIST_FILENAME_SUFFIX = "list";
-	private final static String PROP_LIST_CMNT_PREFIX = "List of intances available on the server to monitor for resource type: ";
+	private final static String PROP_LIST_CMNT_PREFIX = "List of instances available on the server to monitor for resource type: ";
 	private final static Map<String, Object> resourceMonitorObjects = new HashMap<String, Object>();
 
 	// Members
