@@ -14,22 +14,6 @@
 //POSSIBILITY OF SUCH DAMAGE.
 package domainhealth.backend.wldfcapture;
 
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.*;
-import static domainhealth.core.statistics.StatisticsStorage.*;
-import static domainhealth.core.statistics.MonitorProperties.*;
-import static domainhealth.core.util.DateUtil.*;
-
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.management.ObjectName;
-
 import domainhealth.backend.retriever.DataRetrievalException;
 import domainhealth.backend.retriever.StatisticCapturer;
 import domainhealth.backend.wldfcapture.data.DataRecordsCollection;
@@ -38,9 +22,19 @@ import domainhealth.backend.wldfcapture.data.TypeDataRecord;
 import domainhealth.core.jmx.WebLogicMBeanConnection;
 import domainhealth.core.jmx.WebLogicMBeanException;
 import domainhealth.core.jmx.WebLogicMBeanPropConstants;
-import domainhealth.core.statistics.StatisticsStorage;
 import domainhealth.core.statistics.ResourceNameNormaliser;
+import domainhealth.core.statistics.StatisticsStorage;
 import domainhealth.frontend.data.rest.ServerState;
+
+import javax.management.ObjectName;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.*;
+import static domainhealth.core.statistics.MonitorProperties.*;
+import static domainhealth.core.statistics.StatisticsStorage.SEPARATOR;
+import static domainhealth.core.util.DateUtil.DATETIME_PARAM_FORMAT;
 
 /**
  * Enables a specific WebLogic server's Core, JDBC and JMS related statistics

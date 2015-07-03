@@ -8,10 +8,13 @@ import domainhealth.core.statistics.StatisticsStorage;
 import domainhealth.frontend.data.DateAmountDataSet;
 import domainhealth.frontend.data.rest.Domain;
 import domainhealth.frontend.data.rest.Server;
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.management.ObjectName;
+import javax.management.Query;
 import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -57,13 +60,13 @@ public class StorageService {
 
             conn = new DomainRuntimeServiceMBeanConnection();
 
-            String domainName  = conn.getDomainName();
+            String domainName = conn.getDomainName();
 
 
             domain = new Domain(domainName);
 
 
-           ObjectName[] serverRuntimes = conn.getAllServerRuntimes();
+            ObjectName[] serverRuntimes = conn.getAllServerRuntimes();
 
 
             int length = serverRuntimes.length;
@@ -81,9 +84,14 @@ public class StorageService {
                 resCore.add("HoggingThreadCount");
                 resCore.add("PendingUserRequestCount");
                 resCore.add("TransactionRolledBackTotalCount");
+                DateTime start = new DateTime(2004, 12, 25, 0, 0, 0, 0);
+                DateTime end = new DateTime(2016, 1, 1, 0, 0, 0, 0);
+                Interval interval = new Interval(start, end);
+                System.out.println("-------------------------"+statisticsStorage.getPropertyData("core", null, "OpenSocketsCurrentCount", interval, "AdminServer")
+                );
 
-                server.getStatistics().addAll(StatisticsStorage.getPropertiesData(statisticsStorage, "core", null, resCore, new Date(), 1, "AdminServer"));
 
+                /*
                 Properties props = statisticsStorage.retrieveOneDayResoureNameList(new Date(),"datasource");
                 List<String> resDatasource = new ArrayList<String>();
                 resDatasource.add("ActiveConnectionsCurrentCount");
@@ -91,13 +99,10 @@ public class StorageService {
                 resDatasource.add("WaitingForConnectionCurrentCount");
 
                 for (Object property:props.keySet()){
-                    List<DateAmountDataSet> res = StatisticsStorage.getPropertiesData(statisticsStorage, "datasource", (String) property, resDatasource, new Date(), 1, "AdminServer");
+                    List<DateAmountDataSet> res = statisticsStorage.getPropertyData("datasource", (String) property, resDatasource, new Date(), 1, "AdminServer");
                     server.getStatistics().addAll(res);
                 }
-
-
-
-
+*/
 
 
             }
@@ -112,7 +117,6 @@ public class StorageService {
                 conn.close();
             }
         }
-
 
 
         return null;
