@@ -49,6 +49,13 @@ public class StorageService {
 
 
     @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    @Path("data")
+    public Domain getDataFor() {
+        return null;
+    }
+
+    @GET
     // The Java method will produce content identified by the MIME Media type "text/plain"
     @Produces({MediaType.APPLICATION_JSON})
     public Domain getSnapshot() {
@@ -88,6 +95,9 @@ public class StorageService {
                 DateTime end = new DateTime(2016, 1, 1, 0, 0, 0, 0);
                 Interval interval = new Interval(start, end);
                 System.out.println("-------------------------"+statisticsStorage.getPropertyData("core", null, "OpenSocketsCurrentCount", interval, "AdminServer")
+                );
+
+                System.out.println("-------------------------"+statisticsStorage.getPropertyData("datasource", null, "OpenSocketsCurrentCount", interval, "AdminServer")
                 );
 
 

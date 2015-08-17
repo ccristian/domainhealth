@@ -163,8 +163,9 @@ public class StatisticsStorage {
      * @return The earliest recorded date-time
      * @throws WebLogicMBeanException Indicates problem accessing Admin Server JMX tree
      * @throws IOException            Indicates problem accessing statistics directories/files
+     * TODO check where it was used on a prev version of DH
      */
-    public Date getEarliestRecordedDateTime() throws WebLogicMBeanException, IOException {
+    private Date getEarliestRecordedDateTime() throws WebLogicMBeanException, IOException {
         DomainRuntimeServiceMBeanConnection conn = null;
 
         try {
@@ -195,7 +196,7 @@ public class StatisticsStorage {
      * @return Zero based index of the property name position
      * @throws IOException Indicates problem accessing statistics directories/files
      */
-    public int getPropertyPositionInStatsFile(String resourceType, String resourceName, Date dateTime, String serverName, String property) throws IOException {
+    private int getPropertyPositionInStatsFile(String resourceType, String resourceName, Date dateTime, String serverName, String property) throws IOException {
         int propertyPosition = -1;
         BufferedReader in = null;
 
@@ -252,7 +253,7 @@ public class StatisticsStorage {
      * @throws FileNotFoundException Indicates file containing name list could not be found
      * @throws IOException           Indicates file containing name list could not be read
      */
-    public Properties retrieveOneDayResoureNameList(Date dateTime, String resourceType) throws IOException {
+    private Properties retrieveOneDayResoureNameList(Date dateTime, String resourceType) throws IOException {
         Properties propList = new Properties();
 
         // Lock per resource type enabling threads reading/writing from/to
@@ -329,7 +330,7 @@ public class StatisticsStorage {
      * @param resourceType The type of resource (eg. core, datasource)
      * @return The unique monitor object for that resource type
      */
-    public Object getResourceMonitorObject(String resourceType) {
+    private Object getResourceMonitorObject(String resourceType) {
         Object monitorObject = null;
 
         // Short lived big lock to get more fine-grained monitor object
@@ -354,6 +355,7 @@ public class StatisticsStorage {
      * @param resourceType The type of resource (eg. core, datasource)
      * @return The set of parameter names
      * @throws IOException Indicates a problem retrieving the props file or its contents
+     *
      */
     public Set<String> getResourceNamesFromPropsList(Date dateTime, String resourceType) throws IOException {
         Set<String> resourceKeys = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
@@ -367,6 +369,39 @@ public class StatisticsStorage {
         System.out.println(resourceKeys);
         return resourceKeys;
     }
+
+
+    /**
+     * Get the list of resource names (keys) from the key=value pairs listed
+     * in a file on the filesystem.
+     *
+     * @param interval     The interval indicating which day to look for a props filefor
+     * @param resourceType The type of resource (eg. core, datasource)
+     * @return The set of parameter names
+     * @throws IOException Indicates a problem retrieving the props file or its contents
+     */
+    public Set<String> getResourceNamesFromPropsListForInterval(Interval interval ,String resourceType) throws IOException {
+
+        Set<String> resourceKeys = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+        DateTime start = interval.getStart();
+        DateTime stop = interval.getEnd();
+        DateTime inter = start;
+        // Loop through each day in the span
+        while (inter.compareTo(stop) <= 0) {
+            // Go to next
+            Date dateTime = inter.toDate();
+            Properties properties;
+            properties = retrieveOneDayResoureNameList(dateTime, resourceType);
+            Enumeration<Object> keysEnum = properties.keys();
+            while (keysEnum.hasMoreElements()) {
+                resourceKeys.add((String) keysEnum.nextElement());
+            }
+            System.out.println(resourceKeys);
+            inter = inter.plusDays(1);
+        }
+        return resourceKeys;
+    }
+
 
     /**
      * Clean up day statistics directories for all the days older than the
@@ -472,7 +507,7 @@ public class StatisticsStorage {
         DateTime stop = interval.getEnd();
         DateTime inter = start;
         // Loop through each day in the span
-        while (inter.compareTo(stop) < 0) {
+        while (inter.compareTo(stop) <= 0) {
             //System.out.println(inter);
             // Go to next
             Date date = inter.toDate();
@@ -642,12 +677,13 @@ public class StatisticsStorage {
                 }
             }
         }
-
+ //test
         return resultDataSet;
     }
 
     public DateAmountDataSet getPropertyData(String resourceType, String resourceName, String resourceProperty, Interval interval, String serverName) throws IOException {
         DateAmountDataSet resultDataSet = new DateAmountDataSet();
+        /*retrieves a map with file and date for a specific interval*/
         Map<File, Date> csvLocationPerFile = this.getServerResourceCSVPath(interval, serverName, resourceType, resourceName);
         Collection<File> files = csvLocationPerFile.keySet();
         for (File file : files) {
@@ -662,7 +698,6 @@ public class StatisticsStorage {
                 continue;
             }
             BufferedReader in = null;
-
             try {
                 in = new BufferedReader(new FileReader(file));
                 resultDataSet.addDataSet(generatePropertyDataSet(in, interval.getStart().toDate(), interval.getEnd().toDate(), propertyPosition, resourceType, resourceName, resourceProperty));
@@ -691,7 +726,7 @@ public class StatisticsStorage {
      * @return The set of retrieved stats for the specific property within the specified time window
      * @throws IOException Indicates that the statistics could not be retrieved properly from the CSV file
      */
-    public DateAmountDataSet generatePropertyDataSet(BufferedReader in, Date startDateTime, Date endDateTime, int propertyPosition, String resourceType, String resourceName, String resourceProperty) throws IOException {
+    private DateAmountDataSet generatePropertyDataSet(BufferedReader in, Date startDateTime, Date endDateTime, int propertyPosition, String resourceType, String resourceName, String resourceProperty) throws IOException {
         DateAmountDataSet resultDataSet = new DateAmountDataSet(resourceType, resourceName, resourceProperty);
         DateFormat secondDateFormat = new SimpleDateFormat(DISPLAY_DATETIME_FORMAT);
         Date dateTime = null;
