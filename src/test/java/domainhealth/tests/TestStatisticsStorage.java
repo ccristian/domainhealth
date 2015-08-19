@@ -1,6 +1,7 @@
 package domainhealth.tests;
 
 import domainhealth.core.statistics.StatisticsStorage;
+import domainhealth.frontend.data.DateAmountDataItem;
 import domainhealth.frontend.data.DateAmountDataSet;
 import junit.framework.TestCase;
 import org.joda.time.DateTime;
@@ -46,23 +47,6 @@ public class TestStatisticsStorage extends TestCase {
         }
     }
 
-    public void testXXX(){
-        DateTime start = new DateTime(2001, 12, 25, 0, 0, 0, 0);
-        DateTime end = new DateTime(2020, 1, 1, 0, 0, 0, 0);
-        Interval interval = new Interval(start, end);
-        try {
-
-            DateAmountDataSet dateAmountDataSet1 = statisticsStorage.getPropertyData("core", null, "OpenSocketsCurrentCount", interval, "EFP7-OSB_TESTserver");
-            DateAmountDataSet dateAmountDataSet2 = statisticsStorage.getPropertyData("core", null, "OpenSocketsCurrentCount", interval, "EFP7-OSB_TESTosb11");
-            DateAmountDataSet dateAmountDataSet3 = statisticsStorage.getPropertyData("core", null, "OpenSocketsCurrentCount", interval, "EFP7-OSB_TESTosb12");
-            //System.out.println(dateAmountDataSet3.getData());
-            System.out.println(dateAmountDataSet1.getData().size());
-            System.out.println(dateAmountDataSet2.getData().size());
-            System.out.println(dateAmountDataSet3.getData().size());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
     public void testDatasourceSize(){
         DateTime start = new DateTime(2015, 8, 18, 12, 0, 0, 0);
         DateTime end = new DateTime(2015, 8, 18, 12, 10, 0, 0);
@@ -79,4 +63,24 @@ public class TestStatisticsStorage extends TestCase {
             e.printStackTrace();
         }
     }
+
+    public void testDatasourceValue(){
+        DateTime start = new DateTime(2010, 8, 18, 12, 0, 0, 0);
+        DateTime end = new DateTime(2016, 8, 18, 12, 10, 0, 0);
+        Interval interval = new Interval(start, end);
+        try {
+            DateAmountDataSet dateAmountDataSet1 = statisticsStorage.getPropertyData("datasource", "edaResolverEjbDataSource", "ActiveConnectionsCurrentCount", interval, "EFP7-OSB_TESTserver");
+            DateAmountDataSet dateAmountDataSet2 = statisticsStorage.getPropertyData("datasource", "edaResolverEjbDataSource", "ActiveConnectionsCurrentCount", interval, "EFP7-OSB_TESTosb11");
+            DateAmountDataSet dateAmountDataSet3 = statisticsStorage.getPropertyData("datasource", "edaResolverEjbDataSource", "ActiveConnectionsCurrentCount", interval, "EFP7-OSB_TESTosb12");
+            //the datasource is not targeted to admin server so it should return 0 items
+            assertEquals(dateAmountDataSet1.getData().size(), 0);
+            for (DateAmountDataItem dataItem : dateAmountDataSet2.getData()) {
+                System.out.println(dataItem);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
