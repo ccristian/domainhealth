@@ -1,0 +1,36 @@
+#List of intances available on the server to monitor for resource type: destination
+#Sun Jun 21 23:59:44 CEST 2015
+SEP_Out_ErrQ=2015-06-21-23-59-44
+EDA_Outbound_ErrQ=2015-06-21-23-59-44
+EDA_Outbound_PDM_ErrQ=2015-06-21-23-59-44
+eda_audit_in=2015-06-21-23-59-44
+ODS_Out_Q=2015-06-21-23-59-44
+eda_audit_out=2015-06-21-23-59-44
+EACEA_Out_Q=2015-06-21-23-59-44
+internalEdaQueue_OUT_R=2015-06-21-23-59-44
+EDA_Jms_Server_1.TemporaryQueue0=2015-06-21-09-03-44
+SEP_Out_Q=2015-06-21-23-59-44
+Audit_Out2_Q=2015-06-21-23-59-44
+internalEdaQueue_LOG_Q=2015-06-21-23-59-44
+QueueIn_auto_2=2015-06-21-23-59-44
+Eda_Outbound_ErrQ=2015-06-21-23-59-44
+QueueIn_auto_1=2015-06-21-23-59-44
+eda_private_inbound=2015-06-21-23-59-44
+internalEdaQueue_LostReliableEvents=2015-06-21-23-59-44
+EMI_Out_Q=2015-06-21-23-59-44
+PDM_Out_Q=2015-06-21-23-59-44
+OutQTst=2015-06-21-23-59-44
+eda_inbound2=2015-06-21-23-59-44
+Audit_Out1_ErrQ=2015-06-21-23-59-44
+eda_inbound1=2015-06-21-23-59-44
+eda_inbound_CDM_3_2_1=2015-06-21-23-59-44
+IAM_Out_Q=2015-06-21-23-59-44
+Audit_Out2_ErrQ=2015-06-21-23-59-44
+Audit_Out1_Q=2015-06-21-23-59-44
+Ods_Out_Q-1240110331=2015-06-21-23-59-44
+Audit_Out3_ErrQ=2015-06-21-23-59-44
+EMI_Out_ErrQ=2015-06-21-23-59-44
+Audit_Out3_Q=2015-06-21-23-59-44
+EACEA_Out_ErrQ=2015-06-21-23-59-44
+IAM_Out_ErrQ=2015-06-21-23-59-44
+internalEdaQueue_LostInternalMsgs=2015-06-21-23-59-44

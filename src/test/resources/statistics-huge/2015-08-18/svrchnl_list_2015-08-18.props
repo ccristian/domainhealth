@@ -1,0 +1,8 @@
+#List of intances available on the server to monitor for resource type: svrchnl
+#Tue Aug 18 14:57:28 CEST 2015
+Default_http=2015-08-18-14-57-28
+Default_ldap=2015-08-18-14-57-28
+Default_iiop=2015-08-18-14-57-28
+Default_t3=2015-08-18-14-57-28
+Default_snmp=2015-08-18-14-57-28
+Default_CLUSTER-BROADCAST=2015-08-18-14-57-28
