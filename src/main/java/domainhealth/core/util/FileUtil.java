@@ -36,7 +36,7 @@ public class FileUtil {
 	 */
 	public static File retrieveFile(String filePath) throws IOException, FileNotFoundException {
 		File file = new File(filePath);
-		
+		//System.out.println(filePath);
 		if (file.exists()) {
 			return file;
 		} else {

@@ -12,7 +12,8 @@
     <version>12.1.3-0-0</version>
   </parent>
   <properties>
-    <oracleMiddlewareHome>/Users/cristianchiovari/Oracle/Middleware/Oracle_Home</oracleMiddlewareHome>
+    <!--oracleMiddlewareHome>/Users/cristianchiovari/Oracle/Middleware/Oracle_Home</oracleMiddlewareHome-->
+    <oracleMiddlewareHome>c:/Oracle/Middleware/Oracle_Home_12c_12_1_3</oracleMiddlewareHome>
     <oracleUsername>weblogic</oracleUsername>
     <oraclePassword>weblogic1</oraclePassword>
     <weblogic.server.merged.version>12.1.3-0-0</weblogic.server.merged.version>
@@ -72,10 +73,6 @@
       <artifactId>standard</artifactId>
       <version>1.1.2</version>
     </dependency>
-
-
-
-
   </dependencies>
 
   <build>
