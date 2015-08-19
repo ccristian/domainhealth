@@ -55,10 +55,26 @@ public class TestStatisticsStorage extends TestCase {
             DateAmountDataSet dateAmountDataSet1 = statisticsStorage.getPropertyData("core", null, "OpenSocketsCurrentCount", interval, "EFP7-OSB_TESTserver");
             DateAmountDataSet dateAmountDataSet2 = statisticsStorage.getPropertyData("core", null, "OpenSocketsCurrentCount", interval, "EFP7-OSB_TESTosb11");
             DateAmountDataSet dateAmountDataSet3 = statisticsStorage.getPropertyData("core", null, "OpenSocketsCurrentCount", interval, "EFP7-OSB_TESTosb12");
-            System.out.println(dateAmountDataSet3.getData());
+            //System.out.println(dateAmountDataSet3.getData());
             System.out.println(dateAmountDataSet1.getData().size());
             System.out.println(dateAmountDataSet2.getData().size());
             System.out.println(dateAmountDataSet3.getData().size());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void testDatasourceSize(){
+        DateTime start = new DateTime(2015, 8, 18, 12, 0, 0, 0);
+        DateTime end = new DateTime(2015, 8, 18, 12, 10, 0, 0);
+        Interval interval = new Interval(start, end);
+        try {
+            DateAmountDataSet dateAmountDataSet1 = statisticsStorage.getPropertyData("datasource", "edaResolverEjbDataSource", "NumUnavailable", interval, "EFP7-OSB_TESTserver");
+            DateAmountDataSet dateAmountDataSet2 = statisticsStorage.getPropertyData("datasource", "edaResolverEjbDataSource", "NumUnavailable", interval, "EFP7-OSB_TESTosb11");
+            DateAmountDataSet dateAmountDataSet3 = statisticsStorage.getPropertyData("datasource", "edaResolverEjbDataSource", "NumUnavailable", interval, "EFP7-OSB_TESTosb12");
+            //the datasource is not targeted to admin server so it should return 0 items
+            assertEquals(dateAmountDataSet1.getData().size(), 0);
+            assertEquals(dateAmountDataSet2.getData().size(), 20);
+            assertEquals(dateAmountDataSet3.getData().size(),19);
         } catch (IOException e) {
             e.printStackTrace();
         }
