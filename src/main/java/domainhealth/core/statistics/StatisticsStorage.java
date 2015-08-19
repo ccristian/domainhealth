@@ -396,7 +396,7 @@ public class StatisticsStorage {
             while (keysEnum.hasMoreElements()) {
                 resourceKeys.add((String) keysEnum.nextElement());
             }
-            System.out.println(resourceKeys);
+            //System.out.println(resourceKeys);
             inter = inter.plusDays(1);
         }
         return resourceKeys;
@@ -517,7 +517,7 @@ public class StatisticsStorage {
                 String fileName = String.format("%s%s%s_%s_%s%s%s", dirPath, separatorChar, resourceType, serverName, resourceName, dayDateFormat.format(date), CSV_SUFFIX);
                 File file = FileUtil.retrieveFile(fileName);
                 if (file != null) {
-                    System.out.println(dirPath);
+                    //System.out.println(dirPath);
                     daysMap.put(file, date);
                 }
             }
