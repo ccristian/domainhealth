@@ -82,4 +82,15 @@ public class TestStatisticsStorage extends TestCase {
 
     }
 
+
+    public void testDestinationNames() throws IOException {
+        DateTime start = new DateTime(2001, 12, 25, 0, 0, 0, 0);
+        DateTime end = new DateTime(2020, 1, 1, 0, 0, 0, 0);
+        Interval interval = new Interval(start, end);
+        Set<String> resourceNameList = statisticsStorage.getResourceNamesFromPropsListForInterval(interval, "destination");
+        assertEquals(true, resourceNameList.size()>0);
+        assertEquals(resourceNameList.contains("eda_inbound1"), true);
+
+    }
+
 }
