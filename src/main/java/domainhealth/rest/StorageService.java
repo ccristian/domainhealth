@@ -16,9 +16,8 @@ import javax.ejb.Stateless;
 import javax.management.ObjectName;
 import javax.management.Query;
 import javax.servlet.ServletContext;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
@@ -48,12 +47,16 @@ public class StorageService {
     }
 
 
+    //http://localhost:7001/domainhealth/rest/statistics/core?scope=ALL&startTime=ss&endTime=ss
     @GET
+    @Path("/{resource}")
     @Produces({MediaType.APPLICATION_JSON})
-    @Path("data")
-    public Domain getDataFor() {
-        return null;
+    public String getStats(@QueryParam("scope") List<String> scope,@QueryParam("startTime") String startTime,@QueryParam("endTime") String endTime, @PathParam("resource") String resource) {
+        String temp = resource;
+        return temp+"-"+startTime+"-"+endTime+"==="+scope;
     }
+
+
 
     @GET
     // The Java method will produce content identified by the MIME Media type "text/plain"
