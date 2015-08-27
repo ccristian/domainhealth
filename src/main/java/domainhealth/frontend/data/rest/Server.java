@@ -16,7 +16,6 @@ public class Server {
 
     private List<DateAmountDataSet> statistics= new ArrayList<DateAmountDataSet>();
 
-
     public List<DateAmountDataSet> getStatistics() {
         return statistics;
     }

@@ -28,7 +28,7 @@ import static domainhealth.core.jmx.WebLogicMBeanPropConstants.NAME;
 /**
  * Created by chiovcr on 02/12/2014.
  */
-@Path("/statistics")
+@Path("/")
 public class StorageService {
 
     @Context
@@ -49,82 +49,36 @@ public class StorageService {
 
     //http://localhost:7001/domainhealth/rest/statistics/core?scope=ALL&startTime=ss&endTime=ss
     @GET
-    @Path("/{resource}")
+    @Path("stats/{resource}")
     @Produces({MediaType.APPLICATION_JSON})
     public String getStats(@QueryParam("scope") List<String> scope,@QueryParam("startTime") String startTime,@QueryParam("endTime") String endTime, @PathParam("resource") String resource) {
         String temp = resource;
         return temp+"-"+startTime+"-"+endTime+"==="+scope;
     }
 
-
-
     @GET
-    // The Java method will produce content identified by the MIME Media type "text/plain"
+    @Path("/domain")
     @Produces({MediaType.APPLICATION_JSON})
-    public Domain getSnapshot() {
-
+    public Domain getDomain() {
         Domain domain;
         DomainRuntimeServiceMBeanConnection conn = null;
-        //get all servers from the domain !
         try {
 
             conn = new DomainRuntimeServiceMBeanConnection();
-
             String domainName = conn.getDomainName();
-
-
             domain = new Domain(domainName);
-
-
             ObjectName[] serverRuntimes = conn.getAllServerRuntimes();
-
-
             int length = serverRuntimes.length;
-
             for (int i = 0; i < length; i++) {
-
                 final String serverName = conn.getTextAttr(serverRuntimes[i], NAME);
                 Server server = new Server(serverName);
                 domain.addServer(server);
-                List<String> resCore = new ArrayList<String>();
-                resCore.add("State");
-                resCore.add("OpenSocketsCurrentCount");
-                resCore.add("HeapSizeCurrent");
-                resCore.add("HeapFreeCurrent");
-                resCore.add("HoggingThreadCount");
-                resCore.add("PendingUserRequestCount");
-                resCore.add("TransactionRolledBackTotalCount");
-                DateTime start = new DateTime(2004, 12, 25, 0, 0, 0, 0);
-                DateTime end = new DateTime(2016, 1, 1, 0, 0, 0, 0);
-                Interval interval = new Interval(start, end);
-                System.out.println("-------------------------"+statisticsStorage.getPropertyData("core", null, "OpenSocketsCurrentCount", interval, "AdminServer")
-                );
-
-                System.out.println("-------------------------"+statisticsStorage.getPropertyData("datasource", null, "OpenSocketsCurrentCount", interval, "AdminServer")
-                );
-
-
-                /*
-                Properties props = statisticsStorage.retrieveOneDayResoureNameList(new Date(),"datasource");
-                List<String> resDatasource = new ArrayList<String>();
-                resDatasource.add("ActiveConnectionsCurrentCount");
-                resDatasource.add("FailedReserveRequestCount");
-                resDatasource.add("WaitingForConnectionCurrentCount");
-
-                for (Object property:props.keySet()){
-                    List<DateAmountDataSet> res = statisticsStorage.getPropertyData("datasource", (String) property, resDatasource, new Date(), 1, "AdminServer");
-                    server.getStatistics().addAll(res);
-                }
-*/
-
-
             }
-            System.out.println(domain);
             return domain;
         } catch (Exception e) {
             AppLog.getLogger().error(e.toString());
             e.printStackTrace();
-            AppLog.getLogger().error("Statistics Retriever Background Service - unable to retrieve statistics for domain's servers for this iteration");
+            AppLog.getLogger().error("Statistics Retriever Background Service - unable to retrieve domain structure for domain's servers for this iteration");
         } finally {
             if (conn != null) {
                 conn.close();
@@ -134,6 +88,10 @@ public class StorageService {
 
         return null;
     }
+
+
+
+
 
 
 }
