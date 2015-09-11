@@ -824,6 +824,18 @@ public class StatisticsStorage {
 
     }
 
+
+    public Set<String> getAllPossibleServerNames(DomainRuntimeServiceMBeanConnection conn) throws WebLogicMBeanException {
+        Set<String> serverNames = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+        ObjectName[] servers = conn.getChildren(conn.getDomainConfiguration(), WebLogicMBeanPropConstants.SERVERS);
+
+        for (ObjectName server : servers) {
+            serverNames.add(conn.getTextAttr(server, WebLogicMBeanPropConstants.NAME));
+        }
+
+        return serverNames;
+    }
+
     // Constants
     private final static String CSV_SUFFIX = ".csv";
     private final static String PROPS_SUFFIX = ".props";

@@ -59,22 +59,16 @@ public class StorageService {
     @GET
     @Path("/domain")
     @Produces({MediaType.APPLICATION_JSON})
-    public Domain getDomain() {
+    public Set<String> getDomain() {
         Domain domain;
         DomainRuntimeServiceMBeanConnection conn = null;
         try {
 
             conn = new DomainRuntimeServiceMBeanConnection();
-            String domainName = conn.getDomainName();
-            domain = new Domain(domainName);
-            ObjectName[] serverRuntimes = conn.getAllServerRuntimes();
-            int length = serverRuntimes.length;
-            for (int i = 0; i < length; i++) {
-                final String serverName = conn.getTextAttr(serverRuntimes[i], NAME);
-                Server server = new Server(serverName);
-                domain.addServer(server);
-            }
-            return domain;
+            Set<String> servers = statisticsStorage.getAllPossibleServerNames(conn);
+            System.out.println(servers);
+            return servers;
+
         } catch (Exception e) {
             AppLog.getLogger().error(e.toString());
             e.printStackTrace();
