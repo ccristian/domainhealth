@@ -63,7 +63,6 @@ public class StorageService {
         Domain domain;
         DomainRuntimeServiceMBeanConnection conn = null;
         try {
-
             conn = new DomainRuntimeServiceMBeanConnection();
             String domainName = conn.getDomainName();
             domain = new Domain(domainName);
