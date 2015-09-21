@@ -1,0 +1,18 @@
+body,img,p,h1,h2,h3,h4,h5,h6,form,table,td,ul,ol,li,dl,dt,dd,pre,blockquote,fieldset,label{
+	margin:0;
+	padding:0;
+	border:0;
+}
+body{ background-color: #e4e4e4; font: 90% Arial, Helvetica, sans-serif; padding: 20px; }
+h1,h2,h3{ margin: 10px 0; }
+h1{}
+h2{ color: #f66; }
+h3{ color: #6b84a2; }
+p{ margin: 10px 0; }
+a{ color: #7b94b2; }
+pre{ font-size: 12px; line-height: 16px; padding: 5px 5px 5px 10px; margin: 10px 0; background-color: #e4f4d4; border-left: solid 5px #9EC45F; overflow: auto; }
+input[type='text']{ padding: 4px; width: 160px; border: solid 1px #e4e4e4; border-radius: 4px; }
+
+.wrapper{ background-color: #ffffff; width: 800px; border: solid 1px #eeeeee; padding: 20px; margin: 0 auto; }
+
+.ui-datepicker{ font-size: 85%; }

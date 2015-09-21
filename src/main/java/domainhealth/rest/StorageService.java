@@ -10,6 +10,8 @@ import domainhealth.frontend.data.rest.Domain;
 import domainhealth.frontend.data.rest.Server;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
@@ -21,6 +23,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import java.io.IOException;
 import java.util.*;
 
 import static domainhealth.core.jmx.WebLogicMBeanPropConstants.NAME;
@@ -49,11 +52,40 @@ public class StorageService {
 
     //http://localhost:7001/domainhealth/rest/statistics/core?scope=ALL&startTime=ss&endTime=ss
     @GET
-    @Path("stats/{resource}")
+    @Path("stats/{resourceType}/{resource}")
     @Produces({MediaType.APPLICATION_JSON})
-    public String getStats(@QueryParam("scope") List<String> scope,@QueryParam("startTime") String startTime,@QueryParam("endTime") String endTime, @PathParam("resource") String resource) {
+    public String getStats(@QueryParam("scope") List<String> scope,
+                           @QueryParam("startTime") String startTime,
+                           @QueryParam("endTime") String endTime,
+                           @PathParam("resourceType") String resourceType,
+                           @PathParam("resource") String resource) {
         String temp = resource;
+        //statisticsStorage.getResourceNamesFromPropsListForInterval();
         return temp+"-"+startTime+"-"+endTime+"==="+scope;
+    }
+
+    //http://localhost:7001/domainhealth/rest/resources/workmgr?startTime=01-09-2014-00-00&endTime=17-09-2015-0-00
+    @GET
+    @Path("resources/{resourceType}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Set<String> getStats(@QueryParam("scope") List<String> scope,
+                           @QueryParam("startTime") String startTime,
+                           @QueryParam("endTime") String endTime,
+                           @PathParam("resourceType") String resourceType) {
+        try {
+            DateTimeFormatter fmt = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
+            if (startTime==null){
+               // startTime=
+            }
+            DateTime start = fmt.parseDateTime(startTime);
+            DateTime end = fmt.parseDateTime(endTime);
+            Interval interval = new Interval(start,end);
+            System.out.println(interval);
+            return  statisticsStorage.getResourceNamesFromPropsListForInterval(interval,resourceType);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @GET
@@ -67,7 +99,6 @@ public class StorageService {
             Set<String> servers = statisticsStorage.getAllPossibleServerNames(conn);
             System.out.println(servers);
             return servers;
-
         } catch (Exception e) {
             AppLog.getLogger().error(e.toString());
             e.printStackTrace();

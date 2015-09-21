@@ -263,6 +263,7 @@ public class StatisticsStorage {
 
             try {
                 File file = FileUtil.retrieveFile(getDayResourcePropListFilePath(dateTime, resourceType));
+                System.out.println(file);
 
                 if (file != null) {
                     propsIn = new FileInputStream(file);
@@ -392,11 +393,13 @@ public class StatisticsStorage {
             Date dateTime = inter.toDate();
             Properties properties;
             properties = retrieveOneDayResoureNameList(dateTime, resourceType);
+            System.out.println(dateTime);
+            System.out.println(properties);
             Enumeration<Object> keysEnum = properties.keys();
             while (keysEnum.hasMoreElements()) {
                 resourceKeys.add((String) keysEnum.nextElement());
             }
-            //System.out.println(resourceKeys);
+
             inter = inter.plusDays(1);
         }
         return resourceKeys;
@@ -536,7 +539,9 @@ public class StatisticsStorage {
     private String getDayResourcePropListFilePath(Date dateTime, String resourceType) {
         DateFormat dayDateFormat = new SimpleDateFormat(DATE_PATH_FORMAT);
         String dirPath = getDayDirectoryPath(dateTime);
-        return String.format("%s%s%s_%s_%s%s", dirPath, separatorChar, resourceType, RESOURCE_LIST_FILENAME_SUFFIX, dayDateFormat.format(dateTime), PROPS_SUFFIX);
+        String res = String.format("%s%s%s_%s_%s%s", dirPath, separatorChar, resourceType, RESOURCE_LIST_FILENAME_SUFFIX, dayDateFormat.format(dateTime), PROPS_SUFFIX);
+        System.out.println(res);
+        return res;
     }
 
     /**

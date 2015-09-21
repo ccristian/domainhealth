@@ -1,33 +1,140 @@
-<html>
+
 <head>
     <script type="text/JavaScript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+    <script type="text/JavaScript" src="js/chosen.jquery.min.js"></script>
+    <link rel="stylesheet" href="js/style.css">
+    <!--link rel="stylesheet" href="js/prism.css"-->
+    <link rel="stylesheet" href="js/chosen.min.css">
+    <link rel="stylesheet"
+          href="css/ui-lightness/jquery-ui.min.css" />
+    <link rel="stylesheet"
+          href="css/jquery-ui-timepicker-addon.css" />
+    <!--script src="js/jquery.min.js"></script-->
+    <script src="js/jquery-ui/jquery-ui.min.js"></script>
+    <script src="js/timepicker/jquery-ui-timepicker-addon.js">
+    </script>
 </head>
+
+
+
+
 <body>
-<select id="servers"></select>
+<div>
+
+<select id="servers" data-placeholder="All servers" class="chosen-select" multiple style="width:150px;" tabindex="4">
+</select>
+
+    <input type="text" name="startdate" id="startdate" value="" />
+    <input type="text" name="enddate" id="enddate" value="" />
+</div>
+
+<div><a id='core'>Core</a></div>
+<div><a id='jdbc' >JDBC</a></div>
+<div><a id='jms'>JMS</a></div>
+
+<div id ='resources'>
+</div>
+
 </body>
+
+
 <script type="text/JavaScript">
-    //get a reference to the select element
-    var $select = $('#servers');
+
+    $( document ).ready(function() {
 
 
-    //request the JSON data and parse into the select element
-    $.ajax({
-        url: '/domainhealth/rest/domain',
-        dataType:'JSON',
-        success:function(data){
-            //clear the current content of the select
-            $select.html('');
-            //alert(data.servers);
-            //iterate over the data and append a select option
-            $.each(data.servers, function(key, val){
+        //get a reference to the select element
+        var $select = $('#servers');
+        var $resources = $('#resources');
+        //http://www.jqueryrain.com/?Vn3Q3xQR
 
-                $select.append('<option id="' + val.serverName + '">' + val.serverName + '</option>');
-            })
-        },
-        error:function(){
-            //if there is an error append a 'none available' option
-        $select.html('<option id="-1">none available</option>');
-        }
+        //request the JSON data and parse into the select element
+        $.ajax({
+            url: '/domainhealth/rest/domain',
+            dataType:'JSON',
+            success:function(data){
+                //clear the current content of the select
+                $select.html('');
+
+                //iterate over the data and append a select option
+                $.each(data, function(index, val){
+                    //   alert(val);
+                    $select.append('<option id="' + val+ '">' + val + '</option>');
+                });
+                $(".chosen-select").chosen();
+
+
+            },
+            error:function(){
+                //if there is an error append a 'none available' option
+                $select.html('<option id="-1">none available</option>');
+            }
+
+
+        });
+
+        //$("#center").load("core.html");
+
+        var startDate = $("#startdate"),
+                endDate = $("#enddate");
+        $.timepicker.datetimeRange(
+                startDate,
+                endDate,
+                {
+                    start: {
+                        dateFormat: "dd-mm-yy"
+                    }, // start picker options
+                    end: {dateFormat: "dd-mm-yy"
+                    } // end picker options
+                }
+        );
+
+        $("#jdbc").click(function (e) {
+            var sd = startDate.datetimepicker("getDate");
+            //alert(startDate.val());
+            $.ajax({
+                url: '/domainhealth/rest/resources/workmgr',
+                dataType:'JSON',
+                data: { startTime : startDate.val(),endTime:endDate.val()} ,
+                success:function(data){
+                    //clear the current content of the select
+                    $resources.html('');
+
+                    //iterate over the data and append a select option
+                    $.each(data, function(index, val){
+                        //alert(val);
+                        $resources.append('<a id="' + val+ '">' + val + '</a>');
+                    });
+
+
+                },
+                error:function(){
+                    //if there is an error append a 'none available' option
+                    //$select.html('<option id="-1">none available</option>');
+                }
+
+
+            });
+            $("#center").load("jdbc.html");
+        });
+        $("#jms").click(function (e) {
+            $("#center").load("jms.html");
+        });
+
+        $("#core").click(function (e) {
+            $("#center").load("core.html");
+        });
+
+
+
+
+
+        // Your code here.
+
     });
+
+
 </script>
+
+
 </html>
