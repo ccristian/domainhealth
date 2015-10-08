@@ -255,21 +255,21 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
 				Iterator<String> iteratorBlacklist = getComponentBlacklist().iterator();
 				boolean blacklist = false;
 				
-            	while(iteratorBlacklist.hasNext()){
-            		String element = iteratorBlacklist.next();
-            		
-            		if (name.contains(element)){
-            			
+      	while(iteratorBlacklist.hasNext()){
+      		String element = iteratorBlacklist.next();
+      		
+      		if (name.contains(element)){
+      			
 //System.out.println("StatisticCapturerWLDFQuery::logResourceStats() - A part of the element " + name + " is blacklisted [" + element + "]");
 
-            			blacklist = true;
-						break;
-            		}
-            	}
-            	
-            	if ((resourceType.equals(HOSTMACHINE_RESOURCE_TYPE)) || !blacklist) {
-            		
-            		String contentLine = constructStatsLine(objectRecords.get(name), monitorAttrList);
+      			blacklist = true;
+      			break;
+      		}
+      	}
+      	
+      	if ((resourceType.equals(HOSTMACHINE_RESOURCE_TYPE)) || !blacklist) {
+      		
+      		String contentLine = constructStatsLine(objectRecords.get(name), monitorAttrList);
 					getCSVStats().appendToResourceStatisticsCSV(nowDate, getServerName(), resourceType, name, headerLine, contentLine);
 					artifactList.put(name, now);
 				}
@@ -363,7 +363,7 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
             	
             	if (!blacklist) {
             		
-            		InstanceDataRecord poolObjRecord = poolObjectRecords.get(name);
+          InstanceDataRecord poolObjRecord = poolObjectRecords.get(name);
 					InstanceDataRecord txObjRecord = txObjectRecords.get(name);
 					StringBuilder contentLine = new StringBuilder(constructStatsLine(poolObjRecord, EJB_POOL_MBEAN_MONITOR_ATTR_LIST));
 					appendToStatsLine(contentLine, txObjRecord, EJB_TRANSACTION_MBEAN_MONITOR_ATTR_LIST);

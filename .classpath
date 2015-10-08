@@ -19,5 +19,6 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/WLS_12.1.3"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

@@ -289,8 +289,14 @@ public class RetrieverBackgroundService {
 						try {
 							capturer.captureAndLogServerStats();
 						} catch (Exception e) {
-							AppLog.getLogger().error(e.toString());
-							e.printStackTrace();
+							
+						  // ----------------------------------------------
+						  // Commented by gregoan
+						  // Some applications are taking more than iteration period to be up and running
+						  // No need to print stacktrace for "nothing"
+						  //AppLog.getLogger().error(e.toString());
+							//e.printStackTrace();
+							// ----------------------------------------------
 							AppLog.getLogger().error("Statistics Retriever Background Service - unable to retrieve statistics for specific server '" + serverName + "' for this iteration");
 						}						
 					}					
@@ -302,8 +308,14 @@ public class RetrieverBackgroundService {
 			cleanupOldStatisticsIfNecessary();
 			AppLog.getLogger().info("Statistics Retriever Background Service completing another iteration successfully");
 		} catch (Exception e) {
-			AppLog.getLogger().error(e.toString());
-			e.printStackTrace();
+		  
+		  // ----------------------------------------------
+      // Commented by gregoan
+      // Some applications are taking more than iteration period to be up and running
+      // No need to print stacktrace for "nothing"
+      //AppLog.getLogger().error(e.toString());
+      //e.printStackTrace();
+      // ----------------------------------------------
 			AppLog.getLogger().error("Statistics Retriever Background Service - unable to retrieve statistics for domain's servers for this iteration");
 		} finally {
 			if (conn != null) {
