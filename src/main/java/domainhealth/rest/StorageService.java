@@ -41,7 +41,6 @@ public class StorageService {
 
     @PostConstruct
     public void initialize() {
-        System.out.println("In PostConstruct");
         try {
             statisticsStorage = new StatisticsStorage((String) application.getAttribute(AppProperties.PropKey.STATS_OUTPUT_PATH_PROP.toString()));
         } catch (Exception sqle) {
@@ -80,7 +79,6 @@ public class StorageService {
             DateTime start = fmt.parseDateTime(startTime);
             DateTime end = fmt.parseDateTime(endTime);
             Interval interval = new Interval(start,end);
-            System.out.println(interval);
             return  statisticsStorage.getResourceNamesFromPropsListForInterval(interval,resourceType);
         } catch (IOException e) {
             e.printStackTrace();
@@ -97,7 +95,6 @@ public class StorageService {
         try {
             conn = new DomainRuntimeServiceMBeanConnection();
             Set<String> servers = statisticsStorage.getAllPossibleServerNames(conn);
-            System.out.println(servers);
             return servers;
         } catch (Exception e) {
             AppLog.getLogger().error(e.toString());
