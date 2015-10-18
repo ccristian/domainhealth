@@ -66,10 +66,28 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
         <!-- Header Navbar -->
         <nav class="navbar navbar-static-top" role="navigation">
-          <!-- Sidebar toggle button-->
+
+
+
+                <!-- Sidebar toggle button-->
           <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
             <span class="sr-only">Toggle navigation</span>
           </a>
+          <div class="navbar-custom-menu">
+            <ul class="nav navbar-nav">
+
+              <li>
+              <button type="button" class="btn  navbar-btn fa fa-chevron-left"></button>
+              <!-- Single button -->
+
+              <button type="button" class="btn btn-default navbar-btn fa fa-chevron-right"></button>
+
+              </li>
+              <li>
+                <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+              </li>
+            </ul>
+          </div>
         </nav>
       </header>
       <!-- Left side column. contains the logo and sidebar -->
@@ -161,7 +179,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Main content -->
         <section class="content">
           <div class="row">
-            <div class="col-xs-12">
+            <div class="col-xs-6">
               <!-- interactive chart -->
               <div class="box box-primary">
                 <div class="box-header with-border">
@@ -181,6 +199,26 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </div><!-- /.box -->
 
             </div><!-- /.col -->
+            <div class="col-xs-6">
+              <!-- interactive chart -->
+              <div class="box box-primary">
+                <div class="box-header with-border">
+                  <i class="fa fa-bar-chart-o"></i>
+                  <h3 class="box-title">Interactive Area Chart</h3>
+                  <div class="box-tools pull-right">
+                    Real time
+                    <div class="btn-group" id="realtime" data-toggle="btn-toggle">
+                      <button type="button" class="btn btn-default btn-xs active" data-toggle="on">On</button>
+                      <button type="button" class="btn btn-default btn-xs" data-toggle="off">Off</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="box-body">
+                  <div id="interactive" style="height: 300px;"></div>
+                </div><!-- /.box-body-->
+              </div><!-- /.box -->
+
+            </div>
           </div><!-- /.row -->
 
           <div class="row">
@@ -229,7 +267,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   </div>
                 </div>
                 <div class="box-body">
-                  <div id="bar-chart" style="height: 300px;"></div>
+                  <div id="bar-chart" style="height: 300px;">
+
+                  </div>
                 </div><!-- /.box-body-->
               </div><!-- /.box -->
 
@@ -253,7 +293,55 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
       </div><!-- /.content-wrapper -->
 
-      <!-- Main Footer -->
+      <!-- Control Sidebar -->
+      <aside class="control-sidebar control-sidebar-dark">
+        <!-- Create the tabs -->
+        <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+          <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <!-- Settings tab content -->
+          <div class="tab-pane active" id="control-sidebar-settings-tab">
+              <h2 class="control-sidebar-heading">General Settings</h2>
+              <div class="form-group">
+                <h3 class="control-sidebar-heading">Intervals</h3>
+
+                <h4 class="control-sidebar-heading">Minutes</h4>
+                  <label class="control-sidebar-subheading">
+                    5 minutes
+                    <input type="radio" class="pull-right"  />
+                  </label>
+                <label class="control-sidebar-subheading">
+                  15 minutes
+                  <input type="radio" class="pull-right"  />
+                </label>
+                <label class="control-sidebar-subheading">
+                  30 minutes
+                  <input type="radio" class="pull-right" checked />
+                </label>
+                <h4 class="control-sidebar-subheading">Hours</h4>
+                <label class="control-sidebar-subheading">
+                  5 minutes
+                  <input type="radio" class="pull-right"  />
+                </label>
+                <label class="control-sidebar-subheading">
+                  15 minutes
+                  <input type="radio" class="pull-right"  />
+                </label>
+                <label class="control-sidebar-subheading">
+                  30 minutes
+                  <input type="radio" class="pull-right" checked />
+                </label>
+                <label class="control-sidebar-subheading">
+                  Refresh automatically
+                  <input type="checkbox" class="pull-right" checked />
+                </label>
+                </div><!-- /.form-group -->
+
+          </div><!-- /.tab-pane -->
+        </div>
+      </aside><!-- /.control-sidebar -->
 
       <!-- Control Sidebar -->
       <!-- Add the sidebar's background. This div must be placed
