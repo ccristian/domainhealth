@@ -305,39 +305,67 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <div class="tab-pane active" id="control-sidebar-settings-tab">
               <h2 class="control-sidebar-heading">General Settings</h2>
               <div class="form-group">
-                <h3 class="control-sidebar-heading">Intervals</h3>
 
-                <h4 class="control-sidebar-heading">Minutes</h4>
-                  <label class="control-sidebar-subheading">
-                    5 minutes
-                    <input type="radio" class="pull-right"  />
-                  </label>
-                <label class="control-sidebar-subheading">
-                  15 minutes
-                  <input type="radio" class="pull-right"  />
-                </label>
-                <label class="control-sidebar-subheading">
-                  30 minutes
-                  <input type="radio" class="pull-right" checked />
-                </label>
-                <h4 class="control-sidebar-subheading">Hours</h4>
-                <label class="control-sidebar-subheading">
-                  5 minutes
-                  <input type="radio" class="pull-right"  />
-                </label>
-                <label class="control-sidebar-subheading">
-                  15 minutes
-                  <input type="radio" class="pull-right"  />
-                </label>
-                <label class="control-sidebar-subheading">
-                  30 minutes
-                  <input type="radio" class="pull-right" checked />
-                </label>
                 <label class="control-sidebar-subheading">
                   Refresh automatically
-                  <input type="checkbox" class="pull-right" checked />
+                  <input type="checkbox" class="pull-right"  />
                 </label>
-                </div><!-- /.form-group -->
+
+                <h3 class="control-sidebar-heading">Intervals</h3>
+
+                <label class="control-sidebar-subheading">
+                  5 minutes
+                  <input type="radio" class="pull-right"  name = "interval" value="5min"/>
+                </label>
+
+                <label class="control-sidebar-subheading">
+                  15 minutes
+                  <input type="radio" class="pull-right" name = "interval" value="15min" />
+                </label>
+
+                <label class="control-sidebar-subheading">
+                  30 minutes
+                  <input type="radio" class="pull-right"  name = "interval" value="30min" checked/>
+                </label>
+
+                <label class="control-sidebar-subheading">
+                  1 hour
+                  <input type="radio" class="pull-right" name = "interval" value="1h" />
+                </label>
+
+                <label class="control-sidebar-subheading">
+                  3 hours
+                  <input type="radio" class="pull-right" name = "interval" value="3h" />
+                </label>
+
+                <label class="control-sidebar-subheading">
+                  6 hours
+                  <input type="radio" class="pull-right" name = "interval" value="6h" />
+                </label>
+
+                <label class="control-sidebar-subheading">
+                  12 hours
+                  <input type="radio" class="pull-right" name = "interval" value="12h" />
+                </label>
+
+                <label class="control-sidebar-subheading">
+                  1 day
+                  <input type="radio" class="pull-right" name = "interval" value="1d" />
+                </label>
+
+                <label class="control-sidebar-subheading">
+                  10 days
+                  <input type="radio" class="pull-right"  name = "interval" value="10d"/>
+                </label>
+
+                <label class="control-sidebar-subheading">
+                  30 days
+                  <input type="radio" class="pull-right"  name = "interval" value="30d"/>
+                </label>
+
+                </div>
+
+            <!-- /.form-group -->
 
           </div><!-- /.tab-pane -->
         </div>
