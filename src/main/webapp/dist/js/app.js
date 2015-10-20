@@ -213,6 +213,7 @@ $(function () {
       group.find(".btn.active").removeClass("active");
       $(this).addClass("active");
       e.preventDefault();
+
     });
 
   });
@@ -438,6 +439,7 @@ function _init() {
   $.AdminLTE.controlSidebar = {
     //instantiate the object
     activate: function () {
+
       //Get the object
       var _this = this;
       //Update options
@@ -451,6 +453,7 @@ function _init() {
       btn.on('click', function (e) {
         e.preventDefault();
         //If the sidebar is not open
+        //alert("cucu");
         if (!sidebar.hasClass('control-sidebar-open')
                 && !$('body').hasClass('control-sidebar-open')) {
           //Open the sidebar
