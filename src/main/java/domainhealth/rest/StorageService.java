@@ -4,6 +4,7 @@ package domainhealth.rest;
 import domainhealth.core.env.AppLog;
 import domainhealth.core.env.AppProperties;
 import domainhealth.core.jmx.DomainRuntimeServiceMBeanConnection;
+import domainhealth.core.statistics.MonitorProperties;
 import domainhealth.core.statistics.StatisticsStorage;
 import domainhealth.frontend.data.DateAmountDataSet;
 import domainhealth.frontend.data.rest.Domain;
@@ -34,6 +35,9 @@ import static domainhealth.core.jmx.WebLogicMBeanPropConstants.NAME;
 @Path("/")
 public class StorageService {
 
+    DateTimeFormatter fmt = DateTimeFormat.forPattern("dd-MM-yyyy-HH-mm");
+
+
     @Context
     private ServletContext application;
 
@@ -60,30 +64,37 @@ public class StorageService {
                            @PathParam("resource") String resource) {
         String temp = resource;
         //statisticsStorage.getResourceNamesFromPropsListForInterval();
-        return temp+"-"+startTime+"-"+endTime+"==="+scope;
+        return temp + "-" + startTime + "-" + endTime + "===" + scope;
     }
 
     //http://localhost:7001/domainhealth/rest/resources/workmgr?startTime=01-09-2014-00-00&endTime=17-09-2015-0-00
     @GET
-    @Path("resources/{resourceType}")
+    @Path("resources")
     @Produces({MediaType.APPLICATION_JSON})
-    public Set<String> getStats(@QueryParam("scope") List<String> scope,
-                           @QueryParam("startTime") String startTime,
-                           @QueryParam("endTime") String endTime,
-                           @PathParam("resourceType") String resourceType) {
+    public Map<String,Set<String>> getStats(
+                                @QueryParam("startTime") String startTime,
+                                @QueryParam("endTime") String endTime
+                               ) {
+
+        Map<String,Set<String>> resourcesMap = new HashMap<String, Set<String>>();
         try {
-            DateTimeFormatter fmt = DateTimeFormat.forPattern("dd-MM-yyyy-HH-mm");
-            if (startTime==null){
-               // startTime=
-            }
             DateTime start = fmt.parseDateTime(startTime);
             DateTime end = fmt.parseDateTime(endTime);
-            Interval interval = new Interval(start,end);
-            return  statisticsStorage.getResourceNamesFromPropsListForInterval(interval,resourceType);
+            Interval interval = new Interval(start, end);
+
+                resourcesMap.put(MonitorProperties.CORE_RESOURCE_TYPE,statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.CORE_RESOURCE_TYPE));
+                resourcesMap.put(MonitorProperties.DATASOURCE_RESOURCE_TYPE,statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.DATASOURCE_RESOURCE_TYPE));
+                resourcesMap.put(MonitorProperties.DESTINATION_RESOURCE_TYPE,statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.DESTINATION_RESOURCE_TYPE));
+                resourcesMap.put(MonitorProperties.SAF_RESOURCE_TYPE,statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.SAF_RESOURCE_TYPE));
+                resourcesMap.put(MonitorProperties.EJB_RESOURCE_TYPE,statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.EJB_RESOURCE_TYPE));
+                resourcesMap.put(MonitorProperties.WORKMGR_RESOURCE_TYPE,statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.WORKMGR_RESOURCE_TYPE));
+                resourcesMap.put(MonitorProperties.WEBAPP_RESOURCE_TYPE,statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.WEBAPP_RESOURCE_TYPE));
+                resourcesMap.put(MonitorProperties.SVRCHNL_RESOURCE_TYPE,statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.SVRCHNL_RESOURCE_TYPE));
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return resourcesMap;
     }
 
     @GET
@@ -109,10 +120,6 @@ public class StorageService {
 
         return null;
     }
-
-
-
-
 
 
 }

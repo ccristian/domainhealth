@@ -208,18 +208,44 @@ $(function () {
 
   var currentDate = new Date();
   var endTime = moment(currentDate).format('DD-MM-YYYY-HH-mm');
-  var startTime = moment(currentDate).subtract(30,'months').format('DD-MM-YYYY-HH-mm');
+  var startTime = moment(currentDate).subtract(30,'min').format('DD-MM-YYYY-HH-mm');
 
   //http://localhost:7001/domainhealth/rest/resources/workmgr?startTime=01-09-2014-00-00&endTime=17-09-2015-0-00
 
 
   $.ajax({
-    url: '/domainhealth/rest/resources/datasource',
+    url: '/domainhealth/rest/resources',
     dataType:'JSON',
     data:{startTime:startTime,endTime: endTime},
     success: function(response) {
-      alert("xxxx");
-      $("#datasources").append('<li><a href="/user/messages"><span class="tab">'+response+'</span></a></li>');
+     var resources = response;
+      var res = resources["datasource"];
+      res.forEach(function(entry) {
+        $("#datasource").append('<li><a href="#">'+entry+'</a></li>');
+      });
+      res = resources["destination"];
+      res.forEach(function(entry) {
+        $("#destination").append('<li><a href="#">'+entry+'</a></li>');
+      });
+      res = resources["saf"];
+      res.forEach(function(entry) {
+        $("#saf").append('<li><a href="#">'+entry+'</a></li>');
+      });
+      res = resources["webapp"];
+      res.forEach(function(entry) {
+        $("#webapp").append('<li><a href="#">'+entry+'</a></li>');
+      });
+      res = resources["ejb"];
+      res.forEach(function(entry) {
+        $("#ejb").append('<li><a href="#">'+entry+'</a></li>');
+      });
+      res = resources["svrchnl"];
+      res.forEach(function(entry) {
+        $("#svrchnl").append('<li><a href="#">'+entry+'</a></li>');
+      });
+
+
+
     },
     error: function(xhr) {
       alert("error");
