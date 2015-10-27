@@ -392,6 +392,7 @@ public class StatisticsStorage {
             Date dateTime = inter.toDate();
             Properties properties;
             properties = retrieveOneDayResoureNameList(dateTime, resourceType);
+            //System.out.println(properties);
             Enumeration<Object> keysEnum = properties.keys();
             while (keysEnum.hasMoreElements()) {
                 resourceKeys.add((String) keysEnum.nextElement());

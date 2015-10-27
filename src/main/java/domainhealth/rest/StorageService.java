@@ -72,7 +72,7 @@ public class StorageService {
                            @QueryParam("endTime") String endTime,
                            @PathParam("resourceType") String resourceType) {
         try {
-            DateTimeFormatter fmt = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
+            DateTimeFormatter fmt = DateTimeFormat.forPattern("dd-MM-yyyy-HH-mm");
             if (startTime==null){
                // startTime=
             }

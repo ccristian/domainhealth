@@ -35,6 +35,8 @@ $.AdminLTE = {};
  * Modify these options to suit your implementation
  */
 $.AdminLTE.options = {
+
+
   //Add slimscroll to navbar menus
   //This requires you to load the slimscroll plugin
   //in every page before app.js
@@ -203,6 +205,31 @@ $(function () {
     });
   }
 
+
+  var currentDate = new Date();
+  var endTime = moment(currentDate).format('DD-MM-YYYY-HH-mm');
+  var startTime = moment(currentDate).subtract(30,'months').format('DD-MM-YYYY-HH-mm');
+
+  //http://localhost:7001/domainhealth/rest/resources/workmgr?startTime=01-09-2014-00-00&endTime=17-09-2015-0-00
+
+
+  $.ajax({
+    url: '/domainhealth/rest/resources/datasource',
+    dataType:'JSON',
+    data:{startTime:startTime,endTime: endTime},
+    success: function(response) {
+      alert("xxxx");
+      $("#datasources").append('<li><a href="/user/messages"><span class="tab">'+response+'</span></a></li>');
+    },
+    error: function(xhr) {
+      alert("error");
+    }
+  });
+
+  //var previousDate = moment(currentDate, 'DD-MM-YYYY-HH-mm').be;
+  //$("#datasources").append('<li><a href="/user/messages"><span class="tab">'+endDate+'</span></a></li>');
+
+
   /*
    * INITIALIZE BUTTON TOGGLE
    * ------------------------
@@ -344,6 +371,7 @@ function _init() {
       if ($.AdminLTE.options.sidebarExpandOnHover
               || ($('body').hasClass('fixed')
                       && $('body').hasClass('sidebar-mini'))) {
+        alert("x");
         this.expandOnHover();
       }
     },
@@ -595,139 +623,3 @@ function _init() {
  * All custom plugins are defined below.
  */
 
-/*
- * BOX REFRESH BUTTON
- * ------------------
- * This is a custom plugin to use with the component BOX. It allows you to add
- * a refresh button to the box. It converts the box's state to a loading state.
- *
- * @type plugin
- * @usage $("#box-widget").boxRefresh( options );
- */
-(function ($) {
-
-  $.fn.boxRefresh = function (options) {
-
-    // Render options
-    var settings = $.extend({
-      //Refresh button selector
-      trigger: ".refresh-btn",
-      //File source to be loaded (e.g: ajax/src.php)
-      source: "",
-      //Callbacks
-      onLoadStart: function (box) {
-      }, //Right after the button has been clicked
-      onLoadDone: function (box) {
-      } //When the source has been loaded
-
-    }, options);
-
-    //The overlay
-    var overlay = $('<div class="overlay"><div class="fa fa-refresh fa-spin"></div></div>');
-
-    return this.each(function () {
-      //if a source is specified
-      if (settings.source === "") {
-        if (console) {
-          console.log("Please specify a source first - boxRefresh()");
-        }
-        return;
-      }
-      //the box
-      var box = $(this);
-      //the button
-      var rBtn = box.find(settings.trigger).first();
-
-      //On trigger click
-      rBtn.on('click', function (e) {
-        e.preventDefault();
-        //Add loading overlay
-        start(box);
-
-        //Perform ajax call
-        box.find(".box-body").load(settings.source, function () {
-          done(box);
-        });
-      });
-    });
-
-    function start(box) {
-      //Add overlay and loading img
-      box.append(overlay);
-
-      settings.onLoadStart.call(box);
-    }
-
-    function done(box) {
-      //Remove overlay and loading img
-      box.find(overlay).remove();
-
-      settings.onLoadDone.call(box);
-    }
-
-  };
-
-})(jQuery);
-
-/*
- * EXPLICIT BOX ACTIVATION
- * -----------------------
- * This is a custom plugin to use with the component BOX. It allows you to activate
- * a box inserted in the DOM after the app.js was loaded.
- *
- * @type plugin
- * @usage $("#box-widget").activateBox();
- */
-(function ($) {
-
-  $.fn.activateBox = function () {
-    $.AdminLTE.boxWidget.activate(this);
-  };
-
-})(jQuery);
-
-/*
- * TODO LIST CUSTOM PLUGIN
- * -----------------------
- * This plugin depends on iCheck plugin for checkbox and radio inputs
- *
- * @type plugin
- * @usage $("#todo-widget").todolist( options );
- */
-(function ($) {
-
-  $.fn.todolist = function (options) {
-    // Render options
-    var settings = $.extend({
-      //When the user checks the input
-      onCheck: function (ele) {
-      },
-      //When the user unchecks the input
-      onUncheck: function (ele) {
-      }
-    }, options);
-
-    return this.each(function () {
-
-      if (typeof $.fn.iCheck != 'undefined') {
-        $('input', this).on('ifChecked', function (event) {
-          var ele = $(this).parents("li").first();
-          ele.toggleClass("done");
-          settings.onCheck.call(ele);
-        });
-
-        $('input', this).on('ifUnchecked', function (event) {
-          var ele = $(this).parents("li").first();
-          ele.toggleClass("done");
-          settings.onUncheck.call(ele);
-        });
-      } else {
-        $('input', this).on('change', function (event) {
-          var ele = $(this).parents("li").first();
-          ele.toggleClass("done");
-          settings.onCheck.call(ele);
-        });
-      }
-    });
-  };
-}(jQuery));
