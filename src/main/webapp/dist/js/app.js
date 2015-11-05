@@ -212,6 +212,14 @@ $(function () {
 
   //http://localhost:7001/domainhealth/rest/resources/workmgr?startTime=01-09-2014-00-00&endTime=17-09-2015-0-00
 
+  var source = $("#menu-template").html();
+  var template = Handlebars.compile(source);
+
+
+  Handlebars.registerHelper('shortName', function(name) {
+    return name.substr(0,22);
+  });
+
 
   $.ajax({
     url: '/domainhealth/rest/resources',
@@ -220,31 +228,22 @@ $(function () {
     success: function(response) {
      var resources = response;
       var res = resources["datasource"];
-      res.forEach(function(entry) {
-        $("#datasource").append('<li><a href="#">'+entry.substring(0,25)+'</a></li>');
-      });
+      $("#datasource").append(template(res));
+
       res = resources["destination"];
-      res.forEach(function(entry) {
-        $("#destination").append('<li><a href="#">'+entry.substring(0,25)+'</a></li>');
-      });
+      $("#destination").append(template(res));
+
       res = resources["saf"];
-      res.forEach(function(entry) {
-        $("#saf").append('<li><a href="#">'+entry.substring(0,25)+'</a></li>');
-      });
+      $("#saf").append(template(res));
+
       res = resources["webapp"];
-      res.forEach(function(entry) {
-        $("#webapp").append('<li><a data-toggle="tooltip" title="entry" href="#">'+entry.substring(0,25)+'</a></li>');
-      });
+      $("#webapp").append(template(res));
+
       res = resources["ejb"];
-      res.forEach(function(entry) {
-        $("#ejb").append('<li><a href="#">'+entry.substring(0,25)+'</a></li>');
-      });
+      $("#ejb").append(template(res));
+
       res = resources["svrchnl"];
-      res.forEach(function(entry) {
-        $("#w3s").attr("href",
-        $("#svrchnl").append('<li><a href="#">'+entry.substring(0,25)+'</a></li>');
-      });
-      //$("#ejb").append('<li><a href="#">123456789012345678901234567890</a></li>');
+      $("#svrchnl").append(template(res));
 
 
     },
@@ -252,6 +251,8 @@ $(function () {
       alert("error");
     }
   });
+
+
 
   //var previousDate = moment(currentDate, 'DD-MM-YYYY-HH-mm').be;
   //$("#datasources").append('<li><a href="/user/messages"><span class="tab">'+endDate+'</span></a></li>');
