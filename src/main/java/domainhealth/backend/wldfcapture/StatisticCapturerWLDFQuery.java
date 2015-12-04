@@ -24,7 +24,7 @@ import domainhealth.core.jmx.WebLogicMBeanException;
 import domainhealth.core.jmx.WebLogicMBeanPropConstants;
 import domainhealth.core.statistics.ResourceNameNormaliser;
 import domainhealth.core.statistics.StatisticsStorage;
-import domainhealth.frontend.data.rest.ServerState;
+import domainhealth.frontend.data.ServerState;
 
 import javax.management.ObjectName;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package domainhealth.frontend.data.rest;
+package domainhealth.frontend.data;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by chiovcr on 05/12/2014.
  */
-@XmlRootElement
+//@XmlRootElement
 public class Domain {
 
 

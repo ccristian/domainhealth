@@ -25,7 +25,7 @@ import java.util.TreeSet;
  * not necessarily exclusively, used to identify an x,y point on a graph).
  */
 
-@XmlRootElement
+//@XmlRootElement(name="dataset")
 public class DateAmountDataSet {
 
 

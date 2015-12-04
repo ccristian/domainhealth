@@ -1,23 +1,22 @@
 package domainhealth.rest;
 
 
+
+import com.sun.jersey.api.json.JSONConfiguration;
 import domainhealth.core.env.AppLog;
 import domainhealth.core.env.AppProperties;
 import domainhealth.core.jmx.DomainRuntimeServiceMBeanConnection;
 import domainhealth.core.statistics.MonitorProperties;
 import domainhealth.core.statistics.StatisticsStorage;
 import domainhealth.frontend.data.DateAmountDataSet;
-import domainhealth.frontend.data.rest.Domain;
-import domainhealth.frontend.data.rest.Server;
+import domainhealth.frontend.data.Domain;
+import domainhealth.frontend.data.Statistics;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
-import javax.management.ObjectName;
-import javax.management.Query;
 import javax.servlet.ServletContext;
 
 import javax.ws.rs.*;
@@ -26,8 +25,6 @@ import javax.ws.rs.core.MediaType;
 
 import java.io.IOException;
 import java.util.*;
-
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.NAME;
 
 /**
  * Created by chiovcr on 02/12/2014.
@@ -53,21 +50,62 @@ public class StorageService {
     }
 
 
-    //http://localhost:7001/domainhealth/rest/statistics/core?scope=ALL&startTime=ss&endTime=ss
+    @GET
+    @Path("test")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Statistics getStatss(@QueryParam("startTime") String startTime,
+                                  @QueryParam("endTime") String endTime){
+        //JSONConfiguration.mapped().rootUnwrapping(false).build();
+        DateTime start = fmt.parseDateTime(startTime);
+        DateTime end = fmt.parseDateTime(endTime);
+        Interval interval = new Interval(start, end);
+        JSONConfiguration.mapped().rootUnwrapping(true).build();
+        return new Statistics(interval);
+    }
+
+    //http://localhost:7001/domainhealth/rest/stats/core?scope=ALL&startTime=ss&endTime=ss
+    //http://localhost:7001/domainhealth/rest/stats/core/xdd?startTime=01-09-2014-00-00&endTime=17-11-2015-0-00
     @GET
     @Path("stats/{resourceType}/{resource}")
     @Produces({MediaType.APPLICATION_JSON})
-    public String getStats(@QueryParam("scope") List<String> scope,
+    public Map<String,Map<String,DateAmountDataSet>>  getStats(@QueryParam("scope") List<String> scope,
                            @QueryParam("startTime") String startTime,
                            @QueryParam("endTime") String endTime,
                            @PathParam("resourceType") String resourceType,
                            @PathParam("resource") String resource) {
-        String temp = resource;
-        //statisticsStorage.getResourceNamesFromPropsListForInterval();
-        return temp + "-" + startTime + "-" + endTime + "===" + scope;
+
+        try {
+            System.out.println("Core");
+            Map<String,Map<String,DateAmountDataSet>> result = new HashMap<String, Map<String, DateAmountDataSet>>();
+            //String temp = resource;
+            DateTime start = fmt.parseDateTime(startTime);
+            DateTime end = fmt.parseDateTime(endTime);
+            Interval interval = new Interval(start, end);
+            DomainRuntimeServiceMBeanConnection conn = null;
+            System.out.println(scope);
+            // //ex: StorageUtil.getPropertyData(statisticsStorage,"core",null,"HeapUsedCurrent",new Date(),1,"AdminServer");
+            if (scope==null || scope.size()==0){
+                conn = new DomainRuntimeServiceMBeanConnection();
+                Set<String> servers = statisticsStorage.getAllPossibleServerNames(conn);
+                for (String server:servers){
+                    System.out.println("Nu scope");
+                 //   OpenSocketsCurrentCount	HeapSizeCurrent	HeapFreeCurrent	HeapUsedCurrent
+                    Set<String> coreProps = new HashSet<String>();
+                    coreProps.add("OpenSocketsCurrentCount");
+                    coreProps.add("HeapUsedCurrent");
+                    result.put(server, statisticsStorage.getPropertyData(resourceType, null, coreProps, interval, server));
+                }
+
+            }
+            return result;
+        } catch (Exception e ){
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
-    //http://localhost:7001/domainhealth/rest/resources/workmgr?startTime=01-09-2014-00-00&endTime=17-09-2015-0-00
+    //http://localhost:7001/domainhealth/rest/resources?startTime=01-09-2014-00-00&endTime=17-09-2016-0-00
     @GET
     @Path("resources")
     @Produces({MediaType.APPLICATION_JSON})
@@ -92,6 +130,7 @@ public class StorageService {
                 resourcesMap.put(MonitorProperties.SVRCHNL_RESOURCE_TYPE,statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.SVRCHNL_RESOURCE_TYPE));
 
         } catch (IOException e) {
+            //TODO handle exception
             e.printStackTrace();
         }
         return resourcesMap;

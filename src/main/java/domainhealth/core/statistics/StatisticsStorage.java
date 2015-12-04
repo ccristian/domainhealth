@@ -489,7 +489,7 @@ public class StatisticsStorage {
 
     /**
      * Get the path of CSV statistics file for a given resource for a given
-     * resource type for a given server on a given day.
+     * resource type for a given server on a given interval.
      *
      * @param serverName   The name of the server to get the CSV file path for
      * @param resourceType The type of resource (eg. core, datasource)
@@ -497,6 +497,9 @@ public class StatisticsStorage {
      * @return The file path of the specific statistics CSV file
      */
     private Map<File, Date> getServerResourceCSVPath(Interval interval, String serverName, String resourceType, String resourceName) throws IOException {
+        System.out.println(interval);
+        System.out.println(serverName);
+        System.out.println(resourceType);
         Map<File, Date> daysMap = new HashMap<File, Date>();
         DateFormat dayDateFormat = new SimpleDateFormat(DATE_PATH_FORMAT);
         if (resourceName == null) {
@@ -514,7 +517,6 @@ public class StatisticsStorage {
             Date date = inter.toDate();
             String dirPath = getDayServerResourceDirectoryPath(date, serverName, resourceType);
             if (dirPath != null) {
-
                 String fileName = String.format("%s%s%s_%s_%s%s%s", dirPath, separatorChar, resourceType, serverName, resourceName, dayDateFormat.format(date), CSV_SUFFIX);
                 File file = FileUtil.retrieveFile(fileName);
                 if (file != null) {
@@ -717,6 +719,51 @@ public class StatisticsStorage {
     }
 
 
+    //TODO add comment
+    public Map<String,DateAmountDataSet> getPropertyData(String resourceType, String resourceName, Set<String> resourceProperties, Interval interval, String serverName) throws IOException {
+        Map<String,DateAmountDataSet> data = new HashMap<String, DateAmountDataSet>();
+        DateAmountDataSet resultDataSet = new DateAmountDataSet();
+        /*retrieves a map with file and date for a specific interval*/
+
+        //review the logic......
+        //retrieves a map with date as key and the file for that specific date as value for the whole interval.
+        Map<File, Date> csvLocationPerFile = this.getServerResourceCSVPath(interval, serverName, resourceType, resourceName);
+        Collection<File> files = csvLocationPerFile.keySet();
+        System.out.println(files);
+        for (File file : files) {
+            if ((file == null) || (!file.exists())) {
+                continue;
+                //return new DateAmountDataSet();
+            }
+            System.out.println(file);
+            for (String resourceProperty:resourceProperties){
+            //later to review because the file is already located for a each day from the interval
+            //so getting it one more time does not make sense
+            int propertyPosition = this.getPropertyPositionInStatsFile(resourceType, resourceName, csvLocationPerFile.get(file), serverName, resourceProperty);
+            if (propertyPosition < 0) {
+                continue;
+            }
+            BufferedReader in = null;
+            try {
+                in = new BufferedReader(new FileReader(file));
+                resultDataSet.addDataSet(generatePropertyDataSet(in, interval.getStart().toDate(), interval.getEnd().toDate(), propertyPosition, resourceType, resourceName, resourceProperty));
+                data.put(resourceProperty,resultDataSet);
+            } finally {
+                if (in != null) {
+                    try {
+                        in.close();
+                    } catch (Exception e) {
+                    }
+                }
+            }
+            }
+        }
+
+        return data;
+    }
+
+
+
     /**
      * For a given property column in a CSV file, collects together all
      * statistic values for that property between a specific start and end date.
@@ -794,7 +841,6 @@ public class StatisticsStorage {
 
 
     public List<DateAmountDataSet> getPropertiesData(String resourceType, String resourceName, List<String> resourcesProperty, Date endDateTime, int durationMins, String serverName) throws IOException {
-
         List<DateAmountDataSet> resultDataSet = new ArrayList<DateAmountDataSet>();
         //ex: StorageUtil.getPropertyData(statisticsStorage,"core",null,"HeapUsedCurrent",new Date(),1,"AdminServer");
         Date startDateTime = DateUtil.getEarlierTime(endDateTime, durationMins);

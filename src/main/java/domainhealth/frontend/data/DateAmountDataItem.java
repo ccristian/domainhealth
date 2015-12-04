@@ -14,6 +14,7 @@
 //POSSIBILITY OF SUCH DAMAGE.
 package domainhealth.frontend.data;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
 
@@ -21,7 +22,7 @@ import java.util.Date;
  * Structure for holding a simple Date-Number pair (typically, but not 
  * necessarily exclusively, used to identify an x,y point on a graph).
  */
-@XmlRootElement
+//@XmlRootElement(name="stat")
 public class DateAmountDataItem {
 	/**
 	 * Create date-number pair.
@@ -53,8 +54,11 @@ public class DateAmountDataItem {
 	}
 
 	// Members
+	//@XmlElement(name="date")
 	private Date dateTime = null;
 	private double amount = 0;
+	//@XmlElement(name="val")
+
 
 	@Override
 	public String toString() {

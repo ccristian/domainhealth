@@ -29,7 +29,7 @@ import domainhealth.core.jmx.WebLogicMBeanConnection;
 import domainhealth.core.jmx.WebLogicMBeanException;
 import domainhealth.core.statistics.StatisticsStorage;
 import domainhealth.core.statistics.ResourceNameNormaliser;
-import domainhealth.frontend.data.rest.ServerState;
+import domainhealth.frontend.data.ServerState;
 
 import static domainhealth.core.jmx.WebLogicMBeanPropConstants.*;
 import static domainhealth.core.statistics.StatisticsStorage.*;

@@ -1,4 +1,4 @@
-package domainhealth.frontend.data.rest;
+package domainhealth.frontend.data;
 
 import domainhealth.frontend.data.DateAmountDataSet;
 
@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by chiovcr on 05/12/2014.
  */
-@XmlRootElement
+//@XmlRootElement
 public class Server {
 
     private String serverName;
