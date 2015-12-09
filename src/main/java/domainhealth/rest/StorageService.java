@@ -2,7 +2,7 @@ package domainhealth.rest;
 
 
 
-import com.sun.jersey.api.json.JSONConfiguration;
+
 import domainhealth.core.env.AppLog;
 import domainhealth.core.env.AppProperties;
 import domainhealth.core.jmx.DomainRuntimeServiceMBeanConnection;
@@ -59,8 +59,11 @@ public class StorageService {
         DateTime start = fmt.parseDateTime(startTime);
         DateTime end = fmt.parseDateTime(endTime);
         Interval interval = new Interval(start, end);
-        JSONConfiguration.mapped().rootUnwrapping(true).build();
-        return new Statistics(interval);
+        //JSONConfiguration.mapped().rootUnwrapping(true).build();
+        Statistics stat = new Statistics();
+        stat.setA("a");
+        stat.setB("b");
+        return stat;
     }
 
     //http://localhost:7001/domainhealth/rest/stats/core?scope=ALL&startTime=ss&endTime=ss

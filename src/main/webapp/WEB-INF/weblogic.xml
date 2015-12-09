@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<weblogic-web-app xmlns="http://www.bea.com/ns/weblogic/90">
+<weblogic-web-app xmlns="http://xmlns.oracle.com/weblogic/weblogic-web-app">
+	<container-descriptor>
+		<prefer-web-inf-classes>true</prefer-web-inf-classes>
 
-	<security-role-assignment>
+	</container-descriptor>
+    <security-role-assignment>
 		<!--The security-role-assignment element declares a mapping between
 		a Web application security role and one or more principals in WebLogic Server-->
 		<role-name>SystemAdministrator</role-name>

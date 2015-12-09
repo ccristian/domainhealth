@@ -12,18 +12,28 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name="stats")
 public class Statistics {
 
-    public Statistics(Interval interval){
-        this.interval = interval;
+    private String a;
+
+    private String b;
+
+    public Statistics(){
+
     }
 
-    @XmlElement(name="xxx")
-    Interval interval;
 
-    public Interval getInterval() {
-        return interval;
+    public String getA() {
+        return a;
     }
 
-    public void setInterval(Interval interval) {
-        this.interval = interval;
+    public void setA(String a) {
+        this.a = a;
+    }
+
+    public String getB() {
+        return b;
+    }
+
+    public void setB(String b) {
+        this.b = b;
     }
 }

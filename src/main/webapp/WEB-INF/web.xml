@@ -75,10 +75,7 @@
         <display-name>DH</display-name>
         <servlet-name>DHApp</servlet-name>
         <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
-        <init-param>
-            <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
-            <param-value>true</param-value>
-        </init-param>
+
     </servlet>
     <servlet-mapping>
         <servlet-name>DHApp</servlet-name>
