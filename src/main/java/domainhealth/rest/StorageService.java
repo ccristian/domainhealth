@@ -78,14 +78,14 @@ public class StorageService {
                            @PathParam("resource") String resource) {
 
         try {
-            System.out.println("Core");
+
             Map<String,Map<String,DateAmountDataSet>> result = new HashMap<String, Map<String, DateAmountDataSet>>();
             //String temp = resource;
             DateTime start = fmt.parseDateTime(startTime);
             DateTime end = fmt.parseDateTime(endTime);
             Interval interval = new Interval(start, end);
             DomainRuntimeServiceMBeanConnection conn = null;
-            System.out.println(scope);
+
             // //ex: StorageUtil.getPropertyData(statisticsStorage,"core",null,"HeapUsedCurrent",new Date(),1,"AdminServer");
             if (scope==null || scope.size()==0){
                 conn = new DomainRuntimeServiceMBeanConnection();

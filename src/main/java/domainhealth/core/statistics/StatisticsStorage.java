@@ -263,7 +263,6 @@ public class StatisticsStorage {
 
             try {
                 File file = FileUtil.retrieveFile(getDayResourcePropListFilePath(dateTime, resourceType));
-                System.out.println(file);
 
                 if (file != null) {
                     propsIn = new FileInputStream(file);
@@ -497,9 +496,6 @@ public class StatisticsStorage {
      * @return The file path of the specific statistics CSV file
      */
     private Map<File, Date> getServerResourceCSVPath(Interval interval, String serverName, String resourceType, String resourceName) throws IOException {
-        System.out.println(interval);
-        System.out.println(serverName);
-        System.out.println(resourceType);
         Map<File, Date> daysMap = new HashMap<File, Date>();
         DateFormat dayDateFormat = new SimpleDateFormat(DATE_PATH_FORMAT);
         if (resourceName == null) {
@@ -735,7 +731,6 @@ public class StatisticsStorage {
                 continue;
                 //return new DateAmountDataSet();
             }
-            System.out.println(file);
             for (String resourceProperty:resourceProperties){
             //later to review because the file is already located for a each day from the interval
             //so getting it one more time does not make sense

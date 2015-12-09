@@ -241,6 +241,7 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
             while (names.hasNext()) {
                 String name = (String) names.next();
 
+
                 // Skip resources which are on blacklist (unless this is for the WLHostMachine resource type in which case allow anyway)
                 /*
 				if ((resourceType.equals(HOSTMACHINE_RESOURCE_TYPE)) || (!getComponentBlacklist().contains(name))) {										
