@@ -333,6 +333,7 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
 
             while (poolObjectNames.hasNext()) {
                 String name = (String) poolObjectNames.next();
+
 				
 				/*
 				if (!getComponentBlacklist().contains(name)) {										

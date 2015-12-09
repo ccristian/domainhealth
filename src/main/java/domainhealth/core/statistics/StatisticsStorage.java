@@ -725,7 +725,6 @@ public class StatisticsStorage {
         //retrieves a map with date as key and the file for that specific date as value for the whole interval.
         Map<File, Date> csvLocationPerFile = this.getServerResourceCSVPath(interval, serverName, resourceType, resourceName);
         Collection<File> files = csvLocationPerFile.keySet();
-        System.out.println(files);
         for (File file : files) {
             if ((file == null) || (!file.exists())) {
                 continue;
