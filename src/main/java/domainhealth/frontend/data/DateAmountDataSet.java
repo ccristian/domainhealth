@@ -14,7 +14,9 @@
 //POSSIBILITY OF SUCH DAMAGE.
 package domainhealth.frontend.data;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
@@ -25,12 +27,14 @@ import java.util.TreeSet;
  * not necessarily exclusively, used to identify an x,y point on a graph).
  */
 
-//@XmlRootElement(name="dataset")
+@XmlRootElement(name="dataset")
 public class DateAmountDataSet {
 
-
+	@XmlElement(name = "type")
 	private String resourceType;
+	@XmlElement(name = "name")
 	private String resourceName;
+	@XmlElement(name = "prop")
 	private String resourceProperty;
 
 
@@ -72,6 +76,7 @@ public class DateAmountDataSet {
 	 *
 	 * @return Iterator of date-time/amount pairs
 	 */
+	@XmlTransient
 	public Iterator<DateAmountDataItem> getByIncreasingDateTime() {
 		return items.iterator();
 	}
@@ -89,6 +94,7 @@ public class DateAmountDataSet {
 		}
 	});
 
+	@XmlElement(name = "data")
 	public TreeSet<DateAmountDataItem> getData(){
 		return items;
 	}

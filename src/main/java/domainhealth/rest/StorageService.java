@@ -119,12 +119,24 @@ public class StorageService {
                 conn = new DomainRuntimeServiceMBeanConnection();
                 Set<String> servers = statisticsStorage.getAllPossibleServerNames(conn);
                 for (String server : servers) {
-                    //  System.out.println("Nu scope");
-                    //   OpenSocketsCurrentCount	HeapSizeCurrent	HeapFreeCurrent	HeapUsedCurrent
                     Set<String> coreProps = new HashSet<String>();
-                    coreProps.add("OpenSocketsCurrentCount");
-                    coreProps.add("HeapUsedCurrent");
-                    result.put(server, statisticsStorage.getPropertyData(resourceType, null, coreProps, interval, server));
+
+                    switch (resourceType){
+                        case "core":
+                            coreProps.add("OpenSocketsCurrentCount");
+                            coreProps.add("HeapUsedCurrent");
+                            result.put(server, statisticsStorage.getPropertyData(resourceType, null, coreProps, interval, server));
+                            break;
+                        case "datasource":
+                            coreProps.add("NumAvailable");
+                            coreProps.add("NumUnavailable");
+                            coreProps.add("ActiveConnectionsCurrentCount");
+
+
+                            result.put(server, statisticsStorage.getPropertyData(resourceType, resource, coreProps, interval, server));
+                            break;
+                    }
+
                 }
 
             }

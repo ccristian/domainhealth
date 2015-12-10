@@ -163,7 +163,7 @@ public class StatisticsStorage {
      * @return The earliest recorded date-time
      * @throws WebLogicMBeanException Indicates problem accessing Admin Server JMX tree
      * @throws IOException            Indicates problem accessing statistics directories/files
-     * TODO check where it was used on a prev version of DH
+     *                                TODO check where it was used on a prev version of DH
      */
     private Date getEarliestRecordedDateTime() throws WebLogicMBeanException, IOException {
         DomainRuntimeServiceMBeanConnection conn = null;
@@ -355,7 +355,6 @@ public class StatisticsStorage {
      * @param resourceType The type of resource (eg. core, datasource)
      * @return The set of parameter names
      * @throws IOException Indicates a problem retrieving the props file or its contents
-     *
      */
     public Set<String> getResourceNamesFromPropsList(Date dateTime, String resourceType) throws IOException {
         Set<String> resourceKeys = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
@@ -379,7 +378,7 @@ public class StatisticsStorage {
      * @return The set of parameter names
      * @throws IOException Indicates a problem retrieving the props file or its contents
      */
-    public Set<String> getResourceNamesFromPropsListForInterval(Interval interval ,String resourceType) throws IOException {
+    public Set<String> getResourceNamesFromPropsListForInterval(Interval interval, String resourceType) throws IOException {
 
         Set<String> resourceKeys = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
         DateTime start = interval.getStart();
@@ -677,7 +676,7 @@ public class StatisticsStorage {
                 }
             }
         }
- //test
+        //test
         return resultDataSet;
     }
 
@@ -716,9 +715,9 @@ public class StatisticsStorage {
 
 
     //TODO add comment
-    public Map<String,DateAmountDataSet> getPropertyData(String resourceType, String resourceName, Set<String> resourceProperties, Interval interval, String serverName) throws IOException {
-        Map<String,DateAmountDataSet> data = new HashMap<String, DateAmountDataSet>();
-        DateAmountDataSet resultDataSet = new DateAmountDataSet();
+    public Map<String, DateAmountDataSet> getPropertyData(String resourceType, String resourceName, Set<String> resourceProperties, Interval interval, String serverName) throws IOException {
+        Map<String, DateAmountDataSet> data = new HashMap<String, DateAmountDataSet>();
+
         /*retrieves a map with file and date for a specific interval*/
 
         //review the logic......
@@ -730,32 +729,35 @@ public class StatisticsStorage {
                 continue;
                 //return new DateAmountDataSet();
             }
-            for (String resourceProperty:resourceProperties){
-            //later to review because the file is already located for a each day from the interval
-            //so getting it one more time does not make sense
-            int propertyPosition = this.getPropertyPositionInStatsFile(resourceType, resourceName, csvLocationPerFile.get(file), serverName, resourceProperty);
-            if (propertyPosition < 0) {
-                continue;
-            }
-            BufferedReader in = null;
-            try {
-                in = new BufferedReader(new FileReader(file));
-                resultDataSet.addDataSet(generatePropertyDataSet(in, interval.getStart().toDate(), interval.getEnd().toDate(), propertyPosition, resourceType, resourceName, resourceProperty));
-                data.put(resourceProperty,resultDataSet);
-            } finally {
-                if (in != null) {
-                    try {
-                        in.close();
-                    } catch (Exception e) {
+            for (String resourceProperty : resourceProperties) {
+                DateAmountDataSet resultDataSet = new DateAmountDataSet();
+                resultDataSet.setResourceType(resourceType);
+                resultDataSet.setResourceName(resourceName);
+                resultDataSet.setResourceProperty(resourceProperty);
+                //later to review because the file is already located for a each day from the interval
+                //so getting it one more time does not make sense
+                int propertyPosition = this.getPropertyPositionInStatsFile(resourceType, resourceName, csvLocationPerFile.get(file), serverName, resourceProperty);
+                if (propertyPosition < 0) {
+                    continue;
+                }
+                BufferedReader in = null;
+                try {
+                    in = new BufferedReader(new FileReader(file));
+                    resultDataSet.addDataSet(generatePropertyDataSet(in, interval.getStart().toDate(), interval.getEnd().toDate(), propertyPosition, resourceType, resourceName, resourceProperty));
+                    data.put(resourceProperty, resultDataSet);
+                } finally {
+                    if (in != null) {
+                        try {
+                            in.close();
+                        } catch (Exception e) {
+                        }
                     }
                 }
-            }
             }
         }
 
         return data;
     }
-
 
 
     /**

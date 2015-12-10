@@ -40,6 +40,7 @@ public class DateAmountDataItem {
      * 
      * @return Date-time
      */
+	@XmlElement(name = "time")
 	public Date getDateTime() {
 		return this.dateTime;
 	}
@@ -49,6 +50,7 @@ public class DateAmountDataItem {
 	 * 
 	 * @return Number amount
 	 */
+	@XmlElement(name = "val")
 	public double getAmount() {
 		return this.amount;
 	}
