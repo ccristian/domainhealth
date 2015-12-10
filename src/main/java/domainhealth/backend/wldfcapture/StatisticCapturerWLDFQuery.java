@@ -240,8 +240,7 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
 
             while (names.hasNext()) {
                 String name = (String) names.next();
-
-
+                if (name.contains("\"")) continue;
                 // Skip resources which are on blacklist (unless this is for the WLHostMachine resource type in which case allow anyway)
                 /*
 				if ((resourceType.equals(HOSTMACHINE_RESOURCE_TYPE)) || (!getComponentBlacklist().contains(name))) {										
@@ -273,7 +272,7 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
                     artifactList.put(name, now);
                 }
             }
-
+            System.out.print("Artifact List :"+artifactList);
             getCSVStats().appendSavedOneDayResourceNameList(nowDate, resourceType, artifactList);
         } catch (Exception e) {
             throw new DataRetrievalException("Problem logging " + resourceType + " resources for server " + getServerName() + ". " + e.getMessage(), e);
@@ -333,6 +332,7 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
 
             while (poolObjectNames.hasNext()) {
                 String name = (String) poolObjectNames.next();
+
 
 				
 				/*
