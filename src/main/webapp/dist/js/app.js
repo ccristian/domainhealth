@@ -206,6 +206,30 @@ $(function () {
   }
 
 
+  //listener for core
+  $("#core").click(function () {
+    //Enable hide menu when clicking on the content-wrapper on small screens
+      //alert("Click on core ! do something");
+      var corestats;
+      $(".content-wrapper").html("Core");
+      $.ajax({
+          url: '/domainhealth/rest/stats/core/tbd',
+          dataType:'JSON',
+          data:{startTime:startTime,endTime: endTime},
+          success: function(response) {
+              corestats = response;
+              for (var key in corestats) {
+                alert(JSON.stringify(key));
+              }
+          },
+          error: function(xhr) {
+              alert("error");
+          }
+      });
+
+  });
+
+  //the side bar menu
   var currentDate = new Date();
   var endTime = moment(currentDate).format('DD-MM-YYYY-HH-mm');
   var startTime = moment(currentDate).subtract(30,'min').format('DD-MM-YYYY-HH-mm');
@@ -228,22 +252,22 @@ $(function () {
     success: function(response) {
      var resources = response;
       var res = resources["datasource"];
-      $("#datasource").append(template(res));
+      $("#datasource").html(template(res));
 
       res = resources["destination"];
-      $("#destination").append(template(res));
+      $("#destination").html(template(res));
 
       res = resources["saf"];
-      $("#saf").append(template(res));
+      $("#saf").html(template(res));
 
       res = resources["webapp"];
-      $("#webapp").append(template(res));
+      $("#webapp").html(template(res));
 
       res = resources["ejb"];
-      $("#ejb").append(template(res));
+      $("#ejb").html(template(res));
 
       res = resources["svrchnl"];
-      $("#svrchnl").append(template(res));
+      $("#svrchnl").html(template(res));
 
 
     },
@@ -399,7 +423,7 @@ function _init() {
       if ($.AdminLTE.options.sidebarExpandOnHover
               || ($('body').hasClass('fixed')
                       && $('body').hasClass('sidebar-mini'))) {
-        alert("x");
+        //alert("x");
         this.expandOnHover();
       }
     },

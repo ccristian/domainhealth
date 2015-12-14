@@ -152,7 +152,7 @@ public class StorageService {
     @GET
     @Path("test")
     @Produces({MediaType.APPLICATION_JSON})
-    public Statistics getStatss(@QueryParam("startTime") String startTime,
+    public List<List> getStatss(@QueryParam("startTime") String startTime,
                                 @QueryParam("endTime") String endTime) {
         //JSONConfiguration.mapped().rootUnwrapping(false).build();
         DateTime start = fmt.parseDateTime(startTime);
@@ -162,7 +162,16 @@ public class StorageService {
         Statistics stat = new Statistics();
         stat.setA("a");
         stat.setB("b");
-        return stat;
+        List res = new ArrayList();
+        List l1 = new ArrayList();
+        List l2 = new ArrayList();
+        l1.add(startTime);
+        l1.add(100);
+        l2.add(endTime);
+        l2.add(101);
+        res.add(l1);
+        res.add(l2);
+        return res;
     }
 
 
