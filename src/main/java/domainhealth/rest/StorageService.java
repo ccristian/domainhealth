@@ -96,6 +96,8 @@ public class StorageService {
 
     //http://localhost:7001/domainhealth/rest/stats/core?scope=ALL&startTime=ss&endTime=ss
     //http://localhost:7001/domainhealth/rest/stats/core/xdd?startTime=01-09-2014-00-00&endTime=17-11-2015-0-00
+    //http://localhost:7001/domainhealth/rest/stats/datasource/xdd?startTime=01-09-2014-00-00&endTime=17-11-2015-0-00
+
     @GET
     @Path("stats/{resourceType}/{resource}")
     @Produces({MediaType.APPLICATION_JSON})

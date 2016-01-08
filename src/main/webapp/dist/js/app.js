@@ -211,13 +211,15 @@ $(function () {
     //Enable hide menu when clicking on the content-wrapper on small screens
       //alert("Click on core ! do something");
       var corestats;
-      $(".content-wrapper").html("Core");
+
       $.ajax({
           url: '/domainhealth/rest/stats/core/tbd',
           dataType:'JSON',
           data:{startTime:startTime,endTime: endTime},
           success: function(response) {
               corestats = response;
+            $(".content-wrapper").load("01_06_plotting_time_series.html");
+            //$("#wrapp").html(template(res));
               for (var key in corestats) {
                 alert(JSON.stringify(key));
               }
