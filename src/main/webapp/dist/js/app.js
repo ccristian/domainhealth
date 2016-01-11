@@ -213,15 +213,16 @@ $(function () {
       var corestats;
 
       $.ajax({
-          url: '/domainhealth/rest/stats/core/tbd',
-          dataType:'JSON',
+          url: '/domainhealth/rest/stats/core/tbdd',
+          cache: false,
           data:{startTime:startTime,endTime: endTime},
           success: function(response) {
-              corestats = response;
-            $(".content-wrapper").load("01_06_plotting_time_series.html");
+            //corestats = response;
+            corestats = response;
+            $(".content-wrapper").load("core.html");
             //$("#wrapp").html(template(res));
               for (var key in corestats) {
-                alert(JSON.stringify(key));
+               // alert(JSON.stringify(key));
               }
           },
           error: function(xhr) {
