@@ -101,7 +101,7 @@ public class StorageService {
     @GET
     @Path("stats/{resourceType}/{resource}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Map<String, Map<String, DateAmountDataSet>> getStats(@QueryParam("scope") List<String> scope,
+    public Map<String, Map<String, DateAmountDataSet>> getStats(@QueryParam("scope") Set<String> scope,
                                                                 @QueryParam("startTime") String startTime,
                                                                 @QueryParam("endTime") String endTime,
                                                                 @PathParam("resourceType") String resourceType,
@@ -119,31 +119,53 @@ public class StorageService {
             // //ex: StorageUtil.getPropertyData(statisticsStorage,"core",null,"HeapUsedCurrent",new Date(),1,"AdminServer");
             if (scope == null || scope.size() == 0) {
                 conn = new DomainRuntimeServiceMBeanConnection();
-                Set<String> servers = statisticsStorage.getAllPossibleServerNames(conn);
-                for (String server : servers) {
-                    Set<String> coreProps = new HashSet<String>();
+                scope = statisticsStorage.getAllPossibleServerNames(conn);
+            }
 
-                    switch (resourceType){
-                        case "core":
-                            coreProps.add("OpenSocketsCurrentCount");
-                            coreProps.add("HeapUsedCurrent");
-                            result.put(server, statisticsStorage.getPropertyData(resourceType, null, coreProps, interval, server));
-                            break;
-                        case "datasource":
-                            coreProps.add("NumAvailable");
-                            coreProps.add("NumUnavailable");
-                            coreProps.add("ActiveConnectionsCurrentCount");
+            for (String server : scope) {
+                Set<String> coreProps = new HashSet<String>();
 
-
-                            result.put(server, statisticsStorage.getPropertyData(resourceType, resource, coreProps, interval, server));
-                            break;
-                    }
-
+                switch (resourceType) {
+                    case "core":
+                        coreProps.add("OpenSocketsCurrentCount");
+                        coreProps.add("HeapSizeCurrent");
+                        coreProps.add("HeapFreeCurrent");
+                        coreProps.add("HeapUsedCurrent");
+                        coreProps.add("HeapFreePercent");
+                        coreProps.add("ExecuteThreadTotalCount");
+                        coreProps.add("HoggingThreadCount");
+                        coreProps.add("PendingUserRequestCount");
+                        coreProps.add("QueueLength");
+                        coreProps.add("CompletedRequestCount");
+                        coreProps.add("ExecuteThreadIdleCount");
+                        coreProps.add("MinThreadsConstraintsCompleted");
+                        coreProps.add("MinThreadsConstraintsPending");
+                        coreProps.add("StandbyThreadCount");
+                        coreProps.add("Throughput");
+                        coreProps.add("TransactionTotalCount");
+                        coreProps.add("TransactionCommittedTotalCount");
+                        coreProps.add("TransactionRolledBackTotalCount");
+                        coreProps.add("TransactionHeuristicsTotalCount");
+                        coreProps.add("TransactionAbandonedTotalCount");
+                        coreProps.add("ActiveTransactionsTotalCount");
+                        result.put(server, statisticsStorage.getPropertyData(resourceType, null, coreProps, interval, server));
+                        break;
+                    case "datasource":
+                        coreProps.add("NumAvailable");
+                        coreProps.add("NumUnavailable");
+                        coreProps.add("ActiveConnectionsCurrentCount");
+                        result.put(server, statisticsStorage.getPropertyData(resourceType, resource, coreProps, interval, server));
+                        break;
                 }
+
 
             }
             return result;
-        } catch (Exception e) {
+        } catch (
+                Exception e
+                )
+
+        {
             e.printStackTrace();
         }
 
@@ -175,9 +197,6 @@ public class StorageService {
         res.add(l2);
         return res;
     }
-
-
-
 
 
 }
