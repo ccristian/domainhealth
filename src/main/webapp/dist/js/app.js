@@ -213,7 +213,7 @@ $(function () {
       var corestats;
 
       $.ajax({
-          url: '/domainhealth/rest/stats/core/tbdd',
+          url: '/domainhealth/rest/stats/core/tbdd?',
           cache: false,
           data:{startTime:startTime,endTime: endTime},
           success: function(response) {
