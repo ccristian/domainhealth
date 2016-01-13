@@ -206,6 +206,12 @@ $(function () {
   }
 
 
+  //temp highcharts
+
+
+
+
+
   //listener for core
   $("#core").click(function () {
     //Enable hide menu when clicking on the content-wrapper on small screens
@@ -219,11 +225,12 @@ $(function () {
           success: function(response) {
             //corestats = response;
             corestats = response;
-            $(".content-wrapper").load("core.html");
+            $(".content-wrapper").load("core.html?_='" + (new Date()).getTime());
             //$("#wrapp").html(template(res));
               for (var key in corestats) {
                // alert(JSON.stringify(key));
               }
+
           },
           error: function(xhr) {
               alert("error");

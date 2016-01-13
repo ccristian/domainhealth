@@ -148,7 +148,9 @@ public class StorageService {
                         coreProps.add("TransactionHeuristicsTotalCount");
                         coreProps.add("TransactionAbandonedTotalCount");
                         coreProps.add("ActiveTransactionsTotalCount");
-                        result.put(server, statisticsStorage.getPropertyData(resourceType, null, coreProps, interval, server));
+                        Map<String, DateAmountDataSet> dataMap = statisticsStorage.getPropertyData(resourceType, null, coreProps, interval, server);
+
+                        //result.put(server, );
                         break;
                     case "datasource":
                         coreProps.add("NumAvailable");
