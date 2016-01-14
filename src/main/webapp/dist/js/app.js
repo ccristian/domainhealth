@@ -27,7 +27,11 @@ if (typeof jQuery === "undefined") {
  *              prevents conflict with other plugins and is a better
  *              way to organize our code.
  */
-$.AdminLTE = {};
+
+
+$.AdminLTE = {
+  corestats:{}
+};
 
 /* --------------------
  * - AdminLTE Options -
@@ -210,26 +214,30 @@ $(function () {
 
 
 
+//the side bar menu
+  var currentDate = new Date();
+  var endTime = moment(currentDate).format('DD-MM-YYYY-HH-mm');
+  var startTime = moment(currentDate).subtract(30,'minutes').format('DD-MM-YYYY-HH-mm');
+
+
 
 
   //listener for core
   $("#core").click(function () {
     //Enable hide menu when clicking on the content-wrapper on small screens
       //alert("Click on core ! do something");
-      var corestats;
 
-      $.ajax({
+
+      //noinspection JSUnresolvedVariable
+    $.ajax({
           url: '/domainhealth/rest/stats/core/tbdd?',
           cache: false,
           data:{startTime:startTime,endTime: endTime},
           success: function(response) {
             //corestats = response;
-            corestats = response;
+            $.AdminLTE.corestats =  response;
+
             $(".content-wrapper").load("core.html?_='" + (new Date()).getTime());
-            //$("#wrapp").html(template(res));
-              for (var key in corestats) {
-               // alert(JSON.stringify(key));
-              }
 
           },
           error: function(xhr) {
@@ -239,10 +247,6 @@ $(function () {
 
   });
 
-  //the side bar menu
-  var currentDate = new Date();
-  var endTime = moment(currentDate).format('DD-MM-YYYY-HH-mm');
-  var startTime = moment(currentDate).subtract(30,'min').format('DD-MM-YYYY-HH-mm');
 
   //http://localhost:7001/domainhealth/rest/resources/workmgr?startTime=01-09-2014-00-00&endTime=17-09-2015-0-00
 

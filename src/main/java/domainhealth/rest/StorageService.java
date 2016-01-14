@@ -6,6 +6,7 @@ import domainhealth.core.env.AppProperties;
 import domainhealth.core.jmx.DomainRuntimeServiceMBeanConnection;
 import domainhealth.core.statistics.MonitorProperties;
 import domainhealth.core.statistics.StatisticsStorage;
+import domainhealth.frontend.data.DateAmountDataItem;
 import domainhealth.frontend.data.DateAmountDataSet;
 import domainhealth.frontend.data.Domain;
 import domainhealth.frontend.data.Statistics;
@@ -20,6 +21,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -101,7 +103,7 @@ public class StorageService {
     @GET
     @Path("stats/{resourceType}/{resource}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Map<String, Map<String, DateAmountDataSet>> getStats(@QueryParam("scope") Set<String> scope,
+    public Map<String,List<Map>> getStats(@QueryParam("scope") Set<String> scope,
                                                                 @QueryParam("startTime") String startTime,
                                                                 @QueryParam("endTime") String endTime,
                                                                 @PathParam("resourceType") String resourceType,
@@ -109,7 +111,39 @@ public class StorageService {
 
         try {
 
-            Map<String, Map<String, DateAmountDataSet>> result = new HashMap<String, Map<String, DateAmountDataSet>>();
+
+
+
+            Map<String, List<Map>> result = new HashMap<String, List<Map>>();
+
+            /*
+            List l = new ArrayList();
+            l.add(new BigDecimal[]{BigDecimal.valueOf(1449756007000l), BigDecimal.valueOf(172.0)});
+            l.add(new BigDecimal[]{BigDecimal.valueOf(1449756037000l), BigDecimal.valueOf(151.0)});
+            l.add(new BigDecimal[]{BigDecimal.valueOf(1449756037000l), BigDecimal.valueOf(151.0)});
+            l.add(new BigDecimal[]{BigDecimal.valueOf(1449756097000l), BigDecimal.valueOf(153.0)});
+            l.add(new BigDecimal[]{BigDecimal.valueOf(1449756127000l), BigDecimal.valueOf(155.0)});
+
+            List l1 = new ArrayList();
+            l1.add(new BigDecimal[]{BigDecimal.valueOf(1449756007000l), BigDecimal.valueOf(171.0)});
+            l1.add(new BigDecimal[]{BigDecimal.valueOf(1449756037000l), BigDecimal.valueOf(161.0)});
+            l1.add(new BigDecimal[]{BigDecimal.valueOf(1449756037000l), BigDecimal.valueOf(131.0)});
+            l1.add(new BigDecimal[]{BigDecimal.valueOf(1449756097000l), BigDecimal.valueOf(123.0)});
+            l1.add(new BigDecimal[]{BigDecimal.valueOf(1449756137000l), BigDecimal.valueOf(475.0)});
+
+ List<Map> listMap = new ArrayList<>();
+
+            Map map2 = new LinkedHashMap();
+            map2.put("name","Ms1");
+            map2.put("data",l1);
+
+            */
+
+
+
+            //result.put("HeapUsedCurrent",listMap);
+
+
             //String temp = resource;
             DateTime start = fmt.parseDateTime(startTime);
             DateTime end = fmt.parseDateTime(endTime);
@@ -124,7 +158,6 @@ public class StorageService {
 
             for (String server : scope) {
                 Set<String> coreProps = new HashSet<String>();
-
                 switch (resourceType) {
                     case "core":
                         coreProps.add("OpenSocketsCurrentCount");
@@ -150,13 +183,36 @@ public class StorageService {
                         coreProps.add("ActiveTransactionsTotalCount");
                         Map<String, DateAmountDataSet> dataMap = statisticsStorage.getPropertyData(resourceType, null, coreProps, interval, server);
 
+                        for (String res:dataMap.keySet()) {
+
+                            DateAmountDataSet dataSet  = dataMap.get(res);
+                            String property = dataSet.getResourceProperty();
+
+                            List dataList = new LinkedList();
+                            for (DateAmountDataItem dateAmountDataItem:dataSet.getData()) {
+                                dataList.add(new BigDecimal[]{BigDecimal.valueOf(dateAmountDataItem.getDateTime().getTime()), BigDecimal.valueOf(dateAmountDataItem.getAmount())});
+                            }
+
+                            Map map = new LinkedHashMap();
+                            map.put("name",server);
+                            map.put("data",dataList);
+                            List<Map> listMap  = result.get(res);
+                            if (listMap==null){
+                                listMap = new ArrayList<>();
+                                result.put(res,listMap);
+                            }
+                            listMap.add(map);
+                        }
+
+
+
                         //result.put(server, );
                         break;
                     case "datasource":
                         coreProps.add("NumAvailable");
                         coreProps.add("NumUnavailable");
                         coreProps.add("ActiveConnectionsCurrentCount");
-                        result.put(server, statisticsStorage.getPropertyData(resourceType, resource, coreProps, interval, server));
+                       // result.put(server, statisticsStorage.getPropertyData(resourceType, resource, coreProps, interval, server));
                         break;
                 }
 
