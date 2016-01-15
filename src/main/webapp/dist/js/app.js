@@ -220,7 +220,11 @@ $(function () {
   var startTime = moment(currentDate).subtract(30,'minutes').format('DD-MM-YYYY-HH-mm');
 
 
-
+  Highcharts.setOptions({
+    global: {
+      useUTC: false
+    }
+  });
 
   //listener for core
   $("#core").click(function () {
