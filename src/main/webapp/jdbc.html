@@ -1,6 +1,66 @@
+<section class="content">
+        <div class="row">
+            <div class="col-md-4">
+                <!-- Line chart -->
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <i class="fa fa-bar-chart-o"></i>
 
-<div id ='jdbc'>
+                        <h3 class="box-title">Number Available</h3>
 
-    JDBC
+                        <div class="box-tools pull-right">
+                            <!--button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button-->
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div id="NumAvailable" style="height: 300px;"></div>
+                    </div><!-- /.box-body-->
+                </div><!-- /.box -->
+            </div><!-- /.col -->
 
-</div>
+
+
+
+        </div>
+
+        <script>
+
+            $('#NumAvailable').highcharts({
+                chart:{
+                    type:'spline',
+                    zoomType: 'x'
+                },
+                title: {
+                    text: ''
+                },
+                subtitle: {
+                    text: ''
+                },
+                xAxis: {
+                    type: 'datetime',
+
+                    title: {
+                        text: 'Date'
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Megabytes'
+                    },
+                    min: 0,
+                },
+                tooltip: {
+                    formatter: function () {
+                        return '<b>' + this.series.name + '</b><br/>' +
+                                Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
+                                '<b>'+Highcharts.numberFormat(this.y, 2)+'</b>';
+                    }
+                },
+                series: $.AdminLTE.datasource["NumAvailable"]
+            });
+
+        </script>
+
+
+    </section>

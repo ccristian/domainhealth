@@ -495,7 +495,7 @@ public class StatisticsStorage {
      * @return The file path of the specific statistics CSV file
      */
     private Map<File, Date> getServerResourceCSVPath(Interval interval, String serverName, String resourceType, String resourceName) throws IOException {
-        Map<File, Date> daysMap = new HashMap<File, Date>();
+        Map<File, Date> daysMap = new LinkedHashMap<>();
         DateFormat dayDateFormat = new SimpleDateFormat(DATE_PATH_FORMAT);
         if (resourceName == null) {
             resourceName = "";
@@ -725,15 +725,21 @@ public class StatisticsStorage {
         Map<File, Date> csvLocationPerFile = this.getServerResourceCSVPath(interval, serverName, resourceType, resourceName);
         Collection<File> files = csvLocationPerFile.keySet();
         for (File file : files) {
+
             if ((file == null) || (!file.exists())) {
                 continue;
                 //return new DateAmountDataSet();
             }
             for (String resourceProperty : resourceProperties) {
-                DateAmountDataSet resultDataSet = new DateAmountDataSet();
-                resultDataSet.setResourceType(resourceType);
-                resultDataSet.setResourceName(resourceName);
-                resultDataSet.setResourceProperty(resourceProperty);
+                DateAmountDataSet resultDataSet = data.get(resourceProperty);
+                if (resultDataSet==null){
+                    resultDataSet = new DateAmountDataSet();
+                    resultDataSet.setResourceType(resourceType);
+                    resultDataSet.setResourceName(resourceName);
+                    resultDataSet.setResourceProperty(resourceProperty);
+                    data.put(resourceProperty, resultDataSet);
+                }
+
                 //later to review because the file is already located for a each day from the interval
                 //so getting it one more time does not make sense
                 int propertyPosition = this.getPropertyPositionInStatsFile(resourceType, resourceName, csvLocationPerFile.get(file), serverName, resourceProperty);
@@ -744,7 +750,6 @@ public class StatisticsStorage {
                 try {
                     in = new BufferedReader(new FileReader(file));
                     resultDataSet.addDataSet(generatePropertyDataSet(in, interval.getStart().toDate(), interval.getEnd().toDate(), propertyPosition, resourceType, resourceName, resourceProperty));
-                    data.put(resourceProperty, resultDataSet);
                 } finally {
                     if (in != null) {
                         try {

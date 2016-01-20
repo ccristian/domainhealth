@@ -116,35 +116,6 @@ public class StorageService {
 
             Map<String, List<Map>> result = new HashMap<String, List<Map>>();
 
-            /*
-            List l = new ArrayList();
-            l.add(new BigDecimal[]{BigDecimal.valueOf(1449756007000l), BigDecimal.valueOf(172.0)});
-            l.add(new BigDecimal[]{BigDecimal.valueOf(1449756037000l), BigDecimal.valueOf(151.0)});
-            l.add(new BigDecimal[]{BigDecimal.valueOf(1449756037000l), BigDecimal.valueOf(151.0)});
-            l.add(new BigDecimal[]{BigDecimal.valueOf(1449756097000l), BigDecimal.valueOf(153.0)});
-            l.add(new BigDecimal[]{BigDecimal.valueOf(1449756127000l), BigDecimal.valueOf(155.0)});
-
-            List l1 = new ArrayList();
-            l1.add(new BigDecimal[]{BigDecimal.valueOf(1449756007000l), BigDecimal.valueOf(171.0)});
-            l1.add(new BigDecimal[]{BigDecimal.valueOf(1449756037000l), BigDecimal.valueOf(161.0)});
-            l1.add(new BigDecimal[]{BigDecimal.valueOf(1449756037000l), BigDecimal.valueOf(131.0)});
-            l1.add(new BigDecimal[]{BigDecimal.valueOf(1449756097000l), BigDecimal.valueOf(123.0)});
-            l1.add(new BigDecimal[]{BigDecimal.valueOf(1449756137000l), BigDecimal.valueOf(475.0)});
-
- List<Map> listMap = new ArrayList<>();
-
-            Map map2 = new LinkedHashMap();
-            map2.put("name","Ms1");
-            map2.put("data",l1);
-
-            */
-
-
-
-            //result.put("HeapUsedCurrent",listMap);
-
-
-            //String temp = resource;
             DateTime start = fmt.parseDateTime(startTime);
             DateTime end = fmt.parseDateTime(endTime);
             Interval interval = new Interval(start, end);
@@ -156,14 +127,17 @@ public class StorageService {
                 scope = statisticsStorage.getAllPossibleServerNames(conn);
             }
 
+
+            Map<String, DateAmountDataSet> dataMap = null;
+
             for (String server : scope) {
                 Set<String> coreProps = new HashSet<String>();
                 switch (resourceType) {
                     case "core":
+                        coreProps.add("HeapUsedCurrent");
                         coreProps.add("OpenSocketsCurrentCount");
                         coreProps.add("HeapSizeCurrent");
                         coreProps.add("HeapFreeCurrent");
-                        coreProps.add("HeapUsedCurrent");
                         coreProps.add("HeapFreePercent");
                         coreProps.add("ExecuteThreadTotalCount");
                         coreProps.add("HoggingThreadCount");
@@ -181,28 +155,9 @@ public class StorageService {
                         coreProps.add("TransactionHeuristicsTotalCount");
                         coreProps.add("TransactionAbandonedTotalCount");
                         coreProps.add("ActiveTransactionsTotalCount");
-                        Map<String, DateAmountDataSet> dataMap = statisticsStorage.getPropertyData(resourceType, null, coreProps, interval, server);
 
-                        for (String res:dataMap.keySet()) {
+                        resource = null;
 
-                            DateAmountDataSet dataSet  = dataMap.get(res);
-                            String property = dataSet.getResourceProperty();
-
-                            List dataList = new LinkedList();
-                            for (DateAmountDataItem dateAmountDataItem:dataSet.getData()) {
-                                dataList.add(new BigDecimal[]{BigDecimal.valueOf(dateAmountDataItem.getDateTime().getTime()), BigDecimal.valueOf(dateAmountDataItem.getAmount())});
-                            }
-
-                            Map map = new LinkedHashMap();
-                            map.put("name",server);
-                            map.put("data",dataList);
-                            List<Map> listMap  = result.get(res);
-                            if (listMap==null){
-                                listMap = new ArrayList<>();
-                                result.put(res,listMap);
-                            }
-                            listMap.add(map);
-                        }
 
 
 
@@ -212,12 +167,37 @@ public class StorageService {
                         coreProps.add("NumAvailable");
                         coreProps.add("NumUnavailable");
                         coreProps.add("ActiveConnectionsCurrentCount");
-                       // result.put(server, statisticsStorage.getPropertyData(resourceType, resource, coreProps, interval, server));
                         break;
                 }
 
+                dataMap = statisticsStorage.getPropertyData(resourceType, resource, coreProps, interval, server);
+                for (String res:dataMap.keySet()) {
+
+                    DateAmountDataSet dataSet  = dataMap.get(res);
+                    String property = dataSet.getResourceProperty();
+
+                    List dataList = new LinkedList();
+                    for (DateAmountDataItem dateAmountDataItem:dataSet.getData()) {
+                        dataList.add(new BigDecimal[]{BigDecimal.valueOf(dateAmountDataItem.getDateTime().getTime()), BigDecimal.valueOf(dateAmountDataItem.getAmount())});
+                    }
+
+                    Map map = new LinkedHashMap();
+                    map.put("name",server);
+                    map.put("data",dataList);
+                    List<Map> listMap  = result.get(res);
+                    if (listMap==null){
+                        listMap = new ArrayList<>();
+                        result.put(res,listMap);
+                    }
+                    listMap.add(map);
+                }
 
             }
+
+
+
+
+
             return result;
         } catch (
                 Exception e

@@ -217,12 +217,29 @@ $(function () {
 //the side bar menu
   var currentDate = new Date();
   var endTime = moment(currentDate).format('DD-MM-YYYY-HH-mm');
-  var startTime = moment(currentDate).subtract(30,'minutes').format('DD-MM-YYYY-HH-mm');
+  var startTime = moment(currentDate).subtract(365,'days').format('DD-MM-YYYY-HH-mm');
 
 
   Highcharts.setOptions({
     global: {
       useUTC: false
+    }
+  });
+
+
+  $.ajax({
+    url: '/domainhealth/rest/stats/core/tbdd?',
+    cache: false,
+    data:{startTime:startTime,endTime: endTime},
+    success: function(response) {
+      //corestats = response;
+      $.AdminLTE.corestats =  response;
+
+      $(".content-wrapper").load("core.html?_='" + (new Date()).getTime());
+
+    },
+    error: function(xhr) {
+      alert("error");
     }
   });
 
@@ -271,6 +288,31 @@ $(function () {
      var resources = response;
       var res = resources["datasource"];
       $("#datasource").html(template(res));
+      $.each( res, function( key, value ) {
+        //alert('/domainhealth/rest/stats/datasource/'+value);
+        $("#"+value).click(function () {
+          //Enable hide menu when clicking on the content-wrapper on small screens
+          //alert("Click on core ! do something");
+          //noinspection JSUnresolvedVariable
+
+          $.ajax({
+            url: '/domainhealth/rest/stats/datasource/'+value+'?',
+            cache: false,
+            data:{startTime:startTime,endTime: endTime},
+            success: function(response) {
+              //corestats = response;
+              $.AdminLTE.datasource =  response;
+              //alert(response);
+              $(".content-wrapper").load("jdbc.html?_='" + (new Date()).getTime());
+
+            },
+            error: function(xhr) {
+              alert("error");
+            }
+          });
+
+        });
+      });
 
       res = resources["destination"];
       $("#destination").html(template(res));
