@@ -217,7 +217,7 @@ $(function () {
 //the side bar menu
   var currentDate = new Date();
   var endTime = moment(currentDate).format('DD-MM-YYYY-HH-mm');
-  var startTime = moment(currentDate).subtract(365,'days').format('DD-MM-YYYY-HH-mm');
+  var startTime = moment(currentDate).subtract(2,'days').format('DD-MM-YYYY-HH-mm');
 
 
   Highcharts.setOptions({
@@ -234,8 +234,8 @@ $(function () {
     success: function(response) {
       //corestats = response;
       $.AdminLTE.corestats =  response;
-
-      $(".content-wrapper").load("core.html?_='" + (new Date()).getTime());
+      //alert($.AdminLTE.corestats["HeapUsedCurrent"][0].data);
+      $(".content-wrapper").load("coremin.html?_='" + (new Date()).getTime());
 
     },
     error: function(xhr) {
@@ -258,7 +258,7 @@ $(function () {
             //corestats = response;
             $.AdminLTE.corestats =  response;
 
-            $(".content-wrapper").load("core.html?_='" + (new Date()).getTime());
+            $(".content-wrapper").load("coremin.html?_='" + (new Date()).getTime());
 
           },
           error: function(xhr) {

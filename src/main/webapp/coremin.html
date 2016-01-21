@@ -1,12 +1,12 @@
 <section class="content">
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
             <!-- Line chart -->
             <div class="box box-primary">
                 <div class="box-header with-border">
                     <i class="fa fa-bar-chart-o"></i>
 
-                    <h3 class="box-title">Heap Used</h3>
+                    <h3 class="box-title">Heap Used </h3>
 
                     <div class="box-tools pull-right">
                         <!--button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
@@ -20,272 +20,102 @@
         </div><!-- /.col -->
 
 
+        <div class="row">
+            <div class="col-md-6">
+                <!-- Line chart -->
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <i class="fa fa-bar-chart-o"></i>
 
-        <div class="col-md-4">
-            <!-- Line chart -->
-            <div class="box box-primary">
-                <div class="box-header with-border">
-                    <i class="fa fa-bar-chart-o"></i>
+                        <h3 class="box-title">Open Sockets</h3>
 
-                    <h3 class="box-title">Thread Pool Excecute Threads</h3>
-
-                    <div class="box-tools pull-right">
-                        <!--button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                        <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button-->
+                        <div class="box-tools pull-right">
+                            <!--button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button-->
+                        </div>
                     </div>
-                </div>
-                <div class="box-body">
-                    <div id="ExecuteThreadTotalCount" style="height: 300px;"></div>
-                </div><!-- /.box-body-->
-            </div><!-- /.box -->
-        </div>
+                    <div class="box-body">
+                        <div id="OpenSocketsCurrentCount" style="height: 300px;"></div>
+                    </div><!-- /.box-body-->
+                </div><!-- /.box -->
+            </div><!-- /.col -->
+
+
 
     </div>
 
     <script>
 
 
-        $('#ExecuteThreadTotalCount').highcharts({
-            chart:{
-                type:'spline',
-                zoomType: 'x'
-            },
-            title: {
-                text: ''
-            },
-            subtitle: {
-                text: ''
-            },
-            xAxis: {
-                type: 'datetime',
 
-                title: {
-                    text: 'Date'
-                }
+
+        $('#HeapUsedCurrent').highcharts('StockChart', {
+
+            rangeSelector: {
+                selected: 4
             },
+
             yAxis: {
-                title: {
-                    text: 'Number'
-                },
-                min: 0,
+                plotLines: [{
+                    value: 0,
+                    width: 2,
+                    color: 'silver'
+                }]
+            },
+            title : {
+                text : ''
+            },
+
+            plotOptions: {
+                series: {
+                    showCheckbox: true
+                }
             },
             tooltip: {
-                formatter: function () {
-                    return '<b>' + this.series.name + '</b><br/>' +
-                            Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
-                            '<b>'+Highcharts.numberFormat(this.y, 2)+'</b>';
-                }
+                valueDecimals: 2
             },
-            series: $.AdminLTE.corestats["ExecuteThreadTotalCount"]
-        })
 
-        $('#PendingUserRequestCount').highcharts({
-            chart:{
-                type:'spline',
-                zoomType: 'x'
-            },
-            title: {
-                text: ''
-            },
-            subtitle: {
-                text: ''
-            },
-            xAxis: {
-                type: 'datetime',
-
-                title: {
-                    text: 'Date'
-                }
-            },
-            yAxis: {
-                title: {
-                    text: 'Number'
-                },
-                min: 0,
-            },
-            tooltip: {
-                formatter: function () {
-                    return '<b>' + this.series.name + '</b><br/>' +
-                            Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
-                            '<b>'+Highcharts.numberFormat(this.y, 2)+'</b>';
-                }
-            },
-            series: $.AdminLTE.corestats["PendingUserRequestCount"]
-        })
-
-        $('#QueueLength').highcharts({
-            chart:{
-                type:'spline',
-                zoomType: 'x'
-            },
-            title: {
-                text: ''
-            },
-            subtitle: {
-                text: ''
-            },
-            xAxis: {
-                type: 'datetime',
-
-                title: {
-                    text: 'Date'
-                }
-            },
-            yAxis: {
-                title: {
-                    text: 'Number'
-                },
-                min: 0,
-            },
-            tooltip: {
-                formatter: function () {
-                    return '<b>' + this.series.name + '</b><br/>' +
-                            Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
-                            '<b>'+Highcharts.numberFormat(this.y, 2)+'</b>';
-                }
-            },
-            series: $.AdminLTE.corestats["QueueLength"]
-        })
+            series :$.AdminLTE.corestats["HeapUsedCurrent"]
 
 
-        $('#CompletedRequestCount').highcharts({
-            chart:{
-                type:'spline',
-                zoomType: 'x'
-            },
-            title: {
-                text: ''
-            },
-            subtitle: {
-                text: ''
-            },
-            xAxis: {
-                type: 'datetime',
-
-                title: {
-                    text: 'Date'
-                }
-            },
-            yAxis: {
-                title: {
-                    text: 'Number'
-                },
-                min: 0,
-            },
-            tooltip: {
-                formatter: function () {
-                    return '<b>' + this.series.name + '</b><br/>' +
-                            Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
-                            '<b>'+Highcharts.numberFormat(this.y, 2)+'</b>';
-                }
-            },
-            series: $.AdminLTE.corestats["CompletedRequestCount"]
-        })
-
-
-        $('#Throughput').highcharts({
-            chart:{
-                type:'spline',
-                zoomType: 'x'
-            },
-            title: {
-                text: ''
-            },
-            subtitle: {
-                text: ''
-            },
-            xAxis: {
-                type: 'datetime',
-
-                title: {
-                    text: 'Date'
-                }
-            },
-            yAxis: {
-                title: {
-                    text: 'Number'
-                },
-                min: 0,
-            },
-            tooltip: {
-                formatter: function () {
-                    return '<b>' + this.series.name + '</b><br/>' +
-                            Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
-                            '<b>'+Highcharts.numberFormat(this.y, 2)+'</b>';
-                }
-            },
-            series: $.AdminLTE.corestats["Throughput"]
-        })
-
-
-        $('#OpenSocketsCurrentCount').highcharts({
-            chart:{
-                type:'spline',
-                zoomType: 'x'
-            },
-            title: {
-                text: ''
-            },
-            subtitle: {
-                text: ''
-            },
-            xAxis: {
-                type: 'datetime',
-
-                title: {
-                    text: 'Date'
-                }
-            },
-            yAxis: {
-                title: {
-                    text: 'Number'
-                },
-                min: 0,
-            },
-            tooltip: {
-                formatter: function () {
-                    return '<b>' + this.series.name + '</b><br/>' +
-                            Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
-                            '<b>'+Highcharts.numberFormat(this.y, 2)+'</b>';
-                }
-            },
-            series: $.AdminLTE.corestats["OpenSocketsCurrentCount"]
-        })
-
-
-        $('#HeapUsedCurrent').highcharts({
-            chart:{
-                type:'spline',
-                zoomType: 'x'
-            },
-            title: {
-                text: ''
-            },
-            subtitle: {
-                text: ''
-            },
-            xAxis: {
-                type: 'datetime',
-
-                title: {
-                    text: 'Date'
-                }
-            },
-            yAxis: {
-                title: {
-                    text: 'Megabytes'
-                },
-                min: 0,
-            },
-            tooltip: {
-                formatter: function () {
-                    return '<b>' + this.series.name + '</b><br/>' +
-                            Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
-                            '<b>'+Highcharts.numberFormat(this.y, 2)+'</b>';
-                }
-            },
-            series: $.AdminLTE.corestats["HeapUsedCurrent"]
         });
+
+
+        $('#OpenSocketsCurrentCount').highcharts('StockChart', {
+
+            rangeSelector: {
+                selected: 4
+            },
+
+            yAxis: {
+                plotLines: [{
+                    value: 0,
+                    width: 2,
+                    color: 'silver'
+                }]
+            },
+            title : {
+                text : ''
+            },
+
+            plotOptions: {
+                series: {
+                    showCheckbox: true
+                }
+            },
+            tooltip: {
+                valueDecimals: 2
+            },
+
+            series :$.AdminLTE.corestats["OpenSocketsCurrentCount"]
+
+
+        });
+
+
+
+
+
 
     </script>
 
