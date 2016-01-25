@@ -245,9 +245,9 @@ $(function () {
             $.AdminLTE.corestats =  response;
 
             //$(".content-wrapper").load("coremin.html?_='" + (new Date()).getTime());
-            var xxx = templateGraph($.AdminLTE.corestats);
-           alert($.AdminLTE.corestats);
-            $(".content-wrapper").html(xxx);
+            //var xxx = templateGraph($.AdminLTE.corestats);
+
+            ///$(".content-wrapper").html(xxx);
 
 
           },
@@ -264,12 +264,34 @@ $(function () {
   var source = $("#menu-template").html();
   var template = Handlebars.compile(source);
 
-  var sourceGraph = $("#graph-template").html();
-  var templateGraph = Handlebars.compile(sourceGraph);
+  //var sourceGraph = $("#graph-template").html();
+  //var templateGraph = Handlebars.compile(sourceGraph);
+
+
+  var source1 = $("#entry-template").html();
+  var template1 = Handlebars.compile(source1);
+
+//JSON data structure - payload
+  var data = {"key1": "value1", "key2": "value2"};
+
+  var container = {};
+  container.data = data;
+//data2 as a dummy value for a flexible datastructure
+
+
+  var html1 = template1(container);
+  $('.content-wrapper').html(html1);
 
 
 
-
+  Handlebars.registerHelper('eachMapEntries', function(context, options) {
+    var ret = "";
+    $.each(context, function(key, value) {
+      var entry = {"key": key, "value": value};
+      ret = ret + options.fn(entry);
+    });
+    return ret;
+  });
 
   Handlebars.registerHelper('shortName', function(name) {
     return name.substr(0,22);

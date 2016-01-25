@@ -385,13 +385,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
     </script>
 
 
-    <script id="graph-template" type="text/x-handlebars-template">
-      {{#each myObject}}
-      Key: {{@key}} Value = {{this}}
-      {{/each}}
 
+
+    <script id="entry-template" type="text/x-handlebars-template">
+      {{#eachMapEntries data}}
+      key: {{this.key}} / value: {{this.value}} <br>
+      {{/eachMapEntries}}
+      <hr>
     </script>
-
 
 
 
