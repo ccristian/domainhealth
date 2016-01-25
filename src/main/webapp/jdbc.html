@@ -44,6 +44,42 @@
                         text: 'Date'
                     }
                 },
+                rangeSelector: {
+
+                    buttons: [
+                        {
+                            type: 'day',
+                            count: 1,
+                            text: '1d'
+                        },
+                        {
+                        type: 'day',
+                        count: 3,
+                        text: '3d'
+                    },
+
+                        , {
+                        type: 'week',
+                        count: 1,
+                        text: '1w'
+                    }, {
+                        type: 'month',
+                        count: 1,
+                        text: '1m'
+                    }, {
+                        type: 'month',
+                        count: 6,
+                        text: '6m'
+                    }, {
+                        type: 'year',
+                        count: 1,
+                        text: '1y'
+                    }, {
+                        type: 'all',
+                        text: 'All'
+                    }],
+                    selected: 1
+                },
                 yAxis: {
                     title: {
                         text: 'Megabytes'

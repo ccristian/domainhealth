@@ -227,21 +227,7 @@ $(function () {
   });
 
 
-  $.ajax({
-    url: '/domainhealth/rest/stats/core/tbdd?',
-    cache: false,
-    data:{startTime:startTime,endTime: endTime},
-    success: function(response) {
-      //corestats = response;
-      $.AdminLTE.corestats =  response;
-      //alert($.AdminLTE.corestats["HeapUsedCurrent"][0].data);
-      $(".content-wrapper").load("coremin.html?_='" + (new Date()).getTime());
 
-    },
-    error: function(xhr) {
-      alert("error");
-    }
-  });
 
   //listener for core
   $("#core").click(function () {
@@ -258,7 +244,11 @@ $(function () {
             //corestats = response;
             $.AdminLTE.corestats =  response;
 
-            $(".content-wrapper").load("coremin.html?_='" + (new Date()).getTime());
+            //$(".content-wrapper").load("coremin.html?_='" + (new Date()).getTime());
+            var xxx = templateGraph($.AdminLTE.corestats);
+           alert($.AdminLTE.corestats);
+            $(".content-wrapper").html(xxx);
+
 
           },
           error: function(xhr) {
@@ -274,10 +264,18 @@ $(function () {
   var source = $("#menu-template").html();
   var template = Handlebars.compile(source);
 
+  var sourceGraph = $("#graph-template").html();
+  var templateGraph = Handlebars.compile(sourceGraph);
+
+
+
+
 
   Handlebars.registerHelper('shortName', function(name) {
     return name.substr(0,22);
   });
+
+
 
 
   $.ajax({

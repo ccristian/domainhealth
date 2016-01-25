@@ -18,30 +18,6 @@
                 </div><!-- /.box-body-->
             </div><!-- /.box -->
         </div><!-- /.col -->
-
-
-        <div class="row">
-            <div class="col-md-6">
-                <!-- Line chart -->
-                <div class="box box-primary">
-                    <div class="box-header with-border">
-                        <i class="fa fa-bar-chart-o"></i>
-
-                        <h3 class="box-title">Open Sockets</h3>
-
-                        <div class="box-tools pull-right">
-                            <!--button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button-->
-                        </div>
-                    </div>
-                    <div class="box-body">
-                        <div id="OpenSocketsCurrentCount" style="height: 300px;"></div>
-                    </div><!-- /.box-body-->
-                </div><!-- /.box -->
-            </div><!-- /.col -->
-
-
-
     </div>
 
     <script>
@@ -66,55 +42,39 @@
                 text : ''
             },
 
-            plotOptions: {
-                series: {
-                    showCheckbox: true
-                }
-            },
             tooltip: {
                 valueDecimals: 2
+            },
+            rangeSelector: {
+
+                buttons: [
+                    {
+                        type: 'day',
+                        count: 1,
+                        text: '1d'
+                    },
+                    {
+                        type: 'day',
+                        count: 2,
+                        text: '2d'
+                    },
+
+                    {
+                        type: 'all',
+                        text: 'All'
+                    }],
+                selected: 0
+            },
+
+            legend: {
+                enabled: true,
+                maxHeight: 100
             },
 
             series :$.AdminLTE.corestats["HeapUsedCurrent"]
 
 
         });
-
-
-        $('#OpenSocketsCurrentCount').highcharts('StockChart', {
-
-            rangeSelector: {
-                selected: 4
-            },
-
-            yAxis: {
-                plotLines: [{
-                    value: 0,
-                    width: 2,
-                    color: 'silver'
-                }]
-            },
-            title : {
-                text : ''
-            },
-
-            plotOptions: {
-                series: {
-                    showCheckbox: true
-                }
-            },
-            tooltip: {
-                valueDecimals: 2
-            },
-
-            series :$.AdminLTE.corestats["OpenSocketsCurrentCount"]
-
-
-        });
-
-
-
-
 
 
     </script>

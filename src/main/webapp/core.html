@@ -384,7 +384,15 @@
                             '<b>'+Highcharts.numberFormat(this.y, 2)+'</b>';
                 }
             },
-            series: $.AdminLTE.corestats["HeapUsedCurrent"]
+            series:{
+                name:    $.AdminLTE.corestats["HeapUsedCurrent"].name,
+                data:     $.AdminLTE.corestats["HeapUsedCurrent"].data,
+                pointInterval: 300000
+
+            }
+
+
+
         });
 
     </script>

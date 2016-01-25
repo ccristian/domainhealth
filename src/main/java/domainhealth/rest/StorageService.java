@@ -194,10 +194,11 @@ public class StorageService {
 
             }
 
-
-
-
-
+            long t1 = System.currentTimeMillis();
+            // TODO add misssing data
+            // addMissingData(result,start,end);
+            long t2 = System.currentTimeMillis();
+            System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"+(t2-t1));
             return result;
         } catch (
                 Exception e
@@ -208,6 +209,50 @@ public class StorageService {
         }
 
         return null;
+    }
+
+    private void addMissingData(Map<String,List<Map>> data,DateTime startTime,DateTime endTime){
+        for (List<Map> list : data.values()) {
+            for (Map map:list) {
+                List<BigDecimal[]> dataList = (List<BigDecimal[]>)map.get("data");
+                DateTime inter = startTime;
+                // Loop through each day in the span
+                while (inter.compareTo(endTime) < 0) {
+                    // Go to next
+                    inter = inter.plusHours(1);
+                    if (!isDatePresent(inter,dataList)){
+                        dataList.add(new BigDecimal[]{BigDecimal.valueOf(inter.getMillis()),null});
+                    }
+                }
+                Collections.sort(dataList, new Comparator<BigDecimal[]>() {
+                    @Override
+                    public int compare(BigDecimal[] o1, BigDecimal[] o2) {
+                        return o1[0].compareTo(o2[0]);
+                    }
+                });
+            }
+        }
+
+    }
+
+    private boolean isDatePresent(DateTime date,List<BigDecimal[]> dataList){
+        int year = date.getYear();
+        int month = date.getMonthOfYear();
+        int day = date.getDayOfMonth();
+        int hour = date.getHourOfDay();
+
+        for (BigDecimal[] val : dataList) {
+            BigDecimal timeasBD = (BigDecimal) val[0];
+            DateTime datetime = new DateTime(timeasBD.longValue());
+            int yearDT = datetime.getYear();
+            int monthDT = datetime.getMonthOfYear();
+            int dayDT = datetime.getDayOfMonth();
+            int hourDT = datetime.getHourOfDay();
+            if (year==yearDT && monthDT==month && dayDT==day && hourDT==hour )
+                return true;
+        }
+
+        return false;
     }
 
 
