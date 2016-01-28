@@ -217,7 +217,7 @@ $(function () {
 //the side bar menu
   var currentDate = new Date();
   var endTime = moment(currentDate).format('DD-MM-YYYY-HH-mm');
-  var startTime = moment(currentDate).subtract(2,'days').format('DD-MM-YYYY-HH-mm');
+  var startTime = moment(currentDate).subtract(30,'minutes').format('DD-MM-YYYY-HH-mm');
 
 
   Highcharts.setOptions({
@@ -225,6 +225,7 @@ $(function () {
       useUTC: false
     }
   });
+
 
 
 
@@ -242,12 +243,13 @@ $(function () {
           data:{startTime:startTime,endTime: endTime},
           success: function(response) {
             //corestats = response;
-            $.AdminLTE.corestats =  response;
-
+            $.AdminLTE.renderedData =  response;
+           // $.AdminLTE.corestats.resname = "corestats"
+            //console.log(JSON.stringify($.AdminLTE.corestats));
             //$(".content-wrapper").load("coremin.html?_='" + (new Date()).getTime());
-            //var xxx = templateGraph($.AdminLTE.corestats);
-
-            ///$(".content-wrapper").html(xxx);
+            //var xxx =
+           // alert(xxx);
+            $(".content-wrapper").html(template1($.AdminLTE.renderedData));
 
 
           },
@@ -264,40 +266,15 @@ $(function () {
   var source = $("#menu-template").html();
   var template = Handlebars.compile(source);
 
-  //var sourceGraph = $("#graph-template").html();
-  //var templateGraph = Handlebars.compile(sourceGraph);
-
-
-  var source1 = $("#entry-template").html();
+  var source1 = $("#menu-template1").html();
   var template1 = Handlebars.compile(source1);
 
-//JSON data structure - payload
-  var data = {"key1": "value1", "key2": "value2"};
-
-  var container = {};
-  container.data = data;
-//data2 as a dummy value for a flexible datastructure
 
 
-  var html1 = template1(container);
-  $('.content-wrapper').html(html1);
-
-
-
-  Handlebars.registerHelper('eachMapEntries', function(context, options) {
-    var ret = "";
-    $.each(context, function(key, value) {
-      var entry = {"key": key, "value": value};
-      ret = ret + options.fn(entry);
-    });
-    return ret;
-  });
 
   Handlebars.registerHelper('shortName', function(name) {
     return name.substr(0,22);
   });
-
-
 
 
   $.ajax({
@@ -321,9 +298,12 @@ $(function () {
             data:{startTime:startTime,endTime: endTime},
             success: function(response) {
               //corestats = response;
-              $.AdminLTE.datasource =  response;
+              $.AdminLTE.renderedData =  response;
+              //$.AdminLTE.datasource =  response;
+              //$.AdminLTE.resname = "datasource";
               //alert(response);
-              $(".content-wrapper").load("jdbc.html?_='" + (new Date()).getTime());
+              $(".content-wrapper").html(template1($.AdminLTE.renderedData));
+
 
             },
             error: function(xhr) {
@@ -336,6 +316,30 @@ $(function () {
 
       res = resources["destination"];
       $("#destination").html(template(res));
+      $.each( res, function( key, value ) {
+
+        $("#"+value).click(function () {
+          //Enable hide menu when clicking on the content-wrapper on small screens
+          //alert("Click on core ! do something");
+          //noinspection JSUnresolvedVariable
+
+          $.ajax({
+            url: '/domainhealth/rest/stats/destination/'+value+'?',
+            cache: false,
+            data:{startTime:startTime,endTime: endTime},
+            success: function(response) {
+              //corestats = response;
+              $.AdminLTE.renderedData =  response;
+              $(".content-wrapper").html(template1($.AdminLTE.renderedData));
+
+            },
+            error: function(xhr) {
+              alert("error");
+            }
+          });
+
+        });
+      });
 
       res = resources["saf"];
       $("#saf").html(template(res));
