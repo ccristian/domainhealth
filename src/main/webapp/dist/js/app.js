@@ -217,7 +217,7 @@ $(function () {
 //the side bar menu
   var currentDate = new Date();
   var endTime = moment(currentDate).format('DD-MM-YYYY-HH-mm');
-  var startTime = moment(currentDate).subtract(30,'minutes').format('DD-MM-YYYY-HH-mm');
+  var startTime = moment(currentDate).subtract(30,'days').format('DD-MM-YYYY-HH-mm');
 
 
   Highcharts.setOptions({
@@ -319,16 +319,12 @@ $(function () {
       $.each( res, function( key, value ) {
 
         $("#"+value).click(function () {
-          //Enable hide menu when clicking on the content-wrapper on small screens
-          //alert("Click on core ! do something");
-          //noinspection JSUnresolvedVariable
 
           $.ajax({
             url: '/domainhealth/rest/stats/destination/'+value+'?',
             cache: false,
             data:{startTime:startTime,endTime: endTime},
             success: function(response) {
-              //corestats = response;
               $.AdminLTE.renderedData =  response;
               $(".content-wrapper").html(template1($.AdminLTE.renderedData));
 
@@ -343,16 +339,95 @@ $(function () {
 
       res = resources["saf"];
       $("#saf").html(template(res));
+      $.each( res, function( key, value ) {
+
+        $("#"+value).click(function () {
+
+          $.ajax({
+            url: '/domainhealth/rest/stats/saf/'+value+'?',
+            cache: false,
+            data:{startTime:startTime,endTime: endTime},
+            success: function(response) {
+              $.AdminLTE.renderedData =  response;
+              $(".content-wrapper").html(template1($.AdminLTE.renderedData));
+
+            },
+            error: function(xhr) {
+              alert("error");
+            }
+          });
+
+        });
+      });
 
       res = resources["webapp"];
       $("#webapp").html(template(res));
+      $.each( res, function( key, value ) {
+
+        $("#"+value).click(function () {
+
+          $.ajax({
+            url: '/domainhealth/rest/stats/webapp/'+value+'?',
+            cache: false,
+            data:{startTime:startTime,endTime: endTime},
+            success: function(response) {
+              $.AdminLTE.renderedData =  response;
+              $(".content-wrapper").html(template1($.AdminLTE.renderedData));
+
+            },
+            error: function(xhr) {
+              alert("error");
+            }
+          });
+
+        });
+      });
 
       res = resources["ejb"];
       $("#ejb").html(template(res));
+      $.each( res, function( key, value ) {
+
+        $("#"+value).click(function () {
+
+          $.ajax({
+            url: '/domainhealth/rest/stats/ejb/'+value+'?',
+            cache: false,
+            data:{startTime:startTime,endTime: endTime},
+            success: function(response) {
+              $.AdminLTE.renderedData =  response;
+              $(".content-wrapper").html(template1($.AdminLTE.renderedData));
+
+            },
+            error: function(xhr) {
+              alert("error");
+            }
+          });
+
+        });
+      });
 
       res = resources["svrchnl"];
       $("#svrchnl").html(template(res));
+      $.each( res, function( key, value ) {
 
+        $("#"+value).click(function () {
+
+          $.ajax({
+            url: '/domainhealth/rest/stats/svrchnl/'+value+'?',
+            cache: false,
+            data:{startTime:startTime,endTime: endTime},
+            success: function(response) {
+              $.AdminLTE.renderedData =  response;
+              $(".content-wrapper").html(template1($.AdminLTE.renderedData));
+
+            },
+            error: function(xhr) {
+              alert("error");
+            }
+          });
+
+        });
+      });
 
     },
     error: function(xhr) {

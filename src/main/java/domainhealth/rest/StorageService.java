@@ -167,7 +167,66 @@ public class StorageService {
                         coreProps.add("NumAvailable");
                         coreProps.add("NumUnavailable");
                         coreProps.add("ActiveConnectionsCurrentCount");
+                        coreProps.add("ConnectionDelayTime");
+                        coreProps.add("FailedReserveRequestCount");
+                        coreProps.add("FailuresToReconnectCount");
+                        coreProps.add("LeakedConnectionCount");
+                        coreProps.add("WaitingForConnectionCurrentCount");
+                        coreProps.add("WaitingForConnectionFailureTotal");
+                        coreProps.add("WaitSecondsHighCount");
                         break;
+
+                    case "destination":
+                        coreProps.add("MessagesCurrentCount");
+                        coreProps.add("MessagesReceivedCount");
+                        coreProps.add("MessagesPendingCount");
+                        coreProps.add("MessagesHighCount");
+                        coreProps.add("ConsumersCurrentCount");
+                        coreProps.add("ConsumersHighCount");
+                        coreProps.add("ConsumersTotalCount");
+                        break;
+
+                    case "ejb":
+                        coreProps.add("PooledBeansCurrentCount");
+                        coreProps.add("AccessTotalCount");
+                        coreProps.add("BeansInUseCurrentCount");
+                        coreProps.add("WaiterCurrentCount");
+                        coreProps.add("WaiterTotalCount");
+                        coreProps.add("TransactionsCommittedTotalCount");
+                        coreProps.add("TransactionsRolledBackTotalCount");
+                        coreProps.add("TransactionsTimedOutTotalCount");
+                        break;
+                    case "saf":
+                        coreProps.add("MessagesCurrentCount");
+                        coreProps.add("MessagesPendingCount");
+                        coreProps.add("MessagesReceivedCount");
+                        coreProps.add("MessagesHighCount");
+                        break;
+
+                    case "webapp":
+                        coreProps.add("OpenSessionsCurrentCount");
+                        coreProps.add("OpenSessionsHighCount");
+                        coreProps.add("SessionsOpenedTotalCount");
+                        break;
+
+                    case "svrchnl":
+                        coreProps.add("AcceptCount");
+                        coreProps.add("ConnectionsCount");
+                        coreProps.add("MessagesReceivedCount");
+                        coreProps.add("MessagesSentCount");
+                        break;
+
+                    case "workmgr":
+                        coreProps.add("CompletedRequests");
+                        coreProps.add("PendingRequests");
+                        coreProps.add("StuckThreadCount");
+                        break;
+
+
+
+
+
+
                 }
 
                 dataMap = statisticsStorage.getPropertyData(resourceType, resource, coreProps, interval, server);
@@ -198,7 +257,6 @@ public class StorageService {
             // TODO add misssing data
             // addMissingData(result,start,end);
             long t2 = System.currentTimeMillis();
-            System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"+(t2-t1));
             return result;
         } catch (
                 Exception e
