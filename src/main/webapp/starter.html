@@ -17,6 +17,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css" />
     <!-- Theme style -->
     <link href="dist/css/AdminLTE.min.css" rel="stylesheet" type="text/css" />
+      <link href="plugins/gridstack/gridstack.min.css" rel="stylesheet" type="text/css" />
     <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
           page. However, you can choose any other skin. Make sure you
           apply the skin class to the body tag so the changes take effect.
@@ -365,6 +366,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
     <!-- jQuery 2.1.4 -->
     <script src="plugins/jQuery/jQuery-2.1.4.min.js" type="text/javascript"></script>
+    <script src="plugins/jQueryUI/jquery-ui.min.js" type="text/javascript"></script>
     <!-- Bootstrap 3.3.2 JS -->
     <script src="bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
     <!-- AdminLTE App -->
@@ -376,6 +378,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="plugins/highstock/js/highstock.js"></script>
     <script src="plugins/highcharts/js/modules/exporting.js"></script>
 
+    <script src="plugins/gridstack/gridstack.min.js"></script>
+    <script src="plugins/gridstack/lodash.min.js"></script>
+
 
 
     <script id="menu-template" type="text/x-handlebars-template">
@@ -385,98 +390,31 @@ scratch. This page gets rid of all links and provides the needed markup only.
     </script>
 
     <script id="menu-template1" type="text/x-handlebars-template">
-      <section class="content">
-        <div class="row">
-      {{#each this}}
 
-        <div class="col-md-4">
-          <!-- Line chart -->
-          <div class="box box-primary">
-            <div class="box-header with-border">
-              <i class="fa fa-bar-chart-o"></i>
-
-              <h3 class="box-title">{{@key}}</h3>
-
-              <div class="box-tools pull-right">
-                <!--button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button-->
-              </div>
+        <div class="grid-stack">
+            <div class="grid-stack-item"
+                 data-gs-x="0" data-gs-y="0"
+                 data-gs-width="4" data-gs-height="2">
+                <div class="grid-stack-item-content">wwww</div>
             </div>
-            <div class="box-body">
-              <div id="{{@key}}" style="height: 300px;"></div>
-            </div><!-- /.box-body-->
-          </div><!-- /.box -->
-        </div><!-- /.col -->
-
-
-      {{/each}}
+            <div class="grid-stack-item"
+                 data-gs-x="4" data-gs-y="0"
+                 data-gs-width="4" data-gs-height="4">
+                <div class="grid-stack-item-content">ssss</div>
+            </div>
         </div>
 
-
-        <script>
-
-          {{#each this}}
-
-
-
-
-          $('#{{@key}}').highcharts('StockChart', {
-
-            rangeSelector: {
-              selected: 4
-            },
-
-            yAxis: {
-              plotLines: [{
-                value: 0,
-                width: 2,
-                color: 'silver'
-              }]
-            },
-            title : {
-              text : ''
-            },
-
-            tooltip: {
-              valueDecimals: 2
-            },
-            rangeSelector: {
-
-              buttons: [
-                {
-                  type: 'day',
-                  count: 1,
-                  text: '1d'
-                },
-                {
-                  type: 'day',
-                  count: 2,
-                  text: '2d'
-                },
-
-                {
-                  type: 'all',
-                  text: 'All'
-                }],
-              selected: 0
-            },
-
-            legend: {
-              enabled: true,
-              maxHeight: 100
-            },
-
-           series :$.AdminLTE.renderedData["{{@key}}"]
+        <script type="text/javascript">
+            $(function () {
+                var options = {
+                    cell_height: 80,
+                    vertical_margin: 10
+                };
+                $('.grid-stack').gridstack(options);
+            });
+            <{{!}}/script>
 
 
-          });
-          {{/each}}
-
-          <{{!}}/script>
-
-
-
-        </section>
     </script>
 
 
