@@ -81,3 +81,103 @@
 
 
 </section>
+
+<script id="menu-template1" type="text/x-handlebars-template">
+    <section class="content">
+
+        <div class="row" >
+            {{#each this}}
+
+            <div class="col-md-4">
+                <!-- Line chart -->
+                <div class="box box-primary ">
+                    <div class="box-header with-border">
+                        <i class="fa fa-bar-chart-o"></i>
+
+                        <h3 class="box-title">{{@key}}</h3>
+
+                        <div class="box-tools pull-right">
+                            <!--button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button-->
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div id="{{@key}}" style="height: 300px;"></div>
+                    </div><!-- /.box-body-->
+                </div><!-- /.box -->
+            </div><!-- /.col -->
+
+
+            {{/each}}
+        </div>
+
+
+        <script>
+
+            {{#each this}}
+
+
+
+
+            $('#{{@key}}').highcharts('StockChart', {
+
+                rangeSelector: {
+                    selected: 4
+                },
+
+                yAxis: {
+                    plotLines: [{
+                        value: 0,
+                        width: 2,
+                        color: 'silver'
+                    }]
+                },
+                title : {
+                    text : ''
+                },
+
+                tooltip: {
+                    valueDecimals: 2
+                },
+                rangeSelector: {
+
+                    buttons: [
+                        {
+                            type: 'day',
+                            count: 1,
+                            text: '1d'
+                        },
+                        {
+                            type: 'day',
+                            count: 2,
+                            text: '2d'
+                        },
+
+                        {
+                            type: 'all',
+                            text: 'All'
+                        }],
+                    selected: 0
+                },
+
+                legend: {
+                    enabled: true,
+                    maxHeight: 100
+                },
+
+                series :$.AdminLTE.renderedData["{{@key}}"]
+
+
+            });
+            {{/each}}
+
+
+
+
+
+            <{{!}}/script>
+
+
+
+            </section>
+</script>
