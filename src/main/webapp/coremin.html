@@ -121,51 +121,51 @@
 
             $('#{{@key}}').highcharts('StockChart', {
 
-                rangeSelector: {
-                    selected: 4
-                },
+            rangeSelector: {
+            selected: 4
+            },
 
-                yAxis: {
-                    plotLines: [{
-                        value: 0,
-                        width: 2,
-                        color: 'silver'
-                    }]
-                },
-                title : {
-                    text : ''
-                },
+            yAxis: {
+            plotLines: [{
+            value: 0,
+            width: 2,
+            color: 'silver'
+            }]
+            },
+            title : {
+            text : ''
+            },
 
-                tooltip: {
-                    valueDecimals: 2
-                },
-                rangeSelector: {
+            tooltip: {
+            valueDecimals: 2
+            },
+            rangeSelector: {
 
-                    buttons: [
-                        {
-                            type: 'day',
-                            count: 1,
-                            text: '1d'
-                        },
-                        {
-                            type: 'day',
-                            count: 2,
-                            text: '2d'
-                        },
+            buttons: [
+            {
+            type: 'day',
+            count: 1,
+            text: '1d'
+            },
+            {
+            type: 'day',
+            count: 2,
+            text: '2d'
+            },
 
-                        {
-                            type: 'all',
-                            text: 'All'
-                        }],
-                    selected: 0
-                },
+            {
+            type: 'all',
+            text: 'All'
+            }],
+            selected: 0
+            },
 
-                legend: {
-                    enabled: true,
-                    maxHeight: 100
-                },
+            legend: {
+            enabled: true,
+            maxHeight: 100
+            },
 
-                series :$.AdminLTE.renderedData["{{@key}}"]
+            series :$.AdminLTE.renderedData["{{@key}}"]
 
 
             });
@@ -179,7 +179,7 @@
 
 
 
-            </section>
+    </section>
 </script>
 <div class="container-fluid">
 
