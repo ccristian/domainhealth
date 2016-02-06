@@ -222,16 +222,12 @@ $(function () {
   var startTime = moment(currentDate).subtract(30,'days').format('DD-MM-YYYY-HH-mm');
 
 
+  //
   Highcharts.setOptions({
     global: {
       useUTC: false
     }
   });
-
-
-
-
-
 
 
   //listener for core

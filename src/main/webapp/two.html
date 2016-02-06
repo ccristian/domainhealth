@@ -54,30 +54,57 @@
 
     <script type="text/javascript">
         $(function () {
-            var options = {
-                width: 12,
-                float: true
-            };
-            $('#grid1').gridstack(options);
 
-/*
-            var items = [
-                {x: 0, y: 0, width: 2, height: 2},
-                {x: 3, y: 1, width: 1, height: 2},
-                {x: 4, y: 1, width: 1, height: 1},
-                {x: 2, y: 3, width: 3, height: 1},
-                {x: 2, y: 5, width: 1, height: 1}
-            ];
-            var grid = $(this).data('gridstack');
-            $('.grid-stack').each(function () {
+            var delta = 0;
 
+            $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
+                // Create the chart
+                var chart = $('#container').highcharts('StockChart', {
 
-                _.each(items, function (node) {
-                    grid.add_widget($('<div><div class="grid-stack-item-content" /><div/>'),
-                        node.x, node.y, node.width, node.height);
-                }, this);
-            });*/
+                    chart: {
+                        events: {
+                            load: function () {
+                                // this is always constant after the chart is loaded
+                                delta = this.scroller.navigatorGroup.getBBox().height + 30;
+                            }
+                        }
+                    },
+
+                    rangeSelector: {
+                        selected: 1
+                    },
+
+                    title: {
+                        text: 'AAPL Stock Price'
+                    },
+
+                    series: [{
+                        name: 'AAPL',
+                        data: data,
+                        tooltip: {
+                            valueDecimals: 2
+                        }
+                    }]
+                }, function (chart) {
+                    $('#show-hide-nav-btn').click(function () {
+                        // to hide the navigator, increase chart height; the excess will be clipped by the outer clip div because its CSS is set to overflow: hidden
+                        var chartHeight = $('.highcharts-container').height();
+                        $('#container').height(chartHeight + delta);
+                        $('.highcharts-container').height(chartHeight + delta);
+
+                        // manually reflow
+                        chart.reflow();
+
+                        // negate delta for the next click
+                        delta = -delta;
+                    });
+
+                });
+            });
+
         });
+
+
     </script>
 </body>
 </html>

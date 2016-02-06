@@ -348,7 +348,7 @@ desired effect
           <div class="form-group">
             <label class="control-sidebar-subheading">
               Report panel usage
-              <input type="checkbox" class="pull-right" checked />
+              <input type="checkbox" class="pull-right" id="dhnavigator" />
             </label>
             <p>
               Some information about this general settings option
@@ -401,7 +401,7 @@ desired effect
 
 <script id="menu-template1" type="text/x-handlebars-template">
 
-  <section class="content">
+  <section class="contentX">
 
 
     <div class="grid-stack" data-gs-animate="true">
@@ -459,6 +459,7 @@ desired effect
 
     $('#{{@key}}').highcharts('StockChart', {
 
+
       rangeSelector: {
         selected: 4
       },
@@ -508,7 +509,7 @@ desired effect
         maxHeight: 100
       },
       navigator: {
-        enabled: false
+        enabled: $("#dhnavigator").is(':checked')
       },
 
       series :$.AdminLTE.renderedData["{{@key}}"]
