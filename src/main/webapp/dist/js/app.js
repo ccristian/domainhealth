@@ -212,14 +212,14 @@ $(function () {
 
 
 
-  //temp highcharts
-
 
 
 //the side bar menu
   var currentDate = new Date();
   var endTime = moment(currentDate).format('DD-MM-YYYY-HH-mm');
   var startTime = moment(currentDate).subtract(30,'days').format('DD-MM-YYYY-HH-mm');
+
+
 
 
   //
@@ -229,6 +229,22 @@ $(function () {
     }
   });
 
+  $.ajax({
+    url: '/domainhealth/rest/stats/core/data?',
+    cache: false,
+    data:{startTime:startTime,endTime: endTime},
+    success: function(response) {
+      //corestats = response;
+      $.AdminLTE.renderedData =  response;
+      $.AdminLTE.selectedPath =  "Core";
+      $(".content-wrapper").html(template1($.AdminLTE ));
+
+
+    },
+    error: function(xhr) {
+      alert("error");
+    }
+  });
 
   //listener for core
   $("#core").click(function () {
@@ -238,18 +254,14 @@ $(function () {
 
       //noinspection JSUnresolvedVariable
     $.ajax({
-          url: '/domainhealth/rest/stats/core/tbdd?',
+          url: '/domainhealth/rest/stats/core/data?',
           cache: false,
           data:{startTime:startTime,endTime: endTime},
           success: function(response) {
             //corestats = response;
             $.AdminLTE.renderedData =  response;
-           // $.AdminLTE.corestats.resname = "corestats"
-            //console.log(JSON.stringify($.AdminLTE.corestats));
-            //$(".content-wrapper").load("coremin.html?_='" + (new Date()).getTime());
-            //var xxx =
-           // alert(xxx);
-            $(".content-wrapper").html(template1($.AdminLTE.renderedData));
+            $.AdminLTE.selectedPath =  "Core";
+            $(".content-wrapper").html(template1($.AdminLTE ));
 
 
           },
@@ -299,11 +311,9 @@ $(function () {
             success: function(response) {
               //corestats = response;
               $.AdminLTE.renderedData =  response;
-              //$.AdminLTE.datasource =  response;
-              //$.AdminLTE.resname = "datasource";
-              //alert(response);
-              $(".content-wrapper").html(template1($.AdminLTE.renderedData));
+              $.AdminLTE.selectedPath =  "Datasource > " + value;
 
+              $(".content-wrapper").html(template1($.AdminLTE ));
 
             },
             error: function(xhr) {
@@ -326,7 +336,8 @@ $(function () {
             data:{startTime:startTime,endTime: endTime},
             success: function(response) {
               $.AdminLTE.renderedData =  response;
-              $(".content-wrapper").html(template1($.AdminLTE.renderedData));
+              $.AdminLTE.selectedPath =  "JMS > " + value;
+              $(".content-wrapper").html(template1($.AdminLTE));
 
             },
             error: function(xhr) {
@@ -349,8 +360,8 @@ $(function () {
             data:{startTime:startTime,endTime: endTime},
             success: function(response) {
               $.AdminLTE.renderedData =  response;
-              $(".content-wrapper").html(template1($.AdminLTE.renderedData));
-
+              $.AdminLTE.selectedPath =  "SAF > " + value;
+              $(".content-wrapper").html(template1($.AdminLTE));
             },
             error: function(xhr) {
               alert("error");
@@ -372,8 +383,8 @@ $(function () {
             data:{startTime:startTime,endTime: endTime},
             success: function(response) {
               $.AdminLTE.renderedData =  response;
-              $(".content-wrapper").html(template1($.AdminLTE.renderedData));
-
+              $.AdminLTE.selectedPath =  "Web Applications > " + value;
+              $(".content-wrapper").html(template1($.AdminLTE));
             },
             error: function(xhr) {
               alert("error");
@@ -395,7 +406,8 @@ $(function () {
             data:{startTime:startTime,endTime: endTime},
             success: function(response) {
               $.AdminLTE.renderedData =  response;
-              $(".content-wrapper").html(template1($.AdminLTE.renderedData));
+              $.AdminLTE.selectedPath =  "EJB's > " + value;
+              $(".content-wrapper").html(template1($.AdminLTE));
 
             },
             error: function(xhr) {
@@ -418,7 +430,8 @@ $(function () {
             data:{startTime:startTime,endTime: endTime},
             success: function(response) {
               $.AdminLTE.renderedData =  response;
-              $(".content-wrapper").html(template1($.AdminLTE.renderedData));
+              $.AdminLTE.selectedPath =  "Channels > " + value;
+              $(".content-wrapper").html(template1($.AdminLTE));
 
             },
             error: function(xhr) {
