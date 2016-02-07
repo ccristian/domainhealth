@@ -131,7 +131,7 @@ public class StorageService {
             Map<String, DateAmountDataSet> dataMap = null;
 
             for (String server : scope) {
-                Set<String> coreProps = new HashSet<String>();
+                List<String> coreProps = new LinkedList<>();
                 switch (resourceType) {
                     case "core":
                         coreProps.add("HeapUsedCurrent");
@@ -155,6 +155,7 @@ public class StorageService {
                         coreProps.add("TransactionHeuristicsTotalCount");
                         coreProps.add("TransactionAbandonedTotalCount");
                         coreProps.add("ActiveTransactionsTotalCount");
+
 
                         resource = null;
 
@@ -229,7 +230,10 @@ public class StorageService {
 
                 }
 
-                dataMap = statisticsStorage.getPropertyData(resourceType, resource, coreProps, interval, server);
+                //temp solution for ordering gui
+                Collections.reverse(coreProps);
+                Set prp = new LinkedHashSet(coreProps);
+                dataMap = statisticsStorage.getPropertyData(resourceType, resource, prp, interval, server);
                 for (String res:dataMap.keySet()) {
 
                     DateAmountDataSet dataSet  = dataMap.get(res);
