@@ -216,11 +216,16 @@ $(function () {
 
 //the side bar menu
   var currentDate = new Date();
-  var endTime = moment(currentDate).format('DD-MM-YYYY-HH-mm');
-  var startTime = moment(currentDate).subtract(30,'days').format('DD-MM-YYYY-HH-mm');
+  var endTimeVal = moment(currentDate);
+  var startTimeVal = moment(currentDate).subtract(30,'days');
+
+  var endTime = endTimeVal.format('DD-MM-YYYY-HH-mm');
+  var startTime =startTimeVal.format('DD-MM-YYYY-HH-mm');
 
 
+  $('#daterange-btn').html(startTimeVal.format('D MMMM , YYYY') + ' - ' + endTimeVal.format('D MMMM , YYYY'));
 
+  var currentDH = "core";
 
   //
   Highcharts.setOptions({
@@ -273,6 +278,7 @@ $(function () {
   });
 
 
+
   $('#daterange-btn').daterangepicker(
       {
         ranges: {
@@ -287,7 +293,26 @@ $(function () {
         endDate: moment()
       },
       function (start, end) {
-        $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+        $('#daterange-btn').html(start.format('D MMMM , YYYY') + ' - ' + end.format('D MMMM , YYYY'))
+        endTime = end.format('DD-MM-YYYY-HH-mm');
+        startTime =start.format('DD-MM-YYYY-HH-mm');
+        $.ajax({
+          url: '/domainhealth/rest/stats/core/data?',
+          cache: false,
+          data:{startTime:startTime,endTime: endTime},
+          success: function(response) {
+            //corestats = response;
+            $.AdminLTE.renderedData =  response;
+            $.AdminLTE.selectedPath =  "Core";
+            $(".content-wrapper").html(template1($.AdminLTE ));
+
+
+          },
+          error: function(xhr) {
+            alert("error");
+          }
+        });
+
       }
   );
 
