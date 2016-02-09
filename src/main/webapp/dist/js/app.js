@@ -30,7 +30,7 @@ if (typeof jQuery === "undefined") {
 
 
 $.AdminLTE = {
-  corestats:{}
+
 };
 
 /* --------------------
@@ -135,7 +135,13 @@ $.AdminLTE.options = {
     sm: 768,
     md: 992,
     lg: 1200
-  }
+  },
+  currentDate:null,
+  endTimeVal:null,
+  startTimeVal:null,
+  currentView:"core"
+
+
 };
 
 /* ------------------
@@ -149,8 +155,8 @@ $(function () {
   //Extend options if external options exist
   if (typeof AdminLTEOptions !== "undefined") {
     $.extend(true,
-            $.AdminLTE.options,
-            AdminLTEOptions);
+        $.AdminLTE.options,
+        AdminLTEOptions);
   }
 
   //Easy access to options
@@ -210,22 +216,17 @@ $(function () {
   }
 
 
-
-
-
-
-//the side bar menu
   var currentDate = new Date();
-  var endTimeVal = moment(currentDate);
-  var startTimeVal = moment(currentDate).subtract(30,'days');
+  $.AdminLTE.options.endTimeVal = moment(currentDate);
+  $.AdminLTE.options.startTimeVal = moment(currentDate).subtract(1,'day');
 
-  var endTime = endTimeVal.format('DD-MM-YYYY-HH-mm');
-  var startTime =startTimeVal.format('DD-MM-YYYY-HH-mm');
+  var endTime = $.AdminLTE.options.endTimeVal.format('DD-MM-YYYY-HH-mm');
+  var startTime =$.AdminLTE.options.startTimeVal.format('DD-MM-YYYY-HH-mm');
 
 
-  $('#daterange-btn').html(startTimeVal.format('D MMMM , YYYY') + ' - ' + endTimeVal.format('D MMMM , YYYY'));
+  $('#daterange-btn').html($.AdminLTE.options.startTimeVal.format('D MMMM , YYYY') + ' - ' + $.AdminLTE.options.endTimeVal.format('D MMMM , YYYY'));
 
-  var currentDH = "core";
+
 
   //
   Highcharts.setOptions({
@@ -242,7 +243,7 @@ $(function () {
       //corestats = response;
       $.AdminLTE.renderedData =  response;
       $.AdminLTE.selectedPath =  "Core";
-      $(".content-wrapper").html(template1($.AdminLTE ));
+      $(".content-wrapper").html(templateHighstock($.AdminLTE));
 
 
     },
@@ -251,34 +252,10 @@ $(function () {
     }
   });
 
-  //listener for core
-  $("#core").click(function () {
-    //Enable hide menu when clicking on the content-wrapper on small screens
-      //alert("Click on core ! do something");
-
-
-      //noinspection JSUnresolvedVariable
-    $.ajax({
-          url: '/domainhealth/rest/stats/core/data?',
-          cache: false,
-          data:{startTime:startTime,endTime: endTime},
-          success: function(response) {
-            //corestats = response;
-            $.AdminLTE.renderedData =  response;
-            $.AdminLTE.selectedPath =  "Core";
-            $(".content-wrapper").html(template1($.AdminLTE ));
-
-
-          },
-          error: function(xhr) {
-              alert("error");
-          }
-      });
-
-  });
 
 
 
+  //initialize the date range and add a listener when new interval is selected
   $('#daterange-btn').daterangepicker(
       {
         ranges: {
@@ -286,33 +263,17 @@ $(function () {
           'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
           'Last 7 Days': [moment().subtract(6, 'days'), moment()],
           'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-          'This Month': [moment().startOf('month'), moment().endOf('month')],
-          'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+          'This Month': [moment().startOf('month'), moment().endOf('month')]
         },
-        startDate: moment().subtract(29, 'days'),
+        startDate: moment().subtract(1, 'day'),
         endDate: moment()
       },
       function (start, end) {
         $('#daterange-btn').html(start.format('D MMMM , YYYY') + ' - ' + end.format('D MMMM , YYYY'))
         endTime = end.format('DD-MM-YYYY-HH-mm');
         startTime =start.format('DD-MM-YYYY-HH-mm');
-        $.ajax({
-          url: '/domainhealth/rest/stats/core/data?',
-          cache: false,
-          data:{startTime:startTime,endTime: endTime},
-          success: function(response) {
-            //corestats = response;
-            $.AdminLTE.renderedData =  response;
-            $.AdminLTE.selectedPath =  "Core";
-            $(".content-wrapper").html(template1($.AdminLTE ));
 
-
-          },
-          error: function(xhr) {
-            alert("error");
-          }
-        });
-
+        getAndDisplayCharts($.AdminLTE.currentResname,$.AdminLTE.currentPath, $.AdminLTE.currentResource);
       }
   );
 
@@ -322,7 +283,7 @@ $(function () {
   var template = Handlebars.compile(source);
 
   var source1 = $("#menu-template1").html();
-  var template1 = Handlebars.compile(source1);
+  var templateHighstock = Handlebars.compile(source1);
 
 
 
@@ -331,159 +292,71 @@ $(function () {
     return name.substr(0,22);
   });
 
+  function getAndDisplayCharts(resname,respath,value) {
+    $.ajax({
+      url: '/domainhealth/rest/stats/' + respath + '/' + value + '?',
+      cache: false,
+      data: {startTime: startTime, endTime: endTime},
+      success: function (response) {
+        $.AdminLTE.renderedData = response;
+        $.AdminLTE.selectedPath = resname + " > " + value;
+        $.AdminLTE.currentPath = respath;
+        $.AdminLTE.currentResource = value;
+        $.AdminLTE.currentResname = resname;
+        $(".content-wrapper").html(templateHighstock($.AdminLTE));
+      },
+      error: function (xhr) {
+        alert("error");
+      }
+    });
+  }
+  function addListener(res,resname,respath){
+    $.each( res, function( key, value ) {
+      $("#"+value).click(function () {
+        getAndDisplayCharts(resname,respath,value);
+      });
+    });
+  }
+
+  $("#core").click(function () {
+    getAndDisplayCharts("Core","core","params");
+  });
 
   $.ajax({
     url: '/domainhealth/rest/resources',
     dataType:'JSON',
     data:{startTime:startTime,endTime: endTime},
     success: function(response) {
-     var resources = response;
+      var resources = response;
       var res = resources["datasource"];
+
       $("#datasource").html(template(res));
-      $.each( res, function( key, value ) {
-        //alert('/domainhealth/rest/stats/datasource/'+value);
-        $("#"+value).click(function () {
-          //Enable hide menu when clicking on the content-wrapper on small screens
-          //alert("Click on core ! do something");
-          //noinspection JSUnresolvedVariable
+      addListener(res,"Datasource","datasource");
 
-          $.ajax({
-            url: '/domainhealth/rest/stats/datasource/'+value+'?',
-            cache: false,
-            data:{startTime:startTime,endTime: endTime},
-            success: function(response) {
-              //corestats = response;
-              $.AdminLTE.renderedData =  response;
-              $.AdminLTE.selectedPath =  "Datasource > " + value;
-
-              $(".content-wrapper").html(template1($.AdminLTE ));
-
-            },
-            error: function(xhr) {
-              alert("error");
-            }
-          });
-
-        });
-      });
 
       res = resources["destination"];
       $("#destination").html(template(res));
-      $.each( res, function( key, value ) {
+      addListener(res,"JMS","destination");
 
-        $("#"+value).click(function () {
-
-          $.ajax({
-            url: '/domainhealth/rest/stats/destination/'+value+'?',
-            cache: false,
-            data:{startTime:startTime,endTime: endTime},
-            success: function(response) {
-              $.AdminLTE.renderedData =  response;
-              $.AdminLTE.selectedPath =  "JMS > " + value;
-              $(".content-wrapper").html(template1($.AdminLTE));
-
-            },
-            error: function(xhr) {
-              alert("error");
-            }
-          });
-
-        });
-      });
 
       res = resources["saf"];
       $("#saf").html(template(res));
-      $.each( res, function( key, value ) {
+      addListener(res,"Store and Forward","saf");
 
-        $("#"+value).click(function () {
-
-          $.ajax({
-            url: '/domainhealth/rest/stats/saf/'+value+'?',
-            cache: false,
-            data:{startTime:startTime,endTime: endTime},
-            success: function(response) {
-              $.AdminLTE.renderedData =  response;
-              $.AdminLTE.selectedPath =  "SAF > " + value;
-              $(".content-wrapper").html(template1($.AdminLTE));
-            },
-            error: function(xhr) {
-              alert("error");
-            }
-          });
-
-        });
-      });
 
       res = resources["webapp"];
       $("#webapp").html(template(res));
-      $.each( res, function( key, value ) {
-
-        $("#"+value).click(function () {
-
-          $.ajax({
-            url: '/domainhealth/rest/stats/webapp/'+value+'?',
-            cache: false,
-            data:{startTime:startTime,endTime: endTime},
-            success: function(response) {
-              $.AdminLTE.renderedData =  response;
-              $.AdminLTE.selectedPath =  "Web Applications > " + value;
-              $(".content-wrapper").html(template1($.AdminLTE));
-            },
-            error: function(xhr) {
-              alert("error");
-            }
-          });
-
-        });
-      });
+      addListener(res,"Web Applications","webapp");
 
       res = resources["ejb"];
       $("#ejb").html(template(res));
-      $.each( res, function( key, value ) {
+      addListener(res,"EJBs","ejb");
 
-        $("#"+value).click(function () {
-
-          $.ajax({
-            url: '/domainhealth/rest/stats/ejb/'+value+'?',
-            cache: false,
-            data:{startTime:startTime,endTime: endTime},
-            success: function(response) {
-              $.AdminLTE.renderedData =  response;
-              $.AdminLTE.selectedPath =  "EJB's > " + value;
-              $(".content-wrapper").html(template1($.AdminLTE));
-
-            },
-            error: function(xhr) {
-              alert("error");
-            }
-          });
-
-        });
-      });
 
       res = resources["svrchnl"];
       $("#svrchnl").html(template(res));
-      $.each( res, function( key, value ) {
+      addListener(res,"Channels","svrchnl");
 
-        $("#"+value).click(function () {
-
-          $.ajax({
-            url: '/domainhealth/rest/stats/svrchnl/'+value+'?',
-            cache: false,
-            data:{startTime:startTime,endTime: endTime},
-            success: function(response) {
-              $.AdminLTE.renderedData =  response;
-              $.AdminLTE.selectedPath =  "Channels > " + value;
-              $(".content-wrapper").html(template1($.AdminLTE));
-
-            },
-            error: function(xhr) {
-              alert("error");
-            }
-          });
-
-        });
-      });
 
     },
     error: function(xhr) {
@@ -612,9 +485,9 @@ function _init() {
         //Enable sidebar push menu
         if ($(window).width() > (screenSizes.sm - 1)) {
           if ($("body").hasClass('sidebar-collapse')) {
-              $("body").removeClass('sidebar-collapse').trigger('expanded.pushMenu');
+            $("body").removeClass('sidebar-collapse').trigger('expanded.pushMenu');
           } else {
-              $("body").addClass('sidebar-collapse').trigger('collapsed.pushMenu');
+            $("body").addClass('sidebar-collapse').trigger('collapsed.pushMenu');
           }
         }
         //Handle sidebar push menu for small screens
@@ -636,8 +509,8 @@ function _init() {
 
       //Enable expand on hover for sidebar mini
       if ($.AdminLTE.options.sidebarExpandOnHover
-              || ($('body').hasClass('fixed')
-                      && $('body').hasClass('sidebar-mini'))) {
+          || ($('body').hasClass('fixed')
+          && $('body').hasClass('sidebar-mini'))) {
         //alert("x");
         this.expandOnHover();
       }
@@ -648,14 +521,14 @@ function _init() {
       //Expand sidebar on hover
       $('.main-sidebar').hover(function () {
         if ($('body').hasClass('sidebar-mini')
-                && $("body").hasClass('sidebar-collapse')
-                && $(window).width() > screenWidth) {
+            && $("body").hasClass('sidebar-collapse')
+            && $(window).width() > screenWidth) {
           _this.expand();
         }
       }, function () {
         if ($('body').hasClass('sidebar-mini')
-                && $('body').hasClass('sidebar-expanded-on-hover')
-                && $(window).width() > screenWidth) {
+            && $('body').hasClass('sidebar-expanded-on-hover')
+            && $(window).width() > screenWidth) {
           _this.collapse();
         }
       });
@@ -750,7 +623,7 @@ function _init() {
         //If the sidebar is not open
         //alert("cucu");
         if (!sidebar.hasClass('control-sidebar-open')
-                && !$('body').hasClass('control-sidebar-open')) {
+            && !$('body').hasClass('control-sidebar-open')) {
           //Open the sidebar
           _this.open(sidebar, o.slide);
         } else {
@@ -859,8 +732,8 @@ function _init() {
       if (!box.hasClass("collapsed-box")) {
         //Convert minus into plus
         element.children(":first")
-                .removeClass(_this.icons.collapse)
-                .addClass(_this.icons.open);
+            .removeClass(_this.icons.collapse)
+            .addClass(_this.icons.open);
         //Hide the content
         box_content.slideUp(_this.animationSpeed, function () {
           box.addClass("collapsed-box");
@@ -868,8 +741,8 @@ function _init() {
       } else {
         //Convert plus into minus
         element.children(":first")
-                .removeClass(_this.icons.open)
-                .addClass(_this.icons.collapse);
+            .removeClass(_this.icons.open)
+            .addClass(_this.icons.collapse);
         //Show the content
         box_content.slideDown(_this.animationSpeed, function () {
           box.removeClass("collapsed-box");

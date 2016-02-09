@@ -272,7 +272,6 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
                     artifactList.put(name, now);
                 }
             }
-            System.out.print("Artifact List :"+artifactList);
             getCSVStats().appendSavedOneDayResourceNameList(nowDate, resourceType, artifactList);
         } catch (Exception e) {
             throw new DataRetrievalException("Problem logging " + resourceType + " resources for server " + getServerName() + ". " + e.getMessage(), e);
