@@ -269,12 +269,21 @@ desired effect
     <section class="content">
 
 
-      <div class="grid-stack" data-gs-animate="true">
+      <div class="grid-stack"  data-gs-animate="true">
 
         {{#each this.renderedData}}
 
+        {{#if_even @index}}
+        <div class="grid-stack-item" data-gs-x="0" data-gs-y="0" data-gs-no-resize ="true" data-gs-width="6" data-gs-height="6">
 
-        <div class="grid-stack-item" data-gs-auto-position="true" data-gs-no-resize ="true" data-gs-width="6" data-gs-height="6">
+        {{else}}
+
+        <div class="grid-stack-item"  data-gs-x="6" data-gs-y="0" data-gs-no-resize ="true" data-gs-width="6" data-gs-height="6">
+
+
+          {{/if_even}}
+
+
           <div class="grid-stack-item-content">
             <div class="box box-primary ">
               <div class="box-header with-border">
@@ -287,8 +296,6 @@ desired effect
             </div>
           </div>
         </div>
-
-
 
         {{/each}}
 
@@ -315,6 +322,7 @@ desired effect
         vertical_margin: 5,
         handle_class:"box-title",
         resizable:false,
+
 
       };
       $('.grid-stack').gridstack(options);
@@ -400,9 +408,5 @@ desired effect
 
 
 
-<!-- Optionally, you can add Slimscroll and FastClick plugins.
-        Both of these plugins are recommended to enhance the
-user experience. Slimscroll is required when using the
-fixed layout. -->
 </body>
 </html>

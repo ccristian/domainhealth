@@ -19,6 +19,7 @@ import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -103,18 +104,19 @@ public class StorageService {
     @GET
     @Path("stats/{resourceType}/{resource}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Map<String,List<Map>> getStats(@QueryParam("scope") Set<String> scope,
-                                                                @QueryParam("startTime") String startTime,
-                                                                @QueryParam("endTime") String endTime,
-                                                                @PathParam("resourceType") String resourceType,
-                                                                @PathParam("resource") String resource) {
+    public Map<String,List<Map>> getStats(@HeaderParam("user-agent") String userAgent, @QueryParam("scope") Set<String> scope,
+                                          @QueryParam("startTime") String startTime,
+                                          @QueryParam("endTime") String endTime,
+                                          @PathParam("resourceType") String resourceType,
+                                          @PathParam("resource") String resource) {
 
         try {
 
 
 
+            System.out.println(userAgent);
 
-            Map<String, List<Map>> result = new HashMap<String, List<Map>>();
+            Map<String, List<Map>> result = new LinkedHashMap<>();
 
             DateTime start = fmt.parseDateTime(startTime);
             DateTime end = fmt.parseDateTime(endTime);
@@ -234,10 +236,15 @@ public class StorageService {
                 Collections.reverse(coreProps);
                 Set prp = new LinkedHashSet(coreProps);
                 dataMap = statisticsStorage.getPropertyData(resourceType, resource, prp, interval, server);
+
+
+
                 for (String res:dataMap.keySet()) {
 
                     DateAmountDataSet dataSet  = dataMap.get(res);
                     String property = dataSet.getResourceProperty();
+
+
 
                     List dataList = new LinkedList();
                     for (DateAmountDataItem dateAmountDataItem:dataSet.getData()) {

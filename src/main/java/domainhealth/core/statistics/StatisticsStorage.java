@@ -716,7 +716,7 @@ public class StatisticsStorage {
 
     //TODO add comment
     public Map<String, DateAmountDataSet> getPropertyData(String resourceType, String resourceName, Set<String> resourceProperties, Interval interval, String serverName) throws IOException {
-        Map<String, DateAmountDataSet> data = new HashMap<String, DateAmountDataSet>();
+        Map<String, DateAmountDataSet> data = new LinkedHashMap<String, DateAmountDataSet>();
 
         /*retrieves a map with file and date for a specific interval*/
 

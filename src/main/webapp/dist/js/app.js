@@ -139,8 +139,9 @@ $.AdminLTE.options = {
   currentDate:null,
   endTimeVal:null,
   startTimeVal:null,
-  currentView:"core"
-
+  currentPath:"core",
+  currentResource:"params",
+  currentResname:"Core"
 
 };
 
@@ -152,6 +153,29 @@ $.AdminLTE.options = {
  * options above.
  */
 $(function () {
+
+
+  Handlebars.registerHelper('if_even', function(conditional, options) {
+    if((conditional % 2) == 0) {
+      return options.fn(this);
+    } else {
+      return options.inverse(this);
+    }
+  });
+
+  Handlebars.registerHelper("math", function(lvalue, operator, rvalue, options) {
+    lvalue = parseFloat(lvalue);
+    rvalue = parseFloat(rvalue);
+
+    return {
+      "+": lvalue + rvalue,
+      "-": lvalue - rvalue,
+      "*": lvalue * rvalue,
+      "/": lvalue / rvalue,
+      "%": lvalue % rvalue
+    }[operator];
+  });
+
   //Extend options if external options exist
   if (typeof AdminLTEOptions !== "undefined") {
     $.extend(true,
@@ -235,22 +259,10 @@ $(function () {
     }
   });
 
-  $.ajax({
-    url: '/domainhealth/rest/stats/core/data?',
-    cache: false,
-    data:{startTime:startTime,endTime: endTime},
-    success: function(response) {
-      //corestats = response;
-      $.AdminLTE.renderedData =  response;
-      $.AdminLTE.selectedPath =  "Core";
-      $(".content-wrapper").html(templateHighstock($.AdminLTE));
 
 
-    },
-    error: function(xhr) {
-      alert("error");
-    }
-  });
+  //initial view loading the first page
+  getAndDisplayCharts("Core","core","params");
 
 
 
