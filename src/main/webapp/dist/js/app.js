@@ -297,7 +297,10 @@ $(function () {
   var source1 = $("#menu-template1").html();
   var templateHighstock = Handlebars.compile(source1);
 
+  $("#move-left").click(function () {
 
+    alert("move left:"+startTime +"    "+endTime);
+  });
 
 
   Handlebars.registerHelper('shortName', function(name) {
