@@ -248,7 +248,7 @@ $(function () {
   var startTime =$.AdminLTE.options.startTimeVal.format('DD-MM-YYYY-HH-mm');
 
 
-  $('#daterange-btn').html($.AdminLTE.options.startTimeVal.format('D MMMM , YYYY') + ' - ' + $.AdminLTE.options.endTimeVal.format('D MMMM , YYYY'));
+  $('#daterange-btn').html($.AdminLTE.options.startTimeVal.format('DD/MM/YYYY h:mm A') + '   -   ' + $.AdminLTE.options.endTimeVal.format('DD/MM/YYYY h:mm A'));
 
 
 
@@ -270,9 +270,24 @@ $(function () {
   //initialize the date range and add a listener when new interval is selected
   $('#daterange-btn').daterangepicker(
       {
+
+        timePicker: true,
+        timePickerIncrement: 1,
+        locale: {
+          format: 'DD/MM/YYYY h:mm A'
+        },
+
         ranges: {
-          'Today': [moment(), moment()],
-          'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+          '5 minutes': [moment().subtract(5, 'minutes'),moment()],
+          '15 minutes': [moment().subtract(15, 'minutes'),moment()],
+          '30 minutes': [moment().subtract(30, 'minutes'),moment()],
+          '1 hour': [moment().subtract(1, 'hours'),moment()],
+          '3 hours': [moment().subtract(3, 'hours'),moment()],
+          '6 hours': [moment().subtract(6, 'hours'),moment()],
+          '12 hours': [moment().subtract(12, 'hours'),moment()],
+          '24 hours': [moment().subtract(24, 'hours'),moment()],
+          'Today': [moment().startOf('day'), moment()],
+          'Last 2 Days': [moment().subtract(2, 'days'), moment()],
           'Last 7 Days': [moment().subtract(6, 'days'), moment()],
           'Last 30 Days': [moment().subtract(29, 'days'), moment()],
           'This Month': [moment().startOf('month'), moment().endOf('month')]
@@ -281,9 +296,12 @@ $(function () {
         endDate: moment()
       },
       function (start, end) {
-        $('#daterange-btn').html(start.format('D MMMM , YYYY') + ' - ' + end.format('D MMMM , YYYY'))
+        $('#daterange-btn').html(start.format('DD/MM/YYYY h:mm A') + ' - ' + end.format('DD/MM/YYYY h:mm A'))
         endTime = end.format('DD-MM-YYYY-HH-mm');
         startTime =start.format('DD-MM-YYYY-HH-mm');
+        $.AdminLTE.options.endTimeVal = end;
+        $.AdminLTE.options.startTimeVal = start;
+
 
         getAndDisplayCharts($.AdminLTE.currentResname,$.AdminLTE.currentPath, $.AdminLTE.currentResource);
       }
@@ -298,10 +316,29 @@ $(function () {
   var templateHighstock = Handlebars.compile(source1);
 
   $("#move-left").click(function () {
+    var duration = moment.duration($.AdminLTE.options.endTimeVal.diff($.AdminLTE.options.startTimeVal));
+    var minutes = duration.asMinutes();
+    //alert("Navigation by interval"+minutes);
+    $.AdminLTE.options.endTimeVal = $.AdminLTE.options.startTimeVal;
+    $.AdminLTE.options.startTimeVal = moment($.AdminLTE.options.startTimeVal).subtract(minutes,'minutes');
+    $('#daterange-btn').html($.AdminLTE.options.startTimeVal.format('DD/MM/YYYY h:mm A') + ' - ' + $.AdminLTE.options.endTimeVal.format('DD/MM/YYYY h:mm A'))
+    endTime = $.AdminLTE.options.endTimeVal.format('DD-MM-YYYY-HH-mm');
+    startTime =$.AdminLTE.options.startTimeVal.format('DD-MM-YYYY-HH-mm');
+    getAndDisplayCharts($.AdminLTE.currentResname,$.AdminLTE.currentPath, $.AdminLTE.currentResource);
 
-    alert("move left:"+startTime +"    "+endTime);
   });
 
+  $("#move-right").click(function () {
+    var duration = moment.duration($.AdminLTE.options.endTimeVal.diff($.AdminLTE.options.startTimeVal));
+    var minutes = duration.asMinutes();
+    //alert("Navigation by interval"+minutes);
+    $.AdminLTE.options.startTimeVal = $.AdminLTE.options.endTimeVal;
+    $.AdminLTE.options.endTimeVal = moment($.AdminLTE.options.endTimeVal).add(minutes,'minutes');
+    $('#daterange-btn').html($.AdminLTE.options.startTimeVal.format('DD/MM/YYYY h:mm A') + ' - ' + $.AdminLTE.options.endTimeVal.format('DD/MM/YYYY h:mm A'))
+    endTime = $.AdminLTE.options.endTimeVal.format('DD-MM-YYYY-HH-mm');
+    startTime =$.AdminLTE.options.startTimeVal.format('DD-MM-YYYY-HH-mm');
+    getAndDisplayCharts($.AdminLTE.currentResname,$.AdminLTE.currentPath, $.AdminLTE.currentResource);
+  });
 
   Handlebars.registerHelper('shortName', function(name) {
     return name.substr(0,22);
