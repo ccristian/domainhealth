@@ -312,7 +312,7 @@ $(function () {
   var source = $("#menu-template").html();
   var template = Handlebars.compile(source);
 
-  var source1 = $("#menu-template1").html();
+  var source1 = $("#graph-template").html();
   var templateHighstock = Handlebars.compile(source1);
 
   $("#move-left").click(function () {
@@ -347,11 +347,19 @@ $(function () {
   function displayDateInterval(start,end){
     var duration = moment.duration($.AdminLTE.options.endTimeVal.diff($.AdminLTE.options.startTimeVal));
     var minutes = Math.round(duration.asMinutes());
+    var tooltip = start.format('DD/MM/YYYY-hh:mm')+"----"+end.format('DD/MM/YYYY-hh:mm');
     if (minutes <60){
-      $('#daterange-btn').html("<span  data-toggle=/'tooltip/' title=/'vvvvvv/'>"+minutes+" minutes </span>");
-
-    }else{
-      $('#daterange-btn').html(start.format('DD/MM/YYYY h:mm A') + ' - ' + end.format('DD/MM/YYYY h:mm A'))
+      var s1 = "<span  data-toggle=/'tooltip/' title="+tooltip+">"+minutes+" minutes </span>";
+      $('#daterange-btn').html(s1);
+    }
+    else if (minutes >=60 && minutes< 180){
+      $('#daterange-btn').html("<span  data-toggle=/'tooltip/' title="+tooltip+">"+ Math.round(minutes/60)+" hour </span>");
+    }
+    else if (minutes >=180 && minutes<= 24*60){
+      $('#daterange-btn').html("<span  data-toggle=/'tooltip/' title="+tooltip+">"+ Math.round(minutes/60)+" hours </span>");
+    }
+   else {
+      $('#daterange-btn').html(tooltip);
     }
 
 
