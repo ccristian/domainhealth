@@ -242,13 +242,13 @@ $(function () {
 
   var currentDate = new Date();
   $.AdminLTE.options.endTimeVal = moment(currentDate);
-  $.AdminLTE.options.startTimeVal = moment(currentDate).subtract(1,'day');
+  $.AdminLTE.options.startTimeVal = moment(currentDate).subtract(30,'minutes');
 
   var endTime = $.AdminLTE.options.endTimeVal.format('DD-MM-YYYY-HH-mm');
   var startTime =$.AdminLTE.options.startTimeVal.format('DD-MM-YYYY-HH-mm');
 
 
-  $('#daterange-btn').html($.AdminLTE.options.startTimeVal.format('DD/MM/YYYY h:mm A') + '   -   ' + $.AdminLTE.options.endTimeVal.format('DD/MM/YYYY h:mm A'));
+  displayDateInterval($.AdminLTE.options.startTimeVal,$.AdminLTE.options.endTimeVal);
 
 
 
@@ -277,6 +277,8 @@ $(function () {
           format: 'DD/MM/YYYY h:mm A'
         },
 
+
+
         ranges: {
           '5 minutes': [moment().subtract(5, 'minutes'),moment()],
           '15 minutes': [moment().subtract(15, 'minutes'),moment()],
@@ -296,13 +298,11 @@ $(function () {
         endDate: moment()
       },
       function (start, end) {
-        $('#daterange-btn').html(start.format('DD/MM/YYYY h:mm A') + ' - ' + end.format('DD/MM/YYYY h:mm A'))
         endTime = end.format('DD-MM-YYYY-HH-mm');
         startTime =start.format('DD-MM-YYYY-HH-mm');
         $.AdminLTE.options.endTimeVal = end;
         $.AdminLTE.options.startTimeVal = start;
-
-
+        displayDateInterval($.AdminLTE.options.startTimeVal,$.AdminLTE.options.endTimeVal);
         getAndDisplayCharts($.AdminLTE.currentResname,$.AdminLTE.currentPath, $.AdminLTE.currentResource);
       }
   );
@@ -321,7 +321,7 @@ $(function () {
     //alert("Navigation by interval"+minutes);
     $.AdminLTE.options.endTimeVal = $.AdminLTE.options.startTimeVal;
     $.AdminLTE.options.startTimeVal = moment($.AdminLTE.options.startTimeVal).subtract(minutes,'minutes');
-    $('#daterange-btn').html($.AdminLTE.options.startTimeVal.format('DD/MM/YYYY h:mm A') + ' - ' + $.AdminLTE.options.endTimeVal.format('DD/MM/YYYY h:mm A'))
+    displayDateInterval($.AdminLTE.options.startTimeVal,$.AdminLTE.options.endTimeVal);
     endTime = $.AdminLTE.options.endTimeVal.format('DD-MM-YYYY-HH-mm');
     startTime =$.AdminLTE.options.startTimeVal.format('DD-MM-YYYY-HH-mm');
     getAndDisplayCharts($.AdminLTE.currentResname,$.AdminLTE.currentPath, $.AdminLTE.currentResource);
@@ -334,8 +334,8 @@ $(function () {
     //alert("Navigation by interval"+minutes);
     $.AdminLTE.options.startTimeVal = $.AdminLTE.options.endTimeVal;
     $.AdminLTE.options.endTimeVal = moment($.AdminLTE.options.endTimeVal).add(minutes,'minutes');
-    $('#daterange-btn').html($.AdminLTE.options.startTimeVal.format('DD/MM/YYYY h:mm A') + ' - ' + $.AdminLTE.options.endTimeVal.format('DD/MM/YYYY h:mm A'))
-    endTime = $.AdminLTE.options.endTimeVal.format('DD-MM-YYYY-HH-mm');
+    displayDateInterval($.AdminLTE.options.startTimeVal,$.AdminLTE.options.endTimeVal);
+      endTime = $.AdminLTE.options.endTimeVal.format('DD-MM-YYYY-HH-mm');
     startTime =$.AdminLTE.options.startTimeVal.format('DD-MM-YYYY-HH-mm');
     getAndDisplayCharts($.AdminLTE.currentResname,$.AdminLTE.currentPath, $.AdminLTE.currentResource);
   });
@@ -343,6 +343,20 @@ $(function () {
   Handlebars.registerHelper('shortName', function(name) {
     return name.substr(0,22);
   });
+
+  function displayDateInterval(start,end){
+    var duration = moment.duration($.AdminLTE.options.endTimeVal.diff($.AdminLTE.options.startTimeVal));
+    var minutes = Math.round(duration.asMinutes());
+    if (minutes <60){
+      $('#daterange-btn').html("<span  data-toggle=/'tooltip/' title=/'vvvvvv/'>"+minutes+" minutes </span>");
+
+    }else{
+      $('#daterange-btn').html(start.format('DD/MM/YYYY h:mm A') + ' - ' + end.format('DD/MM/YYYY h:mm A'))
+    }
+
+
+
+  }
 
   function getAndDisplayCharts(resname,respath,value) {
     $.ajax({
