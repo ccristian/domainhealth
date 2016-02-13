@@ -164,6 +164,8 @@ public abstract class StatisticCapturer {
 		headerLine.append(HEAP_USED_CURRENT + SEPARATOR); 
 		headerLine.append(HEAP_FREE_PERCENT + SEPARATOR);
 		
+// Add the others part/area of JVM
+		
 		for (String attr : THREADPOOL_MBEAN_MONITOR_ATTR_LIST) {
 			headerLine.append(attr + SEPARATOR);
 		}			
