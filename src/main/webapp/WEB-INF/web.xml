@@ -4,7 +4,6 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
     <display-name>DomainHealth</display-name>
 
-
     <context-param>
         <param-name>dh_stats_output_path</param-name>
         <param-value>./logs/statistics</param-value>
@@ -40,7 +39,6 @@
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
-
 
     <resource-ref>
         <res-ref-name>DomainHealth_IndividualServerStatCapturerWorkMngr</res-ref-name>

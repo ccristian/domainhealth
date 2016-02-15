@@ -95,6 +95,8 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 		line.append((long)(getConn().getNumberAttr(jvm, HEAP_FREE_CURRENT) / BYTES_IN_MEGABYTE) + SEPARATOR);
 		line.append((long)((getConn().getNumberAttr(jvm, HEAP_SIZE_CURRENT) - getConn().getNumberAttr(jvm, HEAP_FREE_CURRENT)) / BYTES_IN_MEGABYTE) + SEPARATOR);
 		line.append(getConn().getNumberAttr(jvm, HEAP_FREE_PERCENT) + SEPARATOR);
+		
+// Add the others part/area of JVM
 
 		// Thread Pool Attributes
 		ObjectName threadPool = getConn().getChild(getServerRuntime(), THREAD_POOL_RUNTIME);

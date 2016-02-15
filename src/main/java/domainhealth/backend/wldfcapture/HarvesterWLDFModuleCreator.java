@@ -307,7 +307,10 @@ public class HarvesterWLDFModuleCreator {
 		conn.setBooleanAttr(harvester, ENABLED, true);
 		conn.setNumberAttr(harvester, SAMPLE_PERIOD, queryIntervalMillis);
 		addMetric(conn, harvester, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, SERVER_RUNTIME), SERVER_MBEAN_MONITOR_ATTR_LIST, true);
-		addMetric(conn, harvester, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, JVM_RUNTIME), JVM_MBEAN_MONITOR_ATTR_LIST, true);		
+		addMetric(conn, harvester, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, JVM_RUNTIME), JVM_MBEAN_MONITOR_ATTR_LIST, true);
+		
+// Check how to add the other JVM values
+		
 		addMetric(conn, harvester, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, JROCKIT_RUNTIME), JVM_MBEAN_MONITOR_ATTR_LIST, true);		
 		addMetric(conn, harvester, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, THREAD_POOL_RUNTIME), THREADPOOL_MBEAN_MONITOR_ATTR_LIST, true);
 		/* Example of restricting mbean type query to a fixed set of known mbean instance names
