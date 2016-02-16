@@ -2,7 +2,8 @@
 To install the plug-in into your local Maven repository, run the following command from the
 ORACLE_COMMON/oracle_common/plugins/maven/com/oracle/maven/oracle-maven-sync/12.1.2 directory:
 mvn install:install-file -DpomFile=oracle-maven-sync.12.1.2.pom -Dfile=oracle-maven-sync.12.1.2.jar
-$ mvn install:install-file -DpomFile=oracle-maven-sync-12.1.3.pom -Dfile=oracle-maven-sync-12.1.3.jar
+mvn install:install-file -DpomFile=oracle-maven-sync-12.1.3.pom -Dfile=oracle-maven-sync-12.1.3.jar
+mvn install:install-file -DpomFile=oracle-maven-sync-12.2.1.pom -Dfile=oracle-maven-sync-12.2.1.jar
 
 mvn com.oracle.maven:oracle-maven-sync:push -Doracle-maven-sync.oracleHome=c:\Oracle\Middleware\Oracle_Home_12c -Doracle-maven-sync.testingOnly=false
 
@@ -15,9 +16,7 @@ After you patch your Oracle home, you should run this plug-in to ensure that you
 This ensures that your builds use correct versions of all artifacts in that particular environment.
 The Oracle Maven Synchronization Plug-in is included in the Oracle WebLogic Server,
 
-
 Installing Oracle Maven Synchronization Plug-In
-
 
 The Maven Project Object Model (POM) file that describes the plug-in, which is located at:
 ORACLE_HOME/oracle_common/plugins/maven/com/oracle/maven/oracle-maven-sync/12.1.2/oracle-maven-sync.12.1.2.pom
@@ -30,15 +29,12 @@ ORACLE_COMMON/oracle_common/plugins/maven/com/oracle/maven/oracle-maven-sync/12.
 
 mvn install:install-file -DpomFile=oracle-maven-sync.12.1.2.pom -Dfile=oracle-maven-sync.12.1.2.jar
 
-
 The simplest way deploy the plug-in into a shared internal repository, use the web user interface provided by your
 Maven Repository Manager to upload the JAR file into the repository.
 
 An alternative method is to use the deploy plug-in, which you can do by using a command like the following from the
 ORACLE_COMMON/oracle_common/plugins/maven/com/oracle/maven/oracle-maven-sync/12.1.2 directory:
-mvn deploy:deploy-file -DpomFile=oracle-maven-sync-12.1.2.pom -Dfile=oracle-maven-sync-12.1.2.jar
--Durl=http://servername/archiva/repositories/internal -DrepositoryId=internal
-
+mvn deploy:deploy-file -DpomFile=oracle-maven-sync-12.1.2.pom -Dfile=oracle-maven-sync-12.1.2.jar -Durl=http://servername/archiva/repositories/internal -DrepositoryId=internal
 
 Running the Oracle Maven Synchronization Plug-In
 
@@ -69,7 +65,7 @@ mvn com.oracle.maven:oracle-maven-sync:push
  -DoracleHome=/path/to/oracleHome
  -Doracle-maven-sync.testingOnly=false
 
- ex:
+ex:
 
 mvn com.oracle.maven:oracle-maven-sync:push -Doracle-maven-sync.oracleHome=c:\Oracle\Middleware\Oracle_Home_12c -Doracle-maven-sync.testingOnly=false
 mvn com.oracle.maven:oracle-maven-sync:push -Doracle-maven-sync.oracleHome=c:\Oracle\Middleware\Oracle_Home_12c_12_1_3 -Doracle-maven-sync.testingOnly=false
@@ -84,9 +80,7 @@ mvn com.oracle.maven:oracle-maven-sync:push
  -Doracle-maven-sync.oracleHome=/path/to/oracleHome
  -Dmaven.repo.local=/alternate/path
 
-
-
- To specify the parameters in your Project Object Model file, you must add a plug-in entry similar to the following in your Project Object Model file:
+To specify the parameters in your Project Object Model file, you must add a plug-in entry similar to the following in your Project Object Model file:
 
 <plugin>
    <groupId>com.oracle.maven</groupId>
@@ -101,6 +95,5 @@ mvn com.oracle.maven:oracle-maven-sync:push
 After adding the plug-in, execute Maven by running the following command on the command line:
 
 mvn com.oracle.maven:oracle-maven-sync:push
-
 
 http://docs.oracle.com/middleware/1212/core/MAVEN/config_maven.htm#MAVEN311

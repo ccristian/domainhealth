@@ -23,7 +23,7 @@
 
 	</run-as-role-assignment>
 
-	<context-root>/domainhealth</context-root>
+	<context-root>domainhealth</context-root>
 
 	<work-manager>
 		<name>DomainHealth_IndividualServerStatCapturerWorkMngr</name>

@@ -420,7 +420,7 @@ public interface WebLogicMBeanPropConstants {
 	/**
 	 * 'HeapFreePercent' MBean property
 	 */
-	public final static String HEAP_FREE_PERCENT = "HeapFreePercent"; 
+	public final static String HEAP_FREE_PERCENT = "HeapFreePercent";
 	
 	/**
 	 * 'ExecuteThreadTotalCount' MBean property
@@ -681,6 +681,23 @@ public interface WebLogicMBeanPropConstants {
 	 * 'MessagesSentCount' MBean property
 	 */
 	public final static String CHNL_MESSAGES_SENT_COUNT = "MessagesSentCount";
+	
+// Added by gregoan
+	
+	/**
+	 * 'wljvmstats.mbeans.WLJvmStats' MBean property
+	 */
+	public final static String JVM_MBEAN = "wljvmstats.mbeans.WLJvmStats";
+	
+	public final static String HEAP_MEMORY_INIT = "HeapMemoryInit";
+	public final static String HEAP_MEMORY_USED = "HeapMemoryUsed";
+	public final static String HEAP_MEMORY_COMMITTED = "HeapMemoryCommitted";
+	public final static String HEAP_MEMORY_MAX = "HeapMemoryMax";
+	
+	public final static String NON_HEAP_MEMORY_INIT = "NonHeapMemoryInit";
+	public final static String NON_HEAP_MEMORY_USED = "NonHeapMemoryUsed";
+	public final static String NON_HEAP_MEMORY_COMMITTED = "NonHeapMemoryCommitted";
+	public final static String NON_HEAP_MEMORY_MAX = "NonHeapMemoryMax";
 	
 	/**
 	 * 'wlhostmachinestats.mbeans.WLHostMachineStats' MBean property

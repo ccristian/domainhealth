@@ -185,7 +185,7 @@ public class MonitorProperties {
 	 * List of JVM MBean Attributes to be monitored
 	 */
 	public final static String[] JVM_MBEAN_MONITOR_ATTR_LIST = {HEAP_SIZE_CURRENT, HEAP_FREE_CURRENT, HEAP_FREE_PERCENT};
-
+		
 	/**
 	 * List of Thread Pool MBean Attributes to be monitored
 	 */
@@ -246,10 +246,15 @@ public class MonitorProperties {
 	public final static String[] SVR_CHANNEL_MBEAN_MONITOR_ATTR_LIST = {ACCEPT_COUNT, CONNECTIONS_COUNT, CHNL_MESSAGES_RECEIVED_COUNT, CHNL_MESSAGES_SENT_COUNT};	
 	
 	/**
-	 * List of  MBean Attributes to be monitored
+	 * List of WLHOSTMACHINESTATS MBean Attributes to be monitored
 	 */
 	public final static String[] HOST_MACHINE_STATS_MBEAN_MONITOR_ATTR_LIST = {JVM_INSTANCE_CORES_USED, JVM_INSTANCE_PHYSICAL_MEMORY_USED_MEGABYTES, NATIVE_PROCESSES_COUNT, NETWORK_RX_MEGABYTES, NETWORK_RX_DROPPED, NETWORK_RX_ERRORS, NETWORK_RX_FRAME, NETWORK_RX_OVERRUNS, NETWORK_MILLIONS_RX_PACKETS, NETWORK_TX_MEGABYTES, NETWORK_TX_CARRIER, NETWORK_TX_COLLISIONS,NETWORK_TX_DROPPED, NETWORK_TX_ERRORS, NETWORK_TX_OVERRUNS, NETWORK_MILLIONS_TX_PACKETS, PHYSICAL_MEMORY_USED_PERCENT, PHYSICAL_SWAP_USED_PERCENT, PROCESSOR_LAST_MINUTE_WORKLOAD_AVERAGE, PROCESSOR_USAGE_PERCENT, ROOT_FILESYSTEM_USED_PERCENT, TCP_CLOSE_WAIT_COUNT, TCP_ESTABLISHED_COUNT, TCP_LISTEN_COUNT, TCP_TIME_WAIT_COUNT};	
 
+	/**
+	 * List of JVM MBean Attributes to be monitored (java version)
+	 */
+	public final static String[] JAVA_JVM_MBEAN_MONITOR_ATTR_LIST = {HEAP_MEMORY_INIT, HEAP_MEMORY_USED, HEAP_MEMORY_COMMITTED, HEAP_MEMORY_MAX, NON_HEAP_MEMORY_INIT, NON_HEAP_MEMORY_USED, NON_HEAP_MEMORY_COMMITTED, NON_HEAP_MEMORY_MAX};
+	
 	/**
 	 * 'weblogic.kernel.Default' Default Work Manager name
 	 */
@@ -326,10 +331,24 @@ public class MonitorProperties {
 		// Add Core properties
 		propList.put(SERVER_STATE, new WLProperty(SERVER_STATE, "Server State", STATE_UNITS));
 		propList.put(OPEN_SOCKETS, new WLProperty(OPEN_SOCKETS, "Open Sockets", NUMBER_UNITS));
+		
 		propList.put(HEAP_SIZE_CURRENT, new WLProperty(HEAP_SIZE_CURRENT, "Heap Size", MEGABYTES_UNITS)); 
 		propList.put(HEAP_FREE_CURRENT, new WLProperty(HEAP_FREE_CURRENT, "Heap Free", MEGABYTES_UNITS)); 
 		propList.put(HEAP_USED_CURRENT, new WLProperty(HEAP_USED_CURRENT, "Heap Used", MEGABYTES_UNITS)); 
-		propList.put(HEAP_FREE_PERCENT, new WLProperty(HEAP_FREE_PERCENT, "Heap Free", PERCENT_UNITS)); 
+		propList.put(HEAP_FREE_PERCENT, new WLProperty(HEAP_FREE_PERCENT, "Heap Free", PERCENT_UNITS));
+		
+// Added by gregoan
+		propList.put(HEAP_MEMORY_INIT, new WLProperty(HEAP_MEMORY_INIT, "Heap Memory Init", MEGABYTES_UNITS));
+		propList.put(HEAP_MEMORY_USED, new WLProperty(HEAP_MEMORY_USED, "Heap Memory Used", MEGABYTES_UNITS));
+		propList.put(HEAP_MEMORY_COMMITTED, new WLProperty(HEAP_MEMORY_COMMITTED, "Heap Memory Committed", MEGABYTES_UNITS));
+		propList.put(HEAP_MEMORY_MAX, new WLProperty(HEAP_MEMORY_MAX, "Heap Memory Max", MEGABYTES_UNITS));
+		
+		propList.put(NON_HEAP_MEMORY_INIT, new WLProperty(NON_HEAP_MEMORY_INIT, "NonHeap Memory Init", MEGABYTES_UNITS));
+		propList.put(NON_HEAP_MEMORY_USED, new WLProperty(NON_HEAP_MEMORY_USED, "NonHeap Memory Used", MEGABYTES_UNITS));
+		propList.put(NON_HEAP_MEMORY_COMMITTED, new WLProperty(NON_HEAP_MEMORY_COMMITTED, "NonHeap Memory Committed", MEGABYTES_UNITS));
+		propList.put(NON_HEAP_MEMORY_MAX, new WLProperty(NON_HEAP_MEMORY_MAX, "NonHeap Memory Max", MEGABYTES_UNITS));
+//
+		
 		propList.put(EXECUTE_THREAD_TOTAL_COUNT, new WLProperty(EXECUTE_THREAD_TOTAL_COUNT, "Thread Pool Execute Threads", NUMBER_UNITS)); 
 		propList.put(HOGGING_THREAD_COUNT, new WLProperty(HOGGING_THREAD_COUNT, "Thread Pool Hogging Threads", NUMBER_UNITS)); 
 		propList.put(PENDING_USER_REQUEST_COUNT, new WLProperty(PENDING_USER_REQUEST_COUNT, "Thread Pool Pending User Requests", NUMBER_UNITS)); 

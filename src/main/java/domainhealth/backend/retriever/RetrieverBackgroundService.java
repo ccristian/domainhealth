@@ -209,8 +209,7 @@ public class RetrieverBackgroundService {
 
 		/*
 		TODO adding later some cpu stats (wlhostmachine or ...)
-		OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(
-		OperatingSystemMXBean.class);
+		OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
 		// What % CPU load this current JVM is taking, from 0.0-1.0
 		System.out.println(osBean.getProcessCpuLoad());
 		// What % load the overall system is at, from 0.0-1.0
@@ -226,6 +225,7 @@ public class RetrieverBackgroundService {
 	 * @throws WebLogicMBeanException Indicates a problem in initialising the monitoring environment - indicates that first time processing will have to be run again at a later time
 	 */
 	private void runFirstTimeProcessing() throws WebLogicMBeanException {
+		
 		AppLog.getLogger().debug("Statistics Retriever Background Service running first time processing initialisation steps");
 		
 		if (!DomainRuntimeServiceMBeanConnection.isThisTheAdminServer()) {
@@ -239,6 +239,10 @@ public class RetrieverBackgroundService {
 		if (alwaysUseJMXPoll) {
 			useWLDFHarvester = false;				
 		} else {
+
+AppLog.getLogger().info("RetrieverBackgroundService - wlsVersionNumber is [" + wlsVersionNumber + "]");
+AppLog.getLogger().info("RetrieverBackgroundService - WLS_MIN_VERSION_FOR_USING_WLDF_RELIABLY is [" + WLS_MIN_VERSION_FOR_USING_WLDF_RELIABLY + "]");			
+				
 			useWLDFHarvester = ProductVersionUtil.isVersion_X_GreaterThanOrEqualTo_Y(wlsVersionNumber, WLS_MIN_VERSION_FOR_USING_WLDF_RELIABLY);
 		}
 		
@@ -301,8 +305,15 @@ public class RetrieverBackgroundService {
 						try {
 							capturer.captureAndLogServerStats();
 						} catch (Exception e) {
-							AppLog.getLogger().error(e.toString());
-							e.printStackTrace();
+							
+							// ----------------------------------------------
+							// Commented by gregoan
+							// Some applications are taking more than iteration period to be up and running
+							// No need to print stacktrace for "nothing"
+							//AppLog.getLogger().error(e.toString());
+							//e.printStackTrace();
+							// ----------------------------------------------
+							
 							AppLog.getLogger().error("Statistics Retriever Background Service - unable to retrieve statistics for specific server '" + serverName + "' for this iteration");
 						}						
 					}					

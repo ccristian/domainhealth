@@ -14,6 +14,8 @@
 //POSSIBILITY OF SUCH DAMAGE.
 package domainhealth.backend.jmxpoll;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
@@ -96,7 +98,17 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 		line.append((long)((getConn().getNumberAttr(jvm, HEAP_SIZE_CURRENT) - getConn().getNumberAttr(jvm, HEAP_FREE_CURRENT)) / BYTES_IN_MEGABYTE) + SEPARATOR);
 		line.append(getConn().getNumberAttr(jvm, HEAP_FREE_PERCENT) + SEPARATOR);
 		
-// Add the others part/area of JVM
+// Add the others part/area of JVM		
+		MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+		line.append((long)(memoryMXBean.getHeapMemoryUsage().getInit() / BYTES_IN_MEGABYTE) + SEPARATOR);
+		line.append((long)(memoryMXBean.getHeapMemoryUsage().getUsed() / BYTES_IN_MEGABYTE) + SEPARATOR);
+		line.append((long)(memoryMXBean.getHeapMemoryUsage().getCommitted() / BYTES_IN_MEGABYTE) + SEPARATOR);
+		line.append((long)(memoryMXBean.getHeapMemoryUsage().getMax() / BYTES_IN_MEGABYTE) + SEPARATOR);
+        
+		line.append((long)(memoryMXBean.getNonHeapMemoryUsage().getInit() / BYTES_IN_MEGABYTE) + SEPARATOR);
+		line.append((long)(memoryMXBean.getNonHeapMemoryUsage().getUsed() / BYTES_IN_MEGABYTE) + SEPARATOR);
+		line.append((long)(memoryMXBean.getNonHeapMemoryUsage().getCommitted() / BYTES_IN_MEGABYTE) + SEPARATOR);
+		line.append((long)(memoryMXBean.getNonHeapMemoryUsage().getMax() / BYTES_IN_MEGABYTE) + SEPARATOR);
 
 		// Thread Pool Attributes
 		ObjectName threadPool = getConn().getChild(getServerRuntime(), THREAD_POOL_RUNTIME);

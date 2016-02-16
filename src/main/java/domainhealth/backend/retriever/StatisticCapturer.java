@@ -166,6 +166,18 @@ public abstract class StatisticCapturer {
 		
 // Add the others part/area of JVM
 		
+		/*
+		headerLine.append(HEAP_MEMORY_INIT + SEPARATOR); 
+		headerLine.append(HEAP_MEMORY_USED + SEPARATOR); 
+		headerLine.append(HEAP_MEMORY_COMMITTED + SEPARATOR); 
+		headerLine.append(HEAP_MEMORY_MAX + SEPARATOR);
+		
+		headerLine.append(NON_HEAP_MEMORY_INIT + SEPARATOR); 
+		headerLine.append(NON_HEAP_MEMORY_USED + SEPARATOR); 
+		headerLine.append(NON_HEAP_MEMORY_COMMITTED + SEPARATOR); 
+		headerLine.append(NON_HEAP_MEMORY_MAX + SEPARATOR);
+		*/
+		
 		for (String attr : THREADPOOL_MBEAN_MONITOR_ATTR_LIST) {
 			headerLine.append(attr + SEPARATOR);
 		}			
