@@ -1,6 +1,7 @@
 package domainhealth.rest;
 
 
+import com.sun.jersey.api.json.JSONWithPadding;
 import domainhealth.core.env.AppLog;
 import domainhealth.core.env.AppProperties;
 import domainhealth.core.jmx.DomainRuntimeServiceMBeanConnection;
@@ -10,15 +11,19 @@ import domainhealth.frontend.data.DateAmountDataItem;
 import domainhealth.frontend.data.DateAmountDataSet;
 import domainhealth.frontend.data.Domain;
 import domainhealth.frontend.data.Statistics;
+import org.codehaus.jackson.map.util.JSONPObject;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import javax.annotation.PostConstruct;
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
 import javax.servlet.ServletContext;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
@@ -76,6 +81,20 @@ public class StorageService {
         return resourcesMap;
     }
 
+
+
+
+    @GET
+    @Path("jsonp/resources")
+    @Produces({"application/javascript"})
+    public JSONWithPadding getStatsJsonp(
+            @QueryParam("startTime") String startTime,
+            @QueryParam("endTime") String endTime, @QueryParam("callback") String callback) {
+        Map<String, Set<String>> resourcesMap = getStats(startTime,endTime);
+        return new JSONWithPadding(resourcesMap,callback);
+    }
+
+
     //http://localhost:7001/domainhealth/domain
     @GET
     @Path("/domain")
@@ -96,6 +115,15 @@ public class StorageService {
         return null;
     }
 
+    @GET
+    @Path("jsonp/domain")
+    @Produces({"application/javascript"})
+    public JSONWithPadding getDomainJsonp(@QueryParam("callback") String callback) {
+        Set<String> servers = getDomain();
+        return new JSONWithPadding(servers,callback);
+    }
+
+
 
     //http://localhost:7001/domainhealth/rest/stats/core?scope=ALL&startTime=ss&endTime=ss
     //http://localhost:7001/domainhealth/rest/stats/core/xdd?startTime=01-09-2014-00-00&endTime=17-11-2015-0-00
@@ -111,13 +139,7 @@ public class StorageService {
                                           @PathParam("resource") String resource) {
 
         try {
-
-
-
-            System.out.println(userAgent);
-
             Map<String, List<Map>> result = new LinkedHashMap<>();
-
             DateTime start = fmt.parseDateTime(startTime);
             DateTime end = fmt.parseDateTime(endTime);
             Interval interval = new Interval(start, end);
@@ -128,101 +150,90 @@ public class StorageService {
                 conn = new DomainRuntimeServiceMBeanConnection();
                 scope = statisticsStorage.getAllPossibleServerNames(conn);
             }
-
-
             Map<String, DateAmountDataSet> dataMap = null;
-
             for (String server : scope) {
-                List<String> coreProps = new LinkedList<>();
+                List<String> properties = new LinkedList<>();
                 switch (resourceType) {
                     case "core":
-                        coreProps.add("HeapUsedCurrent");
-                        coreProps.add("OpenSocketsCurrentCount");
-                        coreProps.add("HeapSizeCurrent");
-                        coreProps.add("HeapFreeCurrent");
-                        coreProps.add("HeapFreePercent");
-                        coreProps.add("ExecuteThreadTotalCount");
-                        coreProps.add("HoggingThreadCount");
-                        coreProps.add("PendingUserRequestCount");
-                        coreProps.add("QueueLength");
-                        coreProps.add("CompletedRequestCount");
-                        coreProps.add("ExecuteThreadIdleCount");
-                        coreProps.add("MinThreadsConstraintsCompleted");
-                        coreProps.add("MinThreadsConstraintsPending");
-                        coreProps.add("StandbyThreadCount");
-                        coreProps.add("Throughput");
-                        coreProps.add("TransactionTotalCount");
-                        coreProps.add("TransactionCommittedTotalCount");
-                        coreProps.add("TransactionRolledBackTotalCount");
-                        coreProps.add("TransactionHeuristicsTotalCount");
-                        coreProps.add("TransactionAbandonedTotalCount");
-                        coreProps.add("ActiveTransactionsTotalCount");
-
-
+                        properties.add("HeapUsedCurrent");
+                        properties.add("OpenSocketsCurrentCount");
+                        properties.add("HeapSizeCurrent");
+                        properties.add("HeapFreeCurrent");
+                        properties.add("HeapFreePercent");
+                        properties.add("ExecuteThreadTotalCount");
+                        properties.add("HoggingThreadCount");
+                        properties.add("PendingUserRequestCount");
+                        properties.add("QueueLength");
+                        properties.add("CompletedRequestCount");
+                        properties.add("ExecuteThreadIdleCount");
+                        properties.add("MinThreadsConstraintsCompleted");
+                        properties.add("MinThreadsConstraintsPending");
+                        properties.add("StandbyThreadCount");
+                        properties.add("Throughput");
+                        properties.add("TransactionTotalCount");
+                        properties.add("TransactionCommittedTotalCount");
+                        properties.add("TransactionRolledBackTotalCount");
+                        properties.add("TransactionHeuristicsTotalCount");
+                        properties.add("TransactionAbandonedTotalCount");
+                        properties.add("ActiveTransactionsTotalCount");
                         resource = null;
-
-
-
-
-                        //result.put(server, );
                         break;
                     case "datasource":
-                        coreProps.add("NumAvailable");
-                        coreProps.add("NumUnavailable");
-                        coreProps.add("ActiveConnectionsCurrentCount");
-                        coreProps.add("ConnectionDelayTime");
-                        coreProps.add("FailedReserveRequestCount");
-                        coreProps.add("FailuresToReconnectCount");
-                        coreProps.add("LeakedConnectionCount");
-                        coreProps.add("WaitingForConnectionCurrentCount");
-                        coreProps.add("WaitingForConnectionFailureTotal");
-                        coreProps.add("WaitSecondsHighCount");
+                        properties.add("NumAvailable");
+                        properties.add("NumUnavailable");
+                        properties.add("ActiveConnectionsCurrentCount");
+                        properties.add("ConnectionDelayTime");
+                        properties.add("FailedReserveRequestCount");
+                        properties.add("FailuresToReconnectCount");
+                        properties.add("LeakedConnectionCount");
+                        properties.add("WaitingForConnectionCurrentCount");
+                        properties.add("WaitingForConnectionFailureTotal");
+                        properties.add("WaitSecondsHighCount");
                         break;
-
                     case "destination":
-                        coreProps.add("MessagesCurrentCount");
-                        coreProps.add("MessagesReceivedCount");
-                        coreProps.add("MessagesPendingCount");
-                        coreProps.add("MessagesHighCount");
-                        coreProps.add("ConsumersCurrentCount");
-                        coreProps.add("ConsumersHighCount");
-                        coreProps.add("ConsumersTotalCount");
+                        properties.add("MessagesCurrentCount");
+                        properties.add("MessagesReceivedCount");
+                        properties.add("MessagesPendingCount");
+                        properties.add("MessagesHighCount");
+                        properties.add("ConsumersCurrentCount");
+                        properties.add("ConsumersHighCount");
+                        properties.add("ConsumersTotalCount");
                         break;
 
                     case "ejb":
-                        coreProps.add("PooledBeansCurrentCount");
-                        coreProps.add("AccessTotalCount");
-                        coreProps.add("BeansInUseCurrentCount");
-                        coreProps.add("WaiterCurrentCount");
-                        coreProps.add("WaiterTotalCount");
-                        coreProps.add("TransactionsCommittedTotalCount");
-                        coreProps.add("TransactionsRolledBackTotalCount");
-                        coreProps.add("TransactionsTimedOutTotalCount");
+                        properties.add("PooledBeansCurrentCount");
+                        properties.add("AccessTotalCount");
+                        properties.add("BeansInUseCurrentCount");
+                        properties.add("WaiterCurrentCount");
+                        properties.add("WaiterTotalCount");
+                        properties.add("TransactionsCommittedTotalCount");
+                        properties.add("TransactionsRolledBackTotalCount");
+                        properties.add("TransactionsTimedOutTotalCount");
                         break;
                     case "saf":
-                        coreProps.add("MessagesCurrentCount");
-                        coreProps.add("MessagesPendingCount");
-                        coreProps.add("MessagesReceivedCount");
-                        coreProps.add("MessagesHighCount");
+                        properties.add("MessagesCurrentCount");
+                        properties.add("MessagesPendingCount");
+                        properties.add("MessagesReceivedCount");
+                        properties.add("MessagesHighCount");
                         break;
 
                     case "webapp":
-                        coreProps.add("OpenSessionsCurrentCount");
-                        coreProps.add("OpenSessionsHighCount");
-                        coreProps.add("SessionsOpenedTotalCount");
+                        properties.add("OpenSessionsCurrentCount");
+                        properties.add("OpenSessionsHighCount");
+                        properties.add("SessionsOpenedTotalCount");
                         break;
 
                     case "svrchnl":
-                        coreProps.add("AcceptCount");
-                        coreProps.add("ConnectionsCount");
-                        coreProps.add("MessagesReceivedCount");
-                        coreProps.add("MessagesSentCount");
+                        properties.add("AcceptCount");
+                        properties.add("ConnectionsCount");
+                        properties.add("MessagesReceivedCount");
+                        properties.add("MessagesSentCount");
                         break;
 
                     case "workmgr":
-                        coreProps.add("CompletedRequests");
-                        coreProps.add("PendingRequests");
-                        coreProps.add("StuckThreadCount");
+                        properties.add("CompletedRequests");
+                        properties.add("PendingRequests");
+                        properties.add("StuckThreadCount");
                         break;
 
 
@@ -233,8 +244,8 @@ public class StorageService {
                 }
 
                 //temp solution for ordering gui
-                Collections.reverse(coreProps);
-                Set prp = new LinkedHashSet(coreProps);
+                Collections.reverse(properties);
+                Set prp = new LinkedHashSet(properties);
                 dataMap = statisticsStorage.getPropertyData(resourceType, resource, prp, interval, server);
 
 
@@ -278,6 +289,20 @@ public class StorageService {
         }
 
         return null;
+    }
+
+
+    @GET
+    @Path("jsonp/stats/{resourceType}/{resource}")
+    @Produces({"application/javascript"})
+    public JSONWithPadding getStatsJsonp(@HeaderParam("user-agent") String userAgent, @QueryParam("scope") Set<String> scope,
+                                          @QueryParam("startTime") String startTime,
+                                          @QueryParam("endTime") String endTime,
+                                          @PathParam("resourceType") String resourceType,
+                                          @PathParam("resource") String resource,@QueryParam("callback") String callback) {
+
+        Map<String, List<Map>> result = getStats(userAgent,scope,startTime,endTime,resourceType,resource);
+        return new JSONWithPadding(result,callback);
     }
 
     private void addMissingData(Map<String,List<Map>> data,DateTime startTime,DateTime endTime){

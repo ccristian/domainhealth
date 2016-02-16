@@ -13,6 +13,10 @@
 
 'use strict';
 
+var myCallback = function(data) {
+  alert("Data"+data);
+};
+
 //Make sure jQuery has been loaded before app.js
 if (typeof jQuery === "undefined") {
   throw new Error("AdminLTE requires jQuery");
@@ -396,12 +400,17 @@ $(function () {
     getAndDisplayCharts("Core","core","params");
   });
 
+  //http://wltrtd06.cc.cec.eu.int:2241/domainhealth/rest/stats/core/params?&startTime=15-02-2016-14-08&endTime=15-02-2016-14-12
+
   $.ajax({
     url: '/domainhealth/rest/resources',
-    dataType:'JSON',
+    dataType:'JSONP',
     data:{startTime:startTime,endTime: endTime},
     success: function(response) {
+
+
       var resources = response;
+
       var res = resources["datasource"];
 
       $("#datasource").html(template(res));
@@ -432,11 +441,15 @@ $(function () {
       addListener(res,"Channels","svrchnl");
 
 
+
     },
-    error: function(xhr) {
-      alert("error");
+    error: function (xhr, errorType, exception) {
+      var errorMessage = exception || xhr.statusText;
+      alert(errorMessage);
     }
   });
+
+
 
 
 
