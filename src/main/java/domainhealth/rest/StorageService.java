@@ -9,22 +9,16 @@ import domainhealth.core.statistics.MonitorProperties;
 import domainhealth.core.statistics.StatisticsStorage;
 import domainhealth.frontend.data.DateAmountDataItem;
 import domainhealth.frontend.data.DateAmountDataSet;
-import domainhealth.frontend.data.Domain;
 import domainhealth.frontend.data.Statistics;
-import org.codehaus.jackson.map.util.JSONPObject;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import javax.annotation.PostConstruct;
-import javax.json.Json;
-import javax.json.JsonObjectBuilder;
 import javax.servlet.ServletContext;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -82,19 +76,6 @@ public class StorageService {
     }
 
 
-
-
-    @GET
-    @Path("jsonp/resources")
-    @Produces({"application/javascript"})
-    public JSONWithPadding getStatsJsonp(
-            @QueryParam("startTime") String startTime,
-            @QueryParam("endTime") String endTime, @QueryParam("callback") String callback) {
-        Map<String, Set<String>> resourcesMap = getStats(startTime,endTime);
-        return new JSONWithPadding(resourcesMap,callback);
-    }
-
-
     //http://localhost:7001/domainhealth/domain
     @GET
     @Path("/domain")
@@ -115,15 +96,6 @@ public class StorageService {
         return null;
     }
 
-    @GET
-    @Path("jsonp/domain")
-    @Produces({"application/javascript"})
-    public JSONWithPadding getDomainJsonp(@QueryParam("callback") String callback) {
-        Set<String> servers = getDomain();
-        return new JSONWithPadding(servers,callback);
-    }
-
-
 
     //http://localhost:7001/domainhealth/rest/stats/core?scope=ALL&startTime=ss&endTime=ss
     //http://localhost:7001/domainhealth/rest/stats/core/xdd?startTime=01-09-2014-00-00&endTime=17-11-2015-0-00
@@ -132,11 +104,11 @@ public class StorageService {
     @GET
     @Path("stats/{resourceType}/{resource}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Map<String,List<Map>> getStats(@HeaderParam("user-agent") String userAgent, @QueryParam("scope") Set<String> scope,
-                                          @QueryParam("startTime") String startTime,
-                                          @QueryParam("endTime") String endTime,
-                                          @PathParam("resourceType") String resourceType,
-                                          @PathParam("resource") String resource) {
+    public Map<String, List<Map>> getStats(@HeaderParam("user-agent") String userAgent, @QueryParam("scope") Set<String> scope,
+                                           @QueryParam("startTime") String startTime,
+                                           @QueryParam("endTime") String endTime,
+                                           @PathParam("resourceType") String resourceType,
+                                           @PathParam("resource") String resource) {
 
         try {
             Map<String, List<Map>> result = new LinkedHashMap<>();
@@ -236,11 +208,6 @@ public class StorageService {
                         properties.add("StuckThreadCount");
                         break;
 
-
-
-
-
-
                 }
 
                 //temp solution for ordering gui
@@ -248,74 +215,82 @@ public class StorageService {
                 Set prp = new LinkedHashSet(properties);
                 dataMap = statisticsStorage.getPropertyData(resourceType, resource, prp, interval, server);
 
-
-
-                for (String res:dataMap.keySet()) {
-
-                    DateAmountDataSet dataSet  = dataMap.get(res);
+                //transform the result for proper format
+                for (String res : dataMap.keySet()) {
+                    DateAmountDataSet dataSet = dataMap.get(res);
                     String property = dataSet.getResourceProperty();
-
-
-
                     List dataList = new LinkedList();
-                    for (DateAmountDataItem dateAmountDataItem:dataSet.getData()) {
+                    for (DateAmountDataItem dateAmountDataItem : dataSet.getData()) {
                         dataList.add(new BigDecimal[]{BigDecimal.valueOf(dateAmountDataItem.getDateTime().getTime()), BigDecimal.valueOf(dateAmountDataItem.getAmount())});
                     }
-
                     Map map = new LinkedHashMap();
-                    map.put("name",server);
-                    map.put("data",dataList);
-                    List<Map> listMap  = result.get(res);
-                    if (listMap==null){
+                    map.put("name", server);
+                    map.put("data", dataList);
+                    List<Map> listMap = result.get(res);
+                    if (listMap == null) {
                         listMap = new ArrayList<>();
-                        result.put(res,listMap);
+                        result.put(res, listMap);
                     }
                     listMap.add(map);
                 }
 
             }
-
             long t1 = System.currentTimeMillis();
             // TODO add misssing data
             // addMissingData(result,start,end);
             long t2 = System.currentTimeMillis();
             return result;
-        } catch (
-                Exception e
-                )
-
-        {
-            e.printStackTrace();
+        } catch (Exception e) {
+            AppLog.getLogger().error("StorageService - unable to retrieve domain structure for domain's servers",e);
         }
-
         return null;
     }
 
+
+
+    @GET
+    @Path("jsonp/domain")
+    @Produces({"application/javascript"})
+    public JSONWithPadding getDomainJsonp(@QueryParam("callback") String callback) {
+        Set<String> servers = getDomain();
+        return new JSONWithPadding(servers, callback);
+    }
+
+    @GET
+    @Path("jsonp/resources")
+    @Produces({"application/javascript"})
+    public JSONWithPadding getStatsJsonp(
+            @QueryParam("startTime") String startTime,
+            @QueryParam("endTime") String endTime, @QueryParam("callback") String callback) {
+        Map<String, Set<String>> resourcesMap = getStats(startTime, endTime);
+        return new JSONWithPadding(resourcesMap, callback);
+    }
 
     @GET
     @Path("jsonp/stats/{resourceType}/{resource}")
     @Produces({"application/javascript"})
     public JSONWithPadding getStatsJsonp(@HeaderParam("user-agent") String userAgent, @QueryParam("scope") Set<String> scope,
-                                          @QueryParam("startTime") String startTime,
-                                          @QueryParam("endTime") String endTime,
-                                          @PathParam("resourceType") String resourceType,
-                                          @PathParam("resource") String resource,@QueryParam("callback") String callback) {
+                                         @QueryParam("startTime") String startTime,
+                                         @QueryParam("endTime") String endTime,
+                                         @PathParam("resourceType") String resourceType,
+                                         @PathParam("resource") String resource, @QueryParam("callback") String callback) {
 
-        Map<String, List<Map>> result = getStats(userAgent,scope,startTime,endTime,resourceType,resource);
-        return new JSONWithPadding(result,callback);
+        Map<String, List<Map>> result = getStats(userAgent, scope, startTime, endTime, resourceType, resource);
+        return new JSONWithPadding(result, callback);
     }
 
-    private void addMissingData(Map<String,List<Map>> data,DateTime startTime,DateTime endTime){
+    //very uneffective method to be removed soon,
+    private void addMissingData(Map<String, List<Map>> data, DateTime startTime, DateTime endTime) {
         for (List<Map> list : data.values()) {
-            for (Map map:list) {
-                List<BigDecimal[]> dataList = (List<BigDecimal[]>)map.get("data");
+            for (Map map : list) {
+                List<BigDecimal[]> dataList = (List<BigDecimal[]>) map.get("data");
                 DateTime inter = startTime;
                 // Loop through each day in the span
                 while (inter.compareTo(endTime) < 0) {
                     // Go to next
                     inter = inter.plusHours(1);
-                    if (!isDatePresent(inter,dataList)){
-                        dataList.add(new BigDecimal[]{BigDecimal.valueOf(inter.getMillis()),null});
+                    if (!isDatePresent(inter, dataList)) {
+                        dataList.add(new BigDecimal[]{BigDecimal.valueOf(inter.getMillis()), null});
                     }
                 }
                 Collections.sort(dataList, new Comparator<BigDecimal[]>() {
@@ -329,7 +304,7 @@ public class StorageService {
 
     }
 
-    private boolean isDatePresent(DateTime date,List<BigDecimal[]> dataList){
+    private boolean isDatePresent(DateTime date, List<BigDecimal[]> dataList) {
         int year = date.getYear();
         int month = date.getMonthOfYear();
         int day = date.getDayOfMonth();
@@ -342,7 +317,7 @@ public class StorageService {
             int monthDT = datetime.getMonthOfYear();
             int dayDT = datetime.getDayOfMonth();
             int hourDT = datetime.getHourOfDay();
-            if (year==yearDT && monthDT==month && dayDT==day && hourDT==hour )
+            if (year == yearDT && monthDT == month && dayDT == day && hourDT == hour)
                 return true;
         }
 
@@ -350,6 +325,7 @@ public class StorageService {
     }
 
 
+    // test method ...to be removed on cleaning
     @GET
     @Path("test")
     @Produces({MediaType.APPLICATION_JSON})
