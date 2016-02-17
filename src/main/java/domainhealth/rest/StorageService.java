@@ -126,6 +126,7 @@ public class StorageService {
             for (String server : scope) {
                 List<String> properties = new LinkedList<>();
                 switch (resourceType) {
+
                     case "core":
                         properties.add("HeapUsedCurrent");
                         properties.add("OpenSocketsCurrentCount");

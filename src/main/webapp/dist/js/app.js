@@ -404,7 +404,7 @@ $(function () {
 
   $.ajax({
     url: '/domainhealth/rest/resources',
-    dataType:'JSONP',
+    dataType:'JSON',
     data:{startTime:startTime,endTime: endTime},
     success: function(response) {
 
