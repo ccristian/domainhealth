@@ -12,14 +12,18 @@
 			a) a user defined in any realm or
 			b) a group defined in any realm-->
 		<principal-name>Administrators</principal-name>
+		<principal-name>Monitors</principal-name>
 	</security-role-assignment>
 
 	<run-as-role-assignment>
 		<!--The run-as-role-assignment element maps a run-as role name
 		(a subelement of the servlet element) in web.xml to a valid user name in the system-->
 		<role-name>SystemAdministrator</role-name>
+		<!--
 		<run-as-principal-name>weblogic</run-as-principal-name>
-
+		-->
+		<!-- Updated by gregoan the 04/06/2014 -->
+		<run-as-principal-name>system</run-as-principal-name>
 
 	</run-as-role-assignment>
 
@@ -34,6 +38,8 @@
 	</work-manager>
 
 	<session-descriptor>
-		<timeout-secs>20</timeout-secs>
+		<timeout-secs>600</timeout-secs>
 	</session-descriptor>
 </weblogic-web-app>
+
+
