@@ -400,7 +400,8 @@ public interface WebLogicMBeanPropConstants {
 	/**
 	 * 'OpenSocketsCurrentCount' MBean property
 	 */
-	public final static String OPEN_SOCKETS = "OpenSocketsCurrentCount";
+	//public final static String OPEN_SOCKETS = "OpenSocketsCurrentCount";
+	public final static String OPEN_SOCKETS_CURRENT_COUNT = "OpenSocketsCurrentCount";
 
 	/**
 	 * 'HeapSizeCurrent' MBean property
@@ -828,6 +829,19 @@ public interface WebLogicMBeanPropConstants {
 	 * 'TcpTimeWaitCount' MBean property
 	 */
 	public final static String TCP_TIME_WAIT_COUNT = "TcpTimeWaitCount";
+	
+	public final static String AVAILABLE_PROCESSORS = "AvailableProcessors";
+	public final static String SYSTEM_LOAD_AVERAGE = "SystemLoadAverage";
+	public final static String COMMITTED_VIRTUAL_MEMORY_SIZE_MEGABYTES = "CommittedVirtualMemorySizeMegabytes";
+	public final static String FREE_PHYSICAL_MEMORY_SIZE_MEGABYTES = "FreePhysicalMemorySizeMegabytes";
+	public final static String FREE_SWAP_SPACE_SIZE_MEGABYTES = "FreeSwapSpaceSizeMegabytes";
+	public final static String MAX_FILE_DESCRIPTOR_COUNT = "MaxFileDescriptorCount";
+	public final static String OPEN_FILE_DESCRIPTOR_COUNT = "OpenFileDescriptorCount";
+	public final static String PROCESS_CPU_LOAD = "ProcessCpuLoad";
+	public final static String PROCESS_CPU_TIME = "ProcessCpuTime";
+	public final static String SYSTEM_CPU_LOAD = "SystemCpuLoad";
+	public final static String TOTAL_PHYSICAL_MEMORY_SIZE_MEGABYTES = "TotalPhysicalMemorySizeMegabytes";
+	public final static String TOTAL_SWAP_SPACE_SIZE_MEGABYTES = "TotalSwapSpaceSizeMegabytes";
 	
 	// -----------------------------------------------------------
 	// Added by gregoan

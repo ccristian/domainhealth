@@ -14,8 +14,6 @@
 //POSSIBILITY OF SUCH DAMAGE.
 package domainhealth.backend.jmxpoll;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
@@ -89,7 +87,7 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 		ObjectName serverRuntime = getServerRuntime();
 
 		line.append(ServerState.getValueForState(getConn().getTextAttr(serverRuntime, SERVER_STATE)) + SEPARATOR);
-		line.append(getConn().getNumberAttr(serverRuntime, OPEN_SOCKETS) + SEPARATOR);
+		line.append(getConn().getNumberAttr(serverRuntime, OPEN_SOCKETS_CURRENT_COUNT) + SEPARATOR);
 		
 		// JVM attributes (got to do these separately because changing some figures to MegaBytes and calculate heap size current)
 		ObjectName jvm = getConn().getChild(getServerRuntime(), JVM_RUNTIME);
@@ -98,18 +96,6 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 		line.append((long)((getConn().getNumberAttr(jvm, HEAP_SIZE_CURRENT) - getConn().getNumberAttr(jvm, HEAP_FREE_CURRENT)) / BYTES_IN_MEGABYTE) + SEPARATOR);
 		line.append(getConn().getNumberAttr(jvm, HEAP_FREE_PERCENT) + SEPARATOR);
 		
-// Add the others part/area of JVM		
-		MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
-		line.append((long)(memoryMXBean.getHeapMemoryUsage().getInit() / BYTES_IN_MEGABYTE) + SEPARATOR);
-		line.append((long)(memoryMXBean.getHeapMemoryUsage().getUsed() / BYTES_IN_MEGABYTE) + SEPARATOR);
-		line.append((long)(memoryMXBean.getHeapMemoryUsage().getCommitted() / BYTES_IN_MEGABYTE) + SEPARATOR);
-		line.append((long)(memoryMXBean.getHeapMemoryUsage().getMax() / BYTES_IN_MEGABYTE) + SEPARATOR);
-        
-		line.append((long)(memoryMXBean.getNonHeapMemoryUsage().getInit() / BYTES_IN_MEGABYTE) + SEPARATOR);
-		line.append((long)(memoryMXBean.getNonHeapMemoryUsage().getUsed() / BYTES_IN_MEGABYTE) + SEPARATOR);
-		line.append((long)(memoryMXBean.getNonHeapMemoryUsage().getCommitted() / BYTES_IN_MEGABYTE) + SEPARATOR);
-		line.append((long)(memoryMXBean.getNonHeapMemoryUsage().getMax() / BYTES_IN_MEGABYTE) + SEPARATOR);
-
 		// Thread Pool Attributes
 		ObjectName threadPool = getConn().getChild(getServerRuntime(), THREAD_POOL_RUNTIME);
 		
@@ -478,7 +464,34 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 		} catch (Exception e) {
 			throw new DataRetrievalException("Problem logging " + HOSTMACHINE_RESOURCE_TYPE + " resources for server " + getServerName(), e);
 		}				
-	}	
+	}
+	
+	/**
+	 * Implements the abstract method to log WLJvm optional mbean stats to a CSV file.
+	 * 
+	 * @throws DataRetrievalException Indicates problem occurred in trying to obtain and persist the server's statistics
+	 */
+	protected void logJvmStats() throws DataRetrievalException {
+		try {
+			Date nowDate = new Date();
+			String now = (new SimpleDateFormat(DATETIME_PARAM_FORMAT)).format(nowDate);
+			Properties artifactList = new Properties();
+			String headerLine = constructHeaderLine(JAVA_JVM_MBEAN_MONITOR_ATTR_LIST);			
+			String jvmMBeanName = String.format(JVM_MBEAN_FULLNAME_TEMPLATE, getServerName());
+			ObjectName remoteWLJvmStatsMBean = getConn().getCustomMBean(jvmMBeanName);
+			
+			if (remoteWLJvmStatsMBean != null) {
+				String name = ResourceNameNormaliser.normalise(JVM_RESOURCE_TYPE, JVM_MBEAN_NAME);
+				String contentLine = constructStatsLine(remoteWLJvmStatsMBean, JAVA_JVM_MBEAN_MONITOR_ATTR_LIST);
+				getCSVStats().appendToResourceStatisticsCSV(new Date(), getServerName(), JVM_RESOURCE_TYPE, name, headerLine, contentLine);
+				artifactList.put(name, now);
+			} 
+
+			getCSVStats().appendSavedOneDayResourceNameList(nowDate, JVM_RESOURCE_TYPE, artifactList);			
+		} catch (Exception e) {
+			throw new DataRetrievalException("Problem logging " + JVM_RESOURCE_TYPE + " resources for server " + getServerName(), e);
+		}				
+	}
 
 	/**
 	 * Does nothing - for JMX Polling statistic capture, we don't go deep and 

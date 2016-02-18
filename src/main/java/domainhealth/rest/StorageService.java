@@ -1,6 +1,5 @@
 package domainhealth.rest;
 
-
 import domainhealth.core.env.AppLog;
 import domainhealth.core.env.AppProperties;
 import domainhealth.core.jmx.DomainRuntimeServiceMBeanConnection;
@@ -8,7 +7,6 @@ import domainhealth.core.statistics.MonitorProperties;
 import domainhealth.core.statistics.StatisticsStorage;
 import domainhealth.frontend.data.DateAmountDataItem;
 import domainhealth.frontend.data.DateAmountDataSet;
-import domainhealth.frontend.data.Domain;
 import domainhealth.frontend.data.Statistics;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
@@ -19,8 +17,10 @@ import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+
+import domainhealth.core.jmx.WebLogicMBeanPropConstants;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
@@ -70,6 +70,11 @@ public class StorageService {
             resourcesMap.put(MonitorProperties.WORKMGR_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.WORKMGR_RESOURCE_TYPE));
             resourcesMap.put(MonitorProperties.WEBAPP_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.WEBAPP_RESOURCE_TYPE));
             resourcesMap.put(MonitorProperties.SVRCHNL_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.SVRCHNL_RESOURCE_TYPE));
+            
+            // Add the extensions of DH
+resourcesMap.put(MonitorProperties.HOSTMACHINE_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.HOSTMACHINE_RESOURCE_TYPE));
+resourcesMap.put(MonitorProperties.JVM_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.JVM_RESOURCE_TYPE));
+            
         } catch (IOException e) {
             AppLog.getLogger().error("Error while getting resources", e);
         }
@@ -112,9 +117,13 @@ public class StorageService {
 
         try {
 
+AppLog.getLogger().info("StorageService - resourceType is [" + resourceType + "]");
+System.out.println("StorageService - resourceType is [" + resourceType + "]");
 
-
-            System.out.println(userAgent);
+AppLog.getLogger().info("StorageService - resource is [" + resource + "]");
+System.out.println("StorageService - resource is [" + resource + "]");
+        	
+            //System.out.println(userAgent);
 
             Map<String, List<Map>> result = new LinkedHashMap<>();
 
@@ -129,13 +138,18 @@ public class StorageService {
                 scope = statisticsStorage.getAllPossibleServerNames(conn);
             }
 
-
             Map<String, DateAmountDataSet> dataMap = null;
 
             for (String server : scope) {
                 List<String> coreProps = new LinkedList<>();
                 switch (resourceType) {
-                    case "core":
+                
+                    //case "core":
+                	case MonitorProperties.CORE_RESOURCE_TYPE:
+                		
+AppLog.getLogger().info("StorageService - [" + MonitorProperties.CORE_RESOURCE_TYPE + "]");
+System.out.println("StorageService - [" + MonitorProperties.CORE_RESOURCE_TYPE + "]");                		
+                		/*
                         coreProps.add("HeapUsedCurrent");
                         coreProps.add("OpenSocketsCurrentCount");
                         coreProps.add("HeapSizeCurrent");
@@ -157,17 +171,41 @@ public class StorageService {
                         coreProps.add("TransactionHeuristicsTotalCount");
                         coreProps.add("TransactionAbandonedTotalCount");
                         coreProps.add("ActiveTransactionsTotalCount");
-
-
+                        */
+                		
+                        coreProps.add(WebLogicMBeanPropConstants.OPEN_SOCKETS_CURRENT_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.HEAP_USED_CURRENT);
+                        coreProps.add(WebLogicMBeanPropConstants.HEAP_SIZE_CURRENT);
+                        coreProps.add(WebLogicMBeanPropConstants.HEAP_FREE_CURRENT);
+                        coreProps.add(WebLogicMBeanPropConstants.HEAP_FREE_PERCENT);
+                        coreProps.add(WebLogicMBeanPropConstants.EXECUTE_THREAD_TOTAL_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.HOGGING_THREAD_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.PENDING_USER_REQUEST_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.THREAD_POOL_QUEUE_LENGTH);
+                        coreProps.add(WebLogicMBeanPropConstants.COMPLETED_REQUEST_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.EXECUTE_THREAD_IDLE_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.MIN_THREADS_CONSTRAINT_COMPLETED);
+                        coreProps.add(WebLogicMBeanPropConstants.MIN_THREADS_CONSTRAINT_PENDING);
+                        coreProps.add(WebLogicMBeanPropConstants.STANDBY_THREAD_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.THROUGHPUT);
+                        coreProps.add(WebLogicMBeanPropConstants.TRANSACTION_TOTAL_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.TRANSACTION_COMMITTED_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.TRANSACTION_ROLLEDBACK_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.TRANSACTION_HEURISTICS_TOTAL_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.TRANSACTION_ABANDONED_TOTAL_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.TRANSACTIONS_ACTIVE_TOTAL_COUNT);
+                		
                         resource = null;
-
-
-
-
-                        //result.put(server, );
                         break;
-                    case "datasource":
-                        coreProps.add("NumAvailable");
+                        
+                    //case "datasource":
+                    case MonitorProperties.DATASOURCE_RESOURCE_TYPE:
+                    	
+AppLog.getLogger().info("StorageService - [" + MonitorProperties.DATASOURCE_RESOURCE_TYPE + "]");
+System.out.println("StorageService - [" + MonitorProperties.DATASOURCE_RESOURCE_TYPE + "]");
+
+                    	/*
+                    	coreProps.add("NumAvailable");
                         coreProps.add("NumUnavailable");
                         coreProps.add("ActiveConnectionsCurrentCount");
                         coreProps.add("ConnectionDelayTime");
@@ -177,9 +215,28 @@ public class StorageService {
                         coreProps.add("WaitingForConnectionCurrentCount");
                         coreProps.add("WaitingForConnectionFailureTotal");
                         coreProps.add("WaitSecondsHighCount");
+                        */
+                    	
+                    	coreProps.add(WebLogicMBeanPropConstants.NUM_AVAILABLE);
+                        coreProps.add(WebLogicMBeanPropConstants.NUM_UNAVAILABLE);
+                        coreProps.add(WebLogicMBeanPropConstants.ACTIVE_CONNECTONS_CURRENT_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.CONNECTION_DELAY_TIME);
+                        coreProps.add(WebLogicMBeanPropConstants.FAILED_RESERVE_REQUEST_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.FAILURES_TO_RECONNECT_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.LEAKED_CONNECTION_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.WAITING_FOR_CONNECTION_CURRENT_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.WAITING_FOR_CONNECTION_FAILURES_TOTAL);
+                        coreProps.add(WebLogicMBeanPropConstants.WAITING_SECONDS_HIGH_COUNT);
+                    	
                         break;
 
-                    case "destination":
+                    //case "destination":
+                    case MonitorProperties.DESTINATION_RESOURCE_TYPE:
+                    	
+AppLog.getLogger().info("StorageService - [" + MonitorProperties.DESTINATION_RESOURCE_TYPE + "]");
+System.out.println("StorageService - [" + MonitorProperties.DESTINATION_RESOURCE_TYPE + "]");
+                    	
+                    	/*
                         coreProps.add("MessagesCurrentCount");
                         coreProps.add("MessagesReceivedCount");
                         coreProps.add("MessagesPendingCount");
@@ -187,9 +244,24 @@ public class StorageService {
                         coreProps.add("ConsumersCurrentCount");
                         coreProps.add("ConsumersHighCount");
                         coreProps.add("ConsumersTotalCount");
+                        */
+                    	
+                    	coreProps.add(WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.MESSAGES_RECEIVED_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.MESSAGES_PENDING_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.MESSAGES_HIGH_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.CONSUMERS_CURRENT_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.CONSUMERS_HIGH_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.CONSUMERS_TOTAL_COUNT);
+                    	
                         break;
 
-                    case "ejb":
+                    //case "ejb":
+                    case MonitorProperties.EJB_RESOURCE_TYPE:
+AppLog.getLogger().info("StorageService - [" + MonitorProperties.EJB_RESOURCE_TYPE + "]");                    	
+System.out.println("StorageService - [" + MonitorProperties.EJB_RESOURCE_TYPE + "]");
+                    	
+                    	/*
                         coreProps.add("PooledBeansCurrentCount");
                         coreProps.add("AccessTotalCount");
                         coreProps.add("BeansInUseCurrentCount");
@@ -198,53 +270,176 @@ public class StorageService {
                         coreProps.add("TransactionsCommittedTotalCount");
                         coreProps.add("TransactionsRolledBackTotalCount");
                         coreProps.add("TransactionsTimedOutTotalCount");
-                        break;
-                    case "saf":
+                        */
+                    	
+                    	coreProps.add(WebLogicMBeanPropConstants.BEANS_POOLED_CURRENT_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.BEAN_ACCESS_TOTAL_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.BEANS_INUSE_CURRENT_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.BEAN_WAITING_CURRENT_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.BEAN_WAITING_TOTAL_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.BEAN_TRANSACTIONS_COMMITTED_TOTAL_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.BEAN_TRANSACTIONS_ROLLEDBACK_TOTAL_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.BEAN_TRANSACTIONS_TIMEDOUT_TOTAL_COUNT);
+                    	
+                    	break;
+                        
+                    //case "saf":
+                    case MonitorProperties.SAF_RESOURCE_TYPE:
+                    	
+AppLog.getLogger().info("StorageService - [" + MonitorProperties.SAF_RESOURCE_TYPE + "]");                    	
+System.out.println("StorageService - [" + MonitorProperties.SAF_RESOURCE_TYPE + "]");
+
+                    	/*
                         coreProps.add("MessagesCurrentCount");
                         coreProps.add("MessagesPendingCount");
                         coreProps.add("MessagesReceivedCount");
                         coreProps.add("MessagesHighCount");
+                        */
+                    	
+                    	coreProps.add(WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.MESSAGES_PENDING_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.MESSAGES_RECEIVED_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.MESSAGES_HIGH_COUNT);
+                    	
                         break;
 
-                    case "webapp":
+                    //case "webapp":
+                    case MonitorProperties.WEBAPP_RESOURCE_TYPE:
+                    	
+AppLog.getLogger().info("StorageService - [" + MonitorProperties.WEBAPP_RESOURCE_TYPE + "]");
+System.out.println("StorageService - [" + MonitorProperties.WEBAPP_RESOURCE_TYPE + "]");
+
+
+                    	/*
                         coreProps.add("OpenSessionsCurrentCount");
                         coreProps.add("OpenSessionsHighCount");
                         coreProps.add("SessionsOpenedTotalCount");
+                        */
+                    	
+                    	coreProps.add(WebLogicMBeanPropConstants.SESSIONS_CURRENT_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.SESSIONS_HIGH_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.SESSIONS_TOTAL_COUNT);
+                    	
                         break;
 
-                    case "svrchnl":
+                    //case "svrchnl":
+                    case MonitorProperties.SVRCHNL_RESOURCE_TYPE:
+
+AppLog.getLogger().info("StorageService - [" + MonitorProperties.SVRCHNL_RESOURCE_TYPE + "]");
+System.out.println("StorageService - [" + MonitorProperties.SVRCHNL_RESOURCE_TYPE + "]");
+                    	
+                    	/*
                         coreProps.add("AcceptCount");
                         coreProps.add("ConnectionsCount");
                         coreProps.add("MessagesReceivedCount");
                         coreProps.add("MessagesSentCount");
+                        */
+                    	
+                    	coreProps.add(WebLogicMBeanPropConstants.ACCEPT_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.CONNECTIONS_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.CHNL_MESSAGES_RECEIVED_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.CHNL_MESSAGES_SENT_COUNT);
+                    	
                         break;
 
-                    case "workmgr":
+                    //case "workmgr":
+                    case MonitorProperties.WORKMGR_RESOURCE_TYPE:
+                    	
+AppLog.getLogger().info("StorageService - [" + MonitorProperties.WORKMGR_RESOURCE_TYPE + "]");
+System.out.println("StorageService - [" + MonitorProperties.WORKMGR_RESOURCE_TYPE + "]");
+
+                    	/*
                         coreProps.add("CompletedRequests");
                         coreProps.add("PendingRequests");
                         coreProps.add("StuckThreadCount");
+                        */
+                    	
+                    	coreProps.add(WebLogicMBeanPropConstants.COMPLETED_REQUESTS);
+                        coreProps.add(WebLogicMBeanPropConstants.PENDING_REQUESTS);
+                        coreProps.add(WebLogicMBeanPropConstants.STUCK_THREAD_COUNT);
+                    	
                         break;
-
-
-
-
-
-
+                        
+                    case MonitorProperties.HOSTMACHINE_RESOURCE_TYPE:
+                    	
+AppLog.getLogger().info("StorageService - [" + MonitorProperties.HOSTMACHINE_RESOURCE_TYPE + "]");
+System.out.println("StorageService - [" + MonitorProperties.HOSTMACHINE_RESOURCE_TYPE + "]");
+                    	
+                    	coreProps.add(WebLogicMBeanPropConstants.JVM_INSTANCE_CORES_USED);
+                        coreProps.add(WebLogicMBeanPropConstants.JVM_INSTANCE_PHYSICAL_MEMORY_USED_MEGABYTES);
+                        coreProps.add(WebLogicMBeanPropConstants.NATIVE_PROCESSES_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.NETWORK_RX_MEGABYTES);
+                        coreProps.add(WebLogicMBeanPropConstants.NETWORK_RX_DROPPED);
+                        coreProps.add(WebLogicMBeanPropConstants.NETWORK_RX_ERRORS);
+                        coreProps.add(WebLogicMBeanPropConstants.NETWORK_RX_FRAME);
+                        coreProps.add(WebLogicMBeanPropConstants.PENDING_REQUESTS);
+                        coreProps.add(WebLogicMBeanPropConstants.NETWORK_RX_OVERRUNS);
+                        coreProps.add(WebLogicMBeanPropConstants.NETWORK_MILLIONS_RX_PACKETS);
+                        coreProps.add(WebLogicMBeanPropConstants.NETWORK_TX_MEGABYTES);
+                        coreProps.add(WebLogicMBeanPropConstants.NETWORK_TX_CARRIER);
+                        coreProps.add(WebLogicMBeanPropConstants.NETWORK_TX_COLLISIONS);
+                        coreProps.add(WebLogicMBeanPropConstants.NETWORK_TX_DROPPED);
+                        coreProps.add(WebLogicMBeanPropConstants.NETWORK_TX_ERRORS);
+                        coreProps.add(WebLogicMBeanPropConstants.NETWORK_TX_OVERRUNS);
+                        coreProps.add(WebLogicMBeanPropConstants.NETWORK_MILLIONS_TX_PACKETS);
+                        coreProps.add(WebLogicMBeanPropConstants.PHYSICAL_MEMORY_USED_PERCENT);
+                        coreProps.add(WebLogicMBeanPropConstants.PHYSICAL_SWAP_USED_PERCENT);
+                        coreProps.add(WebLogicMBeanPropConstants.PROCESSOR_LAST_MINUTE_WORKLOAD_AVERAGE);
+                        coreProps.add(WebLogicMBeanPropConstants.PROCESSOR_USAGE_PERCENT);
+                        coreProps.add(WebLogicMBeanPropConstants.ROOT_FILESYSTEM_USED_PERCENT);
+                        coreProps.add(WebLogicMBeanPropConstants.TCP_CLOSE_WAIT_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.TCP_ESTABLISHED_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.TCP_LISTEN_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.TCP_TIME_WAIT_COUNT);
+                        
+                        coreProps.add(WebLogicMBeanPropConstants.AVAILABLE_PROCESSORS);
+                        coreProps.add(WebLogicMBeanPropConstants.SYSTEM_LOAD_AVERAGE);
+                        coreProps.add(WebLogicMBeanPropConstants.COMMITTED_VIRTUAL_MEMORY_SIZE_MEGABYTES);
+                        coreProps.add(WebLogicMBeanPropConstants.FREE_PHYSICAL_MEMORY_SIZE_MEGABYTES);
+                        coreProps.add(WebLogicMBeanPropConstants.FREE_SWAP_SPACE_SIZE_MEGABYTES);
+                        coreProps.add(WebLogicMBeanPropConstants.MAX_FILE_DESCRIPTOR_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.OPEN_FILE_DESCRIPTOR_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.PROCESS_CPU_LOAD);
+                        coreProps.add(WebLogicMBeanPropConstants.PROCESS_CPU_TIME);
+                        coreProps.add(WebLogicMBeanPropConstants.SYSTEM_CPU_LOAD);
+                        coreProps.add(WebLogicMBeanPropConstants.TOTAL_PHYSICAL_MEMORY_SIZE_MEGABYTES);
+                        coreProps.add(WebLogicMBeanPropConstants.TOTAL_SWAP_SPACE_SIZE_MEGABYTES);
+                        
+                        //resource = null;
+                        break;
+                        
+                    case MonitorProperties.JVM_RESOURCE_TYPE:
+                    	
+AppLog.getLogger().info("StorageService - [" + MonitorProperties.JVM_RESOURCE_TYPE + "]");
+System.out.println("StorageService - [" + MonitorProperties.JVM_RESOURCE_TYPE + "]");
+                    	
+                    	coreProps.add(WebLogicMBeanPropConstants.HEAP_MEMORY_INIT);
+                        coreProps.add(WebLogicMBeanPropConstants.HEAP_MEMORY_USED);
+                        coreProps.add(WebLogicMBeanPropConstants.HEAP_MEMORY_COMMITTED);
+                        coreProps.add(WebLogicMBeanPropConstants.HEAP_MEMORY_MAX);
+                        coreProps.add(WebLogicMBeanPropConstants.NON_HEAP_MEMORY_INIT);
+                        coreProps.add(WebLogicMBeanPropConstants.NON_HEAP_MEMORY_USED);
+                        coreProps.add(WebLogicMBeanPropConstants.NON_HEAP_MEMORY_COMMITTED);
+                        coreProps.add(WebLogicMBeanPropConstants.NON_HEAP_MEMORY_MAX);
+                        
+                        //resource = null;
+                        break;
+                        
+                    default:
+AppLog.getLogger().info("StorageService - [TYPE_NOT_MANAGED]");
+System.out.println("StorageService - [TYPE_NOT_MANAGED]");
+                    	break;
                 }
 
-                //temp solution for ordering gui
+                // Temp solution for ordering gui
                 Collections.reverse(coreProps);
                 Set prp = new LinkedHashSet(coreProps);
                 dataMap = statisticsStorage.getPropertyData(resourceType, resource, prp, interval, server);
-
-
 
                 for (String res:dataMap.keySet()) {
 
                     DateAmountDataSet dataSet  = dataMap.get(res);
                     String property = dataSet.getResourceProperty();
-
-
 
                     List dataList = new LinkedList();
                     for (DateAmountDataItem dateAmountDataItem:dataSet.getData()) {
@@ -269,14 +464,9 @@ public class StorageService {
             // addMissingData(result,start,end);
             long t2 = System.currentTimeMillis();
             return result;
-        } catch (
-                Exception e
-                )
-
-        {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-
         return null;
     }
 
@@ -349,6 +539,4 @@ public class StorageService {
         res.add(l2);
         return res;
     }
-
-
 }

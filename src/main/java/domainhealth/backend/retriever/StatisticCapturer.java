@@ -78,6 +78,10 @@ public abstract class StatisticCapturer {
 		logWebAppStats();
 		logEJBStats();
 		logHostMachineStats();
+		
+		// Added by gregoan
+		logJvmStats();
+		
 		logExtendedStats();
 	}
 
@@ -134,6 +138,12 @@ public abstract class StatisticCapturer {
 	 */
 	protected abstract void logHostMachineStats() throws DataRetrievalException;
 
+	/**
+	 * Abstract method for capturing and persisting WLJvm optional mbean statistics.
+	 * 
+	 * @throws DataRetrievalException Indicates problem occurred in trying to obtain and persist the server's statistics
+	 */
+	protected abstract void logJvmStats() throws DataRetrievalException;
 
 	/**
 	 * Abstract method for capturing and persisting other types of server 
@@ -163,20 +173,6 @@ public abstract class StatisticCapturer {
 		headerLine.append(HEAP_FREE_CURRENT + SEPARATOR); 
 		headerLine.append(HEAP_USED_CURRENT + SEPARATOR); 
 		headerLine.append(HEAP_FREE_PERCENT + SEPARATOR);
-		
-// Add the others part/area of JVM
-		
-		/*
-		headerLine.append(HEAP_MEMORY_INIT + SEPARATOR); 
-		headerLine.append(HEAP_MEMORY_USED + SEPARATOR); 
-		headerLine.append(HEAP_MEMORY_COMMITTED + SEPARATOR); 
-		headerLine.append(HEAP_MEMORY_MAX + SEPARATOR);
-		
-		headerLine.append(NON_HEAP_MEMORY_INIT + SEPARATOR); 
-		headerLine.append(NON_HEAP_MEMORY_USED + SEPARATOR); 
-		headerLine.append(NON_HEAP_MEMORY_COMMITTED + SEPARATOR); 
-		headerLine.append(NON_HEAP_MEMORY_MAX + SEPARATOR);
-		*/
 		
 		for (String attr : THREADPOOL_MBEAN_MONITOR_ATTR_LIST) {
 			headerLine.append(attr + SEPARATOR);

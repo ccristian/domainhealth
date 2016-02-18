@@ -24,13 +24,19 @@
 		<param-value>domainhealth,WLHostMachineStats,wlhostmachinestats,console,consolehelp,bea_wls9_async_response,bea_wls_cluster_internal,bea_wls_deployment_internal,bea_wls_internal,_async,Mejb,bea_wls_diagnostics,bea_wls_management_internal,bea_wls_management_internal2,uddi,uddiexplorer,wls-wsat,console-help,samlacs,samlars,samlits_ba,samlits_cc,DeployerBean,sbconsole,wls_utc</param-value>
 		-->
 		<param-value>domainhealth,WLHostMachineStats,wlhostmachinestats,console,consolehelp,bea_wls9_async_response,bea_wls_cluster_internal,bea_wls_deployment_internal,bea_wls_internal,_async,Mejb,bea_wls_diagnostics,bea_wls_management_internal,uddi,wls-wsat,console-help,samlacs,samlars,samlits_ba,samlits_cc,DeployerBean,sbconsole,wls_utc,sbresource,sbtestservice,wls-cat,xbuslogging,xbuspublish,xbusrouting,xbustransform,ReliableWseeSAFAgent,WseeJmsServer,wlsbJMSServer,wlsbjmsrpDataSource,wli.reporting,wlsb.internal,WseeCallbackQueue,WseeMessageQueue,alsb-uddi,alsb_ws__async,dms_,httpTransport,inspection.wsil,sbinspection.wsil,consoleWorkManager,weblogic.jms.wlsbJMSServer,ReliableWseeSAFAgent,weblogic.wsee,WseeJmsServer</param-value>
-
-        
     </context-param>
+    
     <context-param>
         <param-name>dh_csv_retain_num_days</param-name>
         <param-value>60</param-value>
     </context-param>
+
+	<!-- Added by gregoan -->
+	<!-- Dashboard -->
+	<context-param>
+		<param-name>dh_showdashboard</param-name>
+		<param-value>true</param-value>
+	</context-param>
 
     <servlet>
         <servlet-name>AppStartStopListener</servlet-name>

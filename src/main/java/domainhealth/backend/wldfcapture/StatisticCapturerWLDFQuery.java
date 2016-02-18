@@ -28,6 +28,8 @@ import domainhealth.frontend.data.ServerState;
 
 import javax.management.ObjectName;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -200,6 +202,15 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
      */
     protected void logHostMachineStats() throws DataRetrievalException {
         logResourceStats(HOSTMACHINE_RESOURCE_TYPE, HOST_MACHINE_MBEAN, HOST_MACHINE_STATS_MBEAN_MONITOR_ATTR_LIST, hostMachineStatsQuery);
+    }
+    
+    /**
+     * Implements the abstract method to log WLJvmStats optional mbean stats to a CSV file.
+     *
+     * @throws DataRetrievalException Indicates problem occurred in trying to obtain and persist the server's statistics
+     */
+    protected void logJvmStats() throws DataRetrievalException {
+        logResourceStats(JVM_RESOURCE_TYPE, JVM_MBEAN, JAVA_JVM_MBEAN_MONITOR_ATTR_LIST, jvmStatsQuery);
     }
 
     /**
@@ -457,6 +468,8 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
     private final static String wkMgrStatsQuery;
     private final static String svrChnlStatsQuery;
     private final static String hostMachineStatsQuery;
+    
+private final static String jvmStatsQuery;
 
     // Static initialiser
     static {
@@ -494,5 +507,11 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
         StringBuilder hostMachineStatsQueryBuilder = new StringBuilder(100);
         appendWLDFQueryPart(hostMachineStatsQueryBuilder, HOST_MACHINE_MBEAN, HOST_MACHINE_STATS_MBEAN_MONITOR_ATTR_LIST);
         hostMachineStatsQuery = hostMachineStatsQueryBuilder.toString();
+        
+StringBuilder jvmStatsQueryBuilder = new StringBuilder(100);
+appendWLDFQueryPart(jvmStatsQueryBuilder, JVM_MBEAN, JAVA_JVM_MBEAN_MONITOR_ATTR_LIST);
+jvmStatsQuery = jvmStatsQueryBuilder.toString();
+        
+        
     }
 }
