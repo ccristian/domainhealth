@@ -28,7 +28,6 @@ if (typeof jQuery === "undefined") {
  *              way to organize our code.
  */
 
-
 $.AdminLTE = {
 
 };
@@ -40,10 +39,8 @@ $.AdminLTE = {
  */
 $.AdminLTE.options = {
 
-
-  //Add slimscroll to navbar menus
-  //This requires you to load the slimscroll plugin
-  //in every page before app.js
+  // Add slimscroll to navbar menus
+  // This requires you to load the slimscroll plugin in every page before app.js
   navbarMenuSlimscroll: true,
   navbarMenuSlimscrollWidth: "3px", //The width of the scroll bar
   navbarMenuHeight: "200px", //The height of the inner menu
@@ -81,6 +78,7 @@ $.AdminLTE.options = {
     //Enable slide over content
     slide: true
   },
+  
   //Box Widget Plugin. Enable this plugin
   //to allow boxes to be collapsed and/or removed
   enableBoxWidget: true,
@@ -101,6 +99,7 @@ $.AdminLTE.options = {
       collapse: '[data-widget="collapse"]'
     }
   },
+  
   //Direct Chat plugin options
   directChat: {
     //Enable direct chat by default
@@ -108,6 +107,7 @@ $.AdminLTE.options = {
     //The button to open and close the chat contacts pane
     contactToggleSelector: '[data-widget="chat-pane-toggle"]'
   },
+  
   //Define the set of colors to use globally around the website
   colors: {
     lightBlue: "#3c8dbc",
@@ -127,6 +127,7 @@ $.AdminLTE.options = {
     black: "#222222",
     gray: "#d2d6de"
   },
+  
   //The standard screen sizes that bootstrap uses.
   //If you change these in the variables.less file, change
   //them here too.
@@ -153,7 +154,6 @@ $.AdminLTE.options = {
  * options above.
  */
 $(function () {
-
 
   Handlebars.registerHelper('if_even', function(conditional, options) {
     if((conditional % 2) == 0) {
@@ -239,7 +239,6 @@ $(function () {
     });
   }
 
-
   var currentDate = new Date();
   $.AdminLTE.options.endTimeVal = moment(currentDate);
   $.AdminLTE.options.startTimeVal = moment(currentDate).subtract(30,'minutes');
@@ -247,10 +246,7 @@ $(function () {
   var endTime = $.AdminLTE.options.endTimeVal.format('DD-MM-YYYY-HH-mm');
   var startTime =$.AdminLTE.options.startTimeVal.format('DD-MM-YYYY-HH-mm');
 
-
   displayDateInterval($.AdminLTE.options.startTimeVal,$.AdminLTE.options.endTimeVal);
-
-
 
   //
   Highcharts.setOptions({
@@ -259,25 +255,17 @@ $(function () {
     }
   });
 
-
-
   //initial view loading the first page
   getAndDisplayCharts("Core","core","params");
-
-
-
 
   //initialize the date range and add a listener when new interval is selected
   $('#daterange-btn').daterangepicker(
       {
-
         timePicker: true,
         timePickerIncrement: 1,
         locale: {
           format: 'DD/MM/YYYY h:mm A'
         },
-
-
 
         ranges: {
           '5 minutes': [moment().subtract(5, 'minutes'),moment()],
@@ -361,9 +349,6 @@ $(function () {
    else {
       $('#daterange-btn').html(tooltip);
     }
-
-
-
   }
 
   function getAndDisplayCharts(resname,respath,value) {
@@ -384,6 +369,7 @@ $(function () {
       }
     });
   }
+  
   function addListener(res,resname,respath){
     $.each( res, function( key, value ) {
       $("#"+value).click(function () {
@@ -398,13 +384,13 @@ $(function () {
 
   // Added by gregoan
   $("#jvm").click(function () {
-	    getAndDisplayCharts("JVM","jvm","params");
-	  });
+    getAndDisplayCharts("JVM","jvm","params");
+  });
   
   // Added by gregoan
   $("#hostmachine").click(function () {
-	    getAndDisplayCharts("HostMachine","hostmachine","params");
-	  });
+    getAndDisplayCharts("HostMachine","hostmachine","params");
+  });
   
   $.ajax({
     url: '/domainhealth/rest/resources',
@@ -445,7 +431,6 @@ $(function () {
 
   //var previousDate = moment(currentDate, 'DD-MM-YYYY-HH-mm').be;
   //$("#datasources").append('<li><a href="/user/messages"><span class="tab">'+endDate+'</span></a></li>');
-
 
   /*
    * INITIALIZE BUTTON TOGGLE
@@ -734,6 +719,7 @@ function _init() {
         $('body').addClass('control-sidebar-open');
       }
     },
+    
     //Close the control sidebar
     close: function (sidebar, slide) {
       if (slide) {
@@ -839,4 +825,3 @@ function _init() {
  * ------------------
  * All custom plugins are defined below.
  */
-

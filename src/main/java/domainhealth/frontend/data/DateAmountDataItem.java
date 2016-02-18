@@ -15,7 +15,6 @@
 package domainhealth.frontend.data;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
 
 /**
@@ -61,12 +60,8 @@ public class DateAmountDataItem {
 	private double amount = 0;
 	//@XmlElement(name="val")
 
-
 	@Override
 	public String toString() {
-		return "DateAmountDataItem{" +
-				"dateTime=" + dateTime +
-				", amount=" + amount +
-				'}';
+		return "DateAmountDataItem{" + "dateTime=" + dateTime +	", amount=" + amount + "}";
 	}
 }

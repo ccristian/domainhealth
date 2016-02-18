@@ -37,10 +37,8 @@ public class DateAmountDataSet {
 	@XmlElement(name = "prop")
 	private String resourceProperty;
 
-
 	public DateAmountDataSet() {
 	}
-
 
 	public DateAmountDataSet(String resourceType, String resourceName, String resourceProperty) {
 		this.resourceType = resourceType;
@@ -125,8 +123,6 @@ public class DateAmountDataSet {
 
 	@Override
 	public String toString() {
-		return "DateAmountDataSet{" +
-				"items=" + items +
-				'}';
+		return "DateAmountDataSet{" + "items=" + items + "}";
 	}
 }

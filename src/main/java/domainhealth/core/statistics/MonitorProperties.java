@@ -85,17 +85,19 @@ public class MonitorProperties {
 	 */
 	public final static String WKMGR_MBEAN_NAME_TEMPLATE = "com.bea:Name=weblogic.kernel.Default,ServerRuntime=%s,Type=WorkManagerRuntime";	
 
-	// Added by gregoan the 03/06/2014
 	/**
 	 * 'JMSDashboard' MBean instance name
 	 */
-	public final static String JMS_DASHBOARD_MBEAN_NAME = "JMSDashboard";
+	// Added by gregoan
+	// Commented by gregoan
+	//public final static String JMS_DASHBOARD_MBEAN_NAME = "JMSDashboard";
 
-	// Added by greoan the 03/06/2014
 	/**
 	 * 'jmsdashboard=%s,name=JMSDashboard' MBean name template
 	 */
-	public final static String JMS_DASHBOARD_MBEAN_FULLNAME_TEMPLATE = "jmsdashboard:Location=%s,name=" + JMS_DASHBOARD_MBEAN_NAME;
+	// Added by gregoan
+	// Commented by gregoan
+	//public final static String JMS_DASHBOARD_MBEAN_FULLNAME_TEMPLATE = "jmsdashboard:Location=%s,name=" + JMS_DASHBOARD_MBEAN_NAME;
 	
 	/**
 	 * 'WLHostMachineStats' MBean instance name
@@ -107,21 +109,17 @@ public class MonitorProperties {
 	 */
 	public final static String HOST_MACHINE_MBEAN_FULLNAME_TEMPLATE = "wlhostmachinestats:Location=%s,name=" + HOST_MACHINE_MBEAN_NAME;
 
-/**
- * 'WLJvmStats' MBean instance name
- */
-public final static String JVM_MBEAN_NAME = "WLJvmStats";
-
-/**
- * 'wljvmstats:Location=%s,name=WLJvmStats' MBean name template
- */
-public final static String JVM_MBEAN_FULLNAME_TEMPLATE = "wljvmstats:Location=%s,name=" + JVM_MBEAN_NAME;
+	/**
+	 * 'WLJvmStats' MBean instance name
+	 */
+	// Added by gregoan
+	public final static String JVM_MBEAN_NAME = "WLJvmStats";
 	
-/**
- * Name of the 'jvm' category of resource for WL Host Machine custom MBean related statistics
- */
-public final static String JVM_RESOURCE_TYPE = "jvm";
-	
+	/**
+	 * 'wljvmstats:Location=%s,name=WLJvmStats' MBean name template
+	 */
+	// Added by gregoan
+	public final static String JVM_MBEAN_FULLNAME_TEMPLATE = "wljvmstats:Location=%s,name=" + JVM_MBEAN_NAME;
 	
 	/**
 	 * Default Name of core resource - empty string ''
@@ -184,13 +182,31 @@ public final static String JVM_RESOURCE_TYPE = "jvm";
 	 */
 	// Added by gregoan
 	public final static String SAFAGENT_RESOURCE_TYPE = "safagent";
+	
+	/**
+	 * Name of the 'jvm' category of resource for WL Host Machine custom MBean related statistics
+	 */
+	// Added by gregoan
+	public final static String JVM_RESOURCE_TYPE = "jvm";
+	
+	/**
+	 * Name of the 'jmsdashboard' category of resource for JMS Dashboard related statistics
+	 */
+	// Added by gregoan
+	public final static String JMS_DASHBOARD_RESOURCE_TYPE = "jmsdashboard";
+	
+	/**
+	 * Name of the 'safdashboard' category of resource for SAF Dashboard related statistics
+	 */
+	// Added by gregoan
+	public final static String SAF_DASHBOARD_RESOURCE_TYPE = "safdashboard";
 
 	/**
 	 * List of names or allowable resource types (eg. core, datasource)
 	 */
 	// Updated by gregoan
 	//public final static List<String> LEGAL_RESOURCE_TYPES = Arrays.asList(CORE_RESOURCE_TYPE, DATASOURCE_RESOURCE_TYPE, DESTINATION_RESOURCE_TYPE, SAF_RESOURCE_TYPE, WEBAPP_RESOURCE_TYPE, EJB_RESOURCE_TYPE, WORKMGR_RESOURCE_TYPE, SVRCHNL_RESOURCE_TYPE, HOSTMACHINE_RESOURCE_TYPE);
-	public final static List<String> LEGAL_RESOURCE_TYPES = Arrays.asList(CORE_RESOURCE_TYPE, DATASOURCE_RESOURCE_TYPE, DESTINATION_RESOURCE_TYPE, SAF_RESOURCE_TYPE, WEBAPP_RESOURCE_TYPE, EJB_RESOURCE_TYPE, WORKMGR_RESOURCE_TYPE, SVRCHNL_RESOURCE_TYPE, HOSTMACHINE_RESOURCE_TYPE, JMSSVR_RESOURCE_TYPE, SAFAGENT_RESOURCE_TYPE, JVM_RESOURCE_TYPE);
+	public final static List<String> LEGAL_RESOURCE_TYPES = Arrays.asList(CORE_RESOURCE_TYPE, DATASOURCE_RESOURCE_TYPE, DESTINATION_RESOURCE_TYPE, SAF_RESOURCE_TYPE, WEBAPP_RESOURCE_TYPE, EJB_RESOURCE_TYPE, WORKMGR_RESOURCE_TYPE, SVRCHNL_RESOURCE_TYPE, HOSTMACHINE_RESOURCE_TYPE, JMSSVR_RESOURCE_TYPE, SAFAGENT_RESOURCE_TYPE, JVM_RESOURCE_TYPE, JMS_DASHBOARD_RESOURCE_TYPE, SAF_DASHBOARD_RESOURCE_TYPE);
 
 	/**
 	 * List of Server MBean Attributes to be monitored

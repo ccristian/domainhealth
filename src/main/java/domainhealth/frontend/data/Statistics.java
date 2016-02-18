@@ -1,8 +1,5 @@
 package domainhealth.frontend.data;
 
-import org.joda.time.Interval;
-
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -19,7 +16,6 @@ public class Statistics {
     public Statistics(){
 
     }
-
 
     public String getA() {
         return a;

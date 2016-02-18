@@ -4,6 +4,7 @@ import domainhealth.core.env.AppLog;
 import domainhealth.core.env.AppProperties;
 import domainhealth.core.jmx.DomainRuntimeServiceMBeanConnection;
 import domainhealth.core.statistics.MonitorProperties;
+import domainhealth.core.statistics.ResourceNameNormaliser;
 import domainhealth.core.statistics.StatisticsStorage;
 import domainhealth.frontend.data.DateAmountDataItem;
 import domainhealth.frontend.data.DateAmountDataSet;
@@ -14,12 +15,35 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import javax.annotation.PostConstruct;
+import javax.management.ObjectName;
 import javax.servlet.ServletContext;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import domainhealth.core.jmx.WebLogicMBeanPropConstants;
+
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.AGENTS;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.CONSUMERS_CURRENT_COUNT;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.CONSUMERS_HIGH_COUNT;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.CONSUMERS_TOTAL_COUNT;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.DESTINATIONS;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.DOWNTIME_HIGH;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.DOWNTIME_TOTAL;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.FAILED_MESSAGES_TOTAL;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.JMS_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.JMS_SERVERS;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.MESSAGES_HIGH_COUNT;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.MESSAGES_PENDING_COUNT;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.MESSAGES_RECEIVED_COUNT;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.NAME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.REMOTE_END_POINTS;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.SAF_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.UPTIME_HIGH;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.UPTIME_TOTAL;
+import static domainhealth.core.statistics.MonitorProperties.JMSSVR_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.SAFAGENT_RESOURCE_TYPE;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -38,6 +62,9 @@ public class StorageService {
 
     StatisticsStorage statisticsStorage;
 
+    /**
+     * 
+     */
     @PostConstruct
     public void initialize() {
         try {
@@ -47,7 +74,12 @@ public class StorageService {
         }
     }
 
-
+    /**
+     * 
+     * @param startTime
+     * @param endTime
+     * @return
+     */
     //http://localhost:7001/domainhealth/rest/resources?startTime=01-09-2014-00-00&endTime=17-09-2016-0-00
     @GET
     @Path("resources")
@@ -61,6 +93,7 @@ public class StorageService {
             DateTime start = fmt.parseDateTime(startTime);
             DateTime end = fmt.parseDateTime(endTime);
             Interval interval = new Interval(start, end);
+            
             resourcesMap.put(MonitorProperties.CORE_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.CORE_RESOURCE_TYPE));
             resourcesMap.put(MonitorProperties.DATASOURCE_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.DATASOURCE_RESOURCE_TYPE));
             resourcesMap.put(MonitorProperties.DESTINATION_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.DESTINATION_RESOURCE_TYPE));
@@ -80,6 +113,10 @@ public class StorageService {
         return resourcesMap;
     }
 
+    /**
+     * 
+     * @return
+     */
     //http://localhost:7001/domainhealth/domain
     @GET
     @Path("/domain")
@@ -101,6 +138,16 @@ public class StorageService {
     }
 
 
+    /**
+     * 
+     * @param userAgent
+     * @param scope
+     * @param startTime
+     * @param endTime
+     * @param resourceType
+     * @param resource
+     * @return
+     */
     //http://localhost:7001/domainhealth/rest/stats/core?scope=ALL&startTime=ss&endTime=ss
     //http://localhost:7001/domainhealth/rest/stats/core/xdd?startTime=01-09-2014-00-00&endTime=17-11-2015-0-00
     //http://localhost:7001/domainhealth/rest/stats/datasource/xdd?startTime=01-09-2014-00-00&endTime=17-11-2015-0-00
@@ -108,22 +155,14 @@ public class StorageService {
     @GET
     @Path("stats/{resourceType}/{resource}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Map<String,List<Map>> getStats(@HeaderParam("user-agent") String userAgent, @QueryParam("scope") Set<String> scope,
-                                          @QueryParam("startTime") String startTime,
-                                          @QueryParam("endTime") String endTime,
-                                          @PathParam("resourceType") String resourceType,
-                                          @PathParam("resource") String resource) {
-
+    public Map<String,List<Map>> getStats(	@HeaderParam("user-agent") String userAgent, 
+    										@QueryParam("scope") Set<String> scope,
+    										@QueryParam("startTime") String startTime,
+    										@QueryParam("endTime") String endTime,
+    										@PathParam("resourceType") String resourceType,
+    										@PathParam("resource") String resource) {
         try {
 
-/*
-//System.out.println("StorageService - userAgent is [" + userAgent + "]");
-//System.out.println("StorageService - startTime is [" + startTime + "]");
-//System.out.println("StorageService - endTime is [" + endTime + "]");
-System.out.println("StorageService - scope [1] is [" + scope + "]");
-System.out.println("StorageService - resourceType is [" + resourceType + "]");
-System.out.println("StorageService - resource is [" + resource + "]");
-*/
 			Map<String, List<Map>> result = new LinkedHashMap<>();
 
             DateTime start = fmt.parseDateTime(startTime);
@@ -137,8 +176,6 @@ System.out.println("StorageService - resource is [" + resource + "]");
                 scope = statisticsStorage.getAllPossibleServerNames(conn);
             }
             
-//System.out.println("StorageService - scope [2] is [" + scope + "]");
-
             Map<String, DateAmountDataSet> dataMap = null;
 
             for (String server : scope) {
@@ -404,13 +441,13 @@ System.out.println("StorageService - resource is [" + resource + "]");
                 Collections.reverse(coreProps);
                 Set prp = new LinkedHashSet(coreProps);
                 dataMap = statisticsStorage.getPropertyData(resourceType, resource, prp, interval, server);
-
-//System.out.println("StorageService - Size of dataMap is [" + dataMap.size() + "]");
                 
                 for (String res:dataMap.keySet()) {
 
                     DateAmountDataSet dataSet  = dataMap.get(res);
-                    String property = dataSet.getResourceProperty();
+                    
+                    // Not used so commented
+                    //String property = dataSet.getResourceProperty();
                     
                     List dataList = new LinkedList();
                     for (DateAmountDataItem dateAmountDataItem:dataSet.getData()) {
@@ -420,8 +457,9 @@ System.out.println("StorageService - resource is [" + resource + "]");
                     Map map = new LinkedHashMap();
                     map.put("name",server);
                     map.put("data",dataList);
+                    
                     List<Map> listMap  = result.get(res);
-                    if (listMap==null){
+                    if (listMap == null){
                         listMap = new ArrayList<>();
                         result.put(res,listMap);
                     }
@@ -439,7 +477,90 @@ System.out.println("StorageService - resource is [" + resource + "]");
         }
         return null;
     }
+    
+    /**
+     * 
+     * @param userAgent
+     * @param scope
+     * @param resourceType
+     * @param resource
+     * @return
+     */
+    @GET
+    @Path("dashboard/{resourceType}/{resource}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Map<String, Map<String, String>> getStatsForDashboard(	@HeaderParam("user-agent") String userAgent,
+    													@QueryParam("scope") Set<String> scope,
+    													@PathParam("resourceType") String resourceType,
+    													@PathParam("resource") String resource) {
+        try {
+        	
+            DomainRuntimeServiceMBeanConnection conn = null;
 
+            if (scope == null || scope.size() == 0) {
+                conn = new DomainRuntimeServiceMBeanConnection();
+                scope = statisticsStorage.getAllPossibleServerNames(conn);
+            }
+                        
+            for (String server : scope) {
+                List<String> coreProps = new LinkedList<>();
+                switch (resourceType) {
+                
+                	case MonitorProperties.JMS_DASHBOARD_RESOURCE_TYPE:
+                		
+                		/*
+                		coreProps.add(WebLogicMBeanPropConstants.NAME);
+						coreProps.add(WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT);
+						coreProps.add(WebLogicMBeanPropConstants.MESSAGES_PENDING_COUNT);
+						coreProps.add(WebLogicMBeanPropConstants.MESSAGES_RECEIVED_COUNT);
+						coreProps.add(WebLogicMBeanPropConstants.MESSAGES_HIGH_COUNT);
+
+						coreProps.add(WebLogicMBeanPropConstants.CONSUMERS_CURRENT_COUNT);
+						coreProps.add(WebLogicMBeanPropConstants.CONSUMERS_HIGH_COUNT);
+						coreProps.add(WebLogicMBeanPropConstants.CONSUMERS_TOTAL_COUNT);
+						*/
+                		
+						//result = getJMSServerDashboard(conn, resource);
+						//return result;
+                		
+                		return getJMSServerDashboard(conn, resource);
+                		
+                	case MonitorProperties.SAF_DASHBOARD_RESOURCE_TYPE:
+                		
+System.out.println("SAF Dashboard generation");
+                		/*
+                		coreProps.add(WebLogicMBeanPropConstants.NAME);
+                		coreProps.add(WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT);
+        				coreProps.add(WebLogicMBeanPropConstants.MESSAGES_PENDING_COUNT);
+						coreProps.add(WebLogicMBeanPropConstants.MESSAGES_RECEIVED_COUNT);
+						coreProps.add(WebLogicMBeanPropConstants.MESSAGES_HIGH_COUNT);
+                		
+						coreProps.add(WebLogicMBeanPropConstants.FAILED_MESSAGES_TOTAL);
+                		coreProps.add(WebLogicMBeanPropConstants.DOWNTIME_HIGH);
+        				coreProps.add(WebLogicMBeanPropConstants.DOWNTIME_TOTAL);
+						coreProps.add(WebLogicMBeanPropConstants.UPTIME_HIGH);
+						coreProps.add(WebLogicMBeanPropConstants.UPTIME_TOTAL);
+						*/
+                		
+                		//result = getSAFAgentDashboard(conn, resource);
+                		//return result;
+                		
+                		return getSAFAgentDashboard(conn, resource);
+                }
+            }
+                        
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 
+     * @param data
+     * @param startTime
+     * @param endTime
+     */
     private void addMissingData(Map<String,List<Map>> data,DateTime startTime,DateTime endTime){
         for (List<Map> list : data.values()) {
             for (Map map:list) {
@@ -490,6 +611,7 @@ System.out.println("StorageService - resource is [" + resource + "]");
     @Produces({MediaType.APPLICATION_JSON})
     public List<List> getStatss(@QueryParam("startTime") String startTime,
                                 @QueryParam("endTime") String endTime) {
+    	
         //JSONConfiguration.mapped().rootUnwrapping(false).build();
         DateTime start = fmt.parseDateTime(startTime);
         DateTime end = fmt.parseDateTime(endTime);
@@ -509,4 +631,116 @@ System.out.println("StorageService - resource is [" + resource + "]");
         res.add(l2);
         return res;
     }
+    
+    /**
+     * 
+     * @param conn
+     * @param jmsServerName
+     * @return
+     */
+    public Map<String, Map<String, String>> getJMSServerDashboard(DomainRuntimeServiceMBeanConnection conn, String jmsServerName){
+		
+    	Map<String, Map<String, String>> result = new LinkedHashMap<>();
+    	
+		try {
+			
+			ObjectName[] serverRuntimes = conn.getAllServerRuntimes();
+			
+			// Find the Admin server
+			for (int index = 0; index < serverRuntimes.length; index++){
+				if(DomainRuntimeServiceMBeanConnection.isThisTheAdminServer()){
+			
+					ObjectName serverRuntime = serverRuntimes[index]; 
+			    	ObjectName jmsRuntime = conn.getChild(serverRuntime, JMS_RUNTIME);			    	
+			        ObjectName[] jmsServers = conn.getChildren(jmsRuntime, JMS_SERVERS);
+			        
+			        for (ObjectName jmsServer : jmsServers)
+			        {
+			        	String currentJmsServerName = conn.getTextAttr(jmsServer, NAME);
+			        	if(currentJmsServerName.equals(jmsServerName)){
+			        		
+			        		Map<String, String> metrics = new LinkedHashMap<String, String>();
+			        		for (ObjectName destination : conn.getChildren(jmsServer, DESTINATIONS)) {
+						    	
+			        			String destinationName = ResourceNameNormaliser.normalise(JMSSVR_RESOURCE_TYPE, conn.getTextAttr(destination, NAME));
+			        			
+//System.out.println("Get metrics for the JMS destination [" + destinationName + "]");
+			        			
+			        			metrics.put(MESSAGES_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_CURRENT_COUNT)).toString());
+			        			metrics.put(MESSAGES_PENDING_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_PENDING_COUNT)).toString());
+			        			metrics.put(MESSAGES_RECEIVED_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_RECEIVED_COUNT)).toString());
+			        			metrics.put(MESSAGES_HIGH_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_HIGH_COUNT)).toString());
+								
+			        			metrics.put(CONSUMERS_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(destination, CONSUMERS_CURRENT_COUNT)).toString());
+			        			metrics.put(CONSUMERS_HIGH_COUNT, new Integer((int)conn.getNumberAttr(destination, CONSUMERS_HIGH_COUNT)).toString());
+			        			metrics.put(CONSUMERS_TOTAL_COUNT, new Integer((int)conn.getNumberAttr(destination, CONSUMERS_TOTAL_COUNT)).toString());
+			        			
+			        			result.put(destinationName, metrics);
+			        		}
+			        	}			    
+			        }
+				}
+			}
+		} catch(Exception ex){
+			AppLog.getLogger().error("Error during generation of JMS dashboard");
+		}
+		return result;
+	}
+	
+    /**
+     * 
+     * @param conn
+     * @param safAgentName
+     * @return
+     */
+    public Map<String, Map<String, String>> getSAFAgentDashboard(DomainRuntimeServiceMBeanConnection conn, String safAgentName){
+		
+		Map<String, Map<String, String>> result = new LinkedHashMap<>();
+		
+		try {
+			
+			ObjectName[] serverRuntimes = conn.getAllServerRuntimes();
+			
+			// Find the Admin server
+			for (int index = 0; index < serverRuntimes.length; index++){
+				if(DomainRuntimeServiceMBeanConnection.isThisTheAdminServer()){
+			
+					ObjectName serverRuntime = serverRuntimes[index]; 
+			    	ObjectName safRuntime = conn.getChild(serverRuntime, SAF_RUNTIME);			    	
+			        ObjectName[] safAgents = conn.getChildren(safRuntime, AGENTS);
+			        
+			        for (ObjectName safAgent : safAgents)
+			        {			        	
+			        	String currentSafAgentName = conn.getTextAttr(safAgent, NAME);
+			        	if(currentSafAgentName.equals(safAgentName)){
+
+			        		Map<String, String> metrics = new LinkedHashMap<String, String>();
+			        		for (ObjectName destination : conn.getChildren(safAgent, REMOTE_END_POINTS)) {
+			        			
+						    	String destinationName = ResourceNameNormaliser.normalise(SAFAGENT_RESOURCE_TYPE, conn.getTextAttr(destination, NAME));
+						    	
+//System.out.println("Get metrics for the SAF destination [" + destinationName + "]");
+						    	
+								metrics.put(MESSAGES_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_CURRENT_COUNT)).toString());
+			        			metrics.put(MESSAGES_PENDING_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_PENDING_COUNT)).toString());
+			        			metrics.put(MESSAGES_RECEIVED_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_RECEIVED_COUNT)).toString());
+			        			metrics.put(MESSAGES_HIGH_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_HIGH_COUNT)).toString());
+								
+			        			metrics.put(DOWNTIME_HIGH, new Integer((int)conn.getNumberAttr(destination, DOWNTIME_HIGH)).toString());
+								metrics.put(DOWNTIME_TOTAL, new Integer((int)conn.getNumberAttr(destination, DOWNTIME_TOTAL)).toString());
+								metrics.put(UPTIME_HIGH, new Integer((int)conn.getNumberAttr(destination, UPTIME_HIGH)).toString());
+								metrics.put(UPTIME_TOTAL, new Integer((int)conn.getNumberAttr(destination, UPTIME_TOTAL)).toString());
+								metrics.put(FAILED_MESSAGES_TOTAL, new Integer((int)conn.getNumberAttr(destination, FAILED_MESSAGES_TOTAL)).toString());
+								
+			        			result.put(destinationName, metrics);
+			        		}
+			        	}			    
+			        }
+				}
+			}
+		} catch(Exception ex){
+			AppLog.getLogger().error("Error during generation of SAF dashboard");
+		}
+		return result;
+	}
 }

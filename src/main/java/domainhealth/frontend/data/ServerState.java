@@ -5,7 +5,8 @@ package domainhealth.frontend.data;
  */
 public enum ServerState {
 
-    SHUTDOWD(0),
+    //SHUTDOWD(0),
+	SHUTDOW(0),
     STARTING(1),
     STANDBY(2),
     RESUMING(3),
@@ -33,5 +34,4 @@ public enum ServerState {
         }
         return -1;
     }
-
 }
