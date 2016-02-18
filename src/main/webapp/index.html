@@ -66,7 +66,7 @@ desired effect
   <header class="main-header">
 
     <!-- Logo -->
-    <a href="index2.html" class="logo">
+    <a href="index.html" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini"><b>D</b>H</span>
       <!-- logo for regular state and mobile devices -->
@@ -157,19 +157,11 @@ desired effect
 				<li><a href='<c:out value="${contexturl}"/>/safagentdashboard?<dh:link-ctx-params/>'>SAF Dashboard</a></li>
 			</c:if>
 		-->
-        <li class="treeview">
-          <a href="#"><i class="fa fa-ioxhost"></i><span>HostMachine</span> <i class="fa fa-angle-left pull-right"></i></a>
-          <ul id="hostmachine" class="treeview-menu"></ul>
-        </li>
-        <li class="treeview">
-          <a href="#"><i class="fa fa-ioxhost"></i><span>JVM</span> <i class="fa fa-angle-left pull-right"></i></a>
-          <ul id="jvm" class="treeview-menu"></ul>
-        </li>
         
-        <li id ="hostmachine" class="active"><a href="#"><i class="fa fa-pie-chart"></i>
+        <li id ="hostmachine"><a href="#"><i class="fa fa-pie-chart"></i>
           <span>HostMachine</span></a>
         </li>
-        <li id ="jvm" class="active"><a href="#"><i class="fa fa-pie-chart"></i>
+        <li id ="jvm"><a href="#"><i class="fa fa-pie-chart"></i>
           <span>JVM</span></a>
         </li>
         
@@ -208,10 +200,10 @@ desired effect
 
   <!-- Main Footer -->
   <footer class="main-footer">
+  
     <!-- To the right -->
-    <div class="pull-right hidden-xs">
-      DomainHealth
-    </div>
+    <div class="pull-right hidden-xs">DomainHealth</div>
+    
     <!-- Default to the left Cristian Chiovari -->
     <strong>2015 <a href="#">DH2</a>.</strong>
   </footer>

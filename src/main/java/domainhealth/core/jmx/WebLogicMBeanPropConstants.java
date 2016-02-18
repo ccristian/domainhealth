@@ -688,7 +688,7 @@ public interface WebLogicMBeanPropConstants {
 	/**
 	 * 'wljvmstats.mbeans.WLJvmStats' MBean property
 	 */
-	public final static String JVM_MBEAN = "wljvmstats.mbeans.WLJvmStats";
+	public final static String JAVA_JVM_MBEAN = "wljvmstats.mbeans.WLJvmStats";
 	
 	public final static String HEAP_MEMORY_INIT = "HeapMemoryInit";
 	public final static String HEAP_MEMORY_USED = "HeapMemoryUsed";

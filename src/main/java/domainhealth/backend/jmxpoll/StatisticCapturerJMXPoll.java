@@ -490,7 +490,7 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 			getCSVStats().appendSavedOneDayResourceNameList(nowDate, JVM_RESOURCE_TYPE, artifactList);			
 		} catch (Exception e) {
 			throw new DataRetrievalException("Problem logging " + JVM_RESOURCE_TYPE + " resources for server " + getServerName(), e);
-		}				
+		}		
 	}
 
 	/**

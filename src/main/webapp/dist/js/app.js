@@ -396,6 +396,16 @@ $(function () {
     getAndDisplayCharts("Core","core","params");
   });
 
+  // Added by gregoan
+  $("#jvm").click(function () {
+	    getAndDisplayCharts("JVM","jvm","params");
+	  });
+  
+  // Added by gregoan
+  $("#hostmachine").click(function () {
+	    getAndDisplayCharts("HostMachine","hostmachine","params");
+	  });
+  
   $.ajax({
     url: '/domainhealth/rest/resources',
     dataType:'JSON',
@@ -407,16 +417,13 @@ $(function () {
       $("#datasource").html(template(res));
       addListener(res,"Datasource","datasource");
 
-
       res = resources["destination"];
       $("#destination").html(template(res));
       addListener(res,"JMS","destination");
 
-
       res = resources["saf"];
       $("#saf").html(template(res));
       addListener(res,"Store and Forward","saf");
-
 
       res = resources["webapp"];
       $("#webapp").html(template(res));
@@ -426,19 +433,15 @@ $(function () {
       $("#ejb").html(template(res));
       addListener(res,"EJBs","ejb");
 
-
       res = resources["svrchnl"];
       $("#svrchnl").html(template(res));
       addListener(res,"Channels","svrchnl");
-
 
     },
     error: function(xhr) {
       alert("error");
     }
   });
-
-
 
   //var previousDate = moment(currentDate, 'DD-MM-YYYY-HH-mm').be;
   //$("#datasources").append('<li><a href="/user/messages"><span class="tab">'+endDate+'</span></a></li>');

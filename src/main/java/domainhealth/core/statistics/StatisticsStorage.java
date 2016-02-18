@@ -495,6 +495,7 @@ public class StatisticsStorage {
      * @return The file path of the specific statistics CSV file
      */
     private Map<File, Date> getServerResourceCSVPath(Interval interval, String serverName, String resourceType, String resourceName) throws IOException {
+    	
         Map<File, Date> daysMap = new LinkedHashMap<>();
         DateFormat dayDateFormat = new SimpleDateFormat(DATE_PATH_FORMAT);
         if (resourceName == null) {
@@ -505,9 +506,10 @@ public class StatisticsStorage {
         DateTime start = interval.getStart();
         DateTime stop = interval.getEnd();
         DateTime inter = start;
+        
         // Loop through each day in the span
         while (inter.compareTo(stop) <= 0) {
-            //System.out.println(inter);
+        	
             // Go to next
             Date date = inter.toDate();
             String dirPath = getDayServerResourceDirectoryPath(date, serverName, resourceType);
@@ -515,7 +517,6 @@ public class StatisticsStorage {
                 String fileName = String.format("%s%s%s_%s_%s%s%s", dirPath, separatorChar, resourceType, serverName, resourceName, dayDateFormat.format(date), CSV_SUFFIX);
                 File file = FileUtil.retrieveFile(fileName);
                 if (file != null) {
-                    //System.out.println(dirPath);
                     daysMap.put(file, date);
                 }
             }
@@ -680,18 +681,31 @@ public class StatisticsStorage {
         return resultDataSet;
     }
 
+    /**
+     * 
+     * @param resourceType
+     * @param resourceName
+     * @param resourceProperty
+     * @param interval
+     * @param serverName
+     * @return
+     * @throws IOException
+     */
     public DateAmountDataSet getPropertyData(String resourceType, String resourceName, String resourceProperty, Interval interval, String serverName) throws IOException {
-        DateAmountDataSet resultDataSet = new DateAmountDataSet();
-        /*retrieves a map with file and date for a specific interval*/
+        
+    	DateAmountDataSet resultDataSet = new DateAmountDataSet();
+        
+        // Retrieves a map with file and date for a specific interval
         Map<File, Date> csvLocationPerFile = this.getServerResourceCSVPath(interval, serverName, resourceType, resourceName);
+                
         Collection<File> files = csvLocationPerFile.keySet();
         for (File file : files) {
             if ((file == null) || (!file.exists())) {
                 continue;
                 //return new DateAmountDataSet();
             }
-            //later to review because the file is already located for a each day from the interval
-            //so getting it one more time does not make sense
+            
+            // TODO : Later to review because the file is already located for a each day from the interval so getting it one more time does not make sense
             int propertyPosition = this.getPropertyPositionInStatsFile(resourceType, resourceName, csvLocationPerFile.get(file), serverName, resourceProperty);
             if (propertyPosition < 0) {
                 continue;
@@ -713,16 +727,24 @@ public class StatisticsStorage {
         return resultDataSet;
     }
 
-
-    //TODO add comment
+    /**
+     * 
+     * @param resourceType
+     * @param resourceName
+     * @param resourceProperties
+     * @param interval
+     * @param serverName
+     * @return
+     * @throws IOException
+     */
     public Map<String, DateAmountDataSet> getPropertyData(String resourceType, String resourceName, Set<String> resourceProperties, Interval interval, String serverName) throws IOException {
-        Map<String, DateAmountDataSet> data = new LinkedHashMap<String, DateAmountDataSet>();
 
-        /*retrieves a map with file and date for a specific interval*/
+    	Map<String, DateAmountDataSet> data = new LinkedHashMap<String, DateAmountDataSet>();
 
-        //review the logic......
-        //retrieves a map with date as key and the file for that specific date as value for the whole interval.
+    	// Retrieves a map with file and date for a specific interval
+        // TODO : Review the logic ...
         Map<File, Date> csvLocationPerFile = this.getServerResourceCSVPath(interval, serverName, resourceType, resourceName);
+        
         Collection<File> files = csvLocationPerFile.keySet();
         for (File file : files) {
 
@@ -740,8 +762,7 @@ public class StatisticsStorage {
                     data.put(resourceProperty, resultDataSet);
                 }
 
-                //later to review because the file is already located for a each day from the interval
-                //so getting it one more time does not make sense
+                // TODO : Later to review because the file is already located for a each day from the interval so getting it one more time does not make sense
                 int propertyPosition = this.getPropertyPositionInStatsFile(resourceType, resourceName, csvLocationPerFile.get(file), serverName, resourceProperty);
                 if (propertyPosition < 0) {
                     continue;
@@ -763,7 +784,6 @@ public class StatisticsStorage {
 
         return data;
     }
-
 
     /**
      * For a given property column in a CSV file, collects together all

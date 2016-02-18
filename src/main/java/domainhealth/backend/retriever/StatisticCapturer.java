@@ -81,7 +81,6 @@ public abstract class StatisticCapturer {
 		
 		// Added by gregoan
 		logJvmStats();
-		
 		logExtendedStats();
 	}
 
@@ -155,8 +154,7 @@ public abstract class StatisticCapturer {
 	protected abstract void logExtendedStats() throws DataRetrievalException, IOException;
 
 	/**
-	 * Returns a text line containing the comma separated statistic field 
-	 * headers for core server statistics.
+	 * Returns a text line containing the comma separated statistic field headers for core server statistics.
 	 * 
 	 * @return The CVS field name header
 	 */

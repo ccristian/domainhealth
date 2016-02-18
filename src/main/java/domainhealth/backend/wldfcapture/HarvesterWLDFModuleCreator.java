@@ -346,7 +346,7 @@ AppLog.getLogger().notice("HarvesterWLDFModuleCreator - DoesNotExist");
 		// Added by gregoan
 		// The JVM mbean are JAVA based and not WebLogic based
 		// -> Apply the same procedure than for wlhostmachinestats (register mbean)
-		addMetric(conn, harvester, JVM_MBEAN, JAVA_JVM_MBEAN_MONITOR_ATTR_LIST, false);
+		addMetric(conn, harvester, JAVA_JVM_MBEAN, JAVA_JVM_MBEAN_MONITOR_ATTR_LIST, false);
 		
 		createNewRetirementPolicy(conn, domainConfig);
 		AppLog.getLogger().notice("Created new DomainHealth WLDF Harvester Module called: " + HARVESTER_MODULE_NAME + " (" + domainhealthVersionNumber + ")");

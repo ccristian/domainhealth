@@ -210,7 +210,7 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
      * @throws DataRetrievalException Indicates problem occurred in trying to obtain and persist the server's statistics
      */
     protected void logJvmStats() throws DataRetrievalException {
-        logResourceStats(JVM_RESOURCE_TYPE, JVM_MBEAN, JAVA_JVM_MBEAN_MONITOR_ATTR_LIST, jvmStatsQuery);
+        logResourceStats(JVM_RESOURCE_TYPE, JAVA_JVM_MBEAN, JAVA_JVM_MBEAN_MONITOR_ATTR_LIST, javaJvmStatsQuery);
     }
 
     /**
@@ -468,8 +468,7 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
     private final static String wkMgrStatsQuery;
     private final static String svrChnlStatsQuery;
     private final static String hostMachineStatsQuery;
-    
-private final static String jvmStatsQuery;
+    private final static String javaJvmStatsQuery;
 
     // Static initialiser
     static {
@@ -504,14 +503,14 @@ private final static String jvmStatsQuery;
         StringBuilder svrChnlStatsQueryBuilder = new StringBuilder(100);
         appendWLDFQueryPart(svrChnlStatsQueryBuilder, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, SERVER_CHANNEL_RUNTIME), SVR_CHANNEL_MBEAN_MONITOR_ATTR_LIST);
         svrChnlStatsQuery = svrChnlStatsQueryBuilder.toString();
+        
         StringBuilder hostMachineStatsQueryBuilder = new StringBuilder(100);
         appendWLDFQueryPart(hostMachineStatsQueryBuilder, HOST_MACHINE_MBEAN, HOST_MACHINE_STATS_MBEAN_MONITOR_ATTR_LIST);
         hostMachineStatsQuery = hostMachineStatsQueryBuilder.toString();
         
-StringBuilder jvmStatsQueryBuilder = new StringBuilder(100);
-appendWLDFQueryPart(jvmStatsQueryBuilder, JVM_MBEAN, JAVA_JVM_MBEAN_MONITOR_ATTR_LIST);
-jvmStatsQuery = jvmStatsQueryBuilder.toString();
-        
+		StringBuilder javaJvmStatsQueryBuilder = new StringBuilder(100);
+		appendWLDFQueryPart(javaJvmStatsQueryBuilder, JAVA_JVM_MBEAN, JAVA_JVM_MBEAN_MONITOR_ATTR_LIST);
+		javaJvmStatsQuery = javaJvmStatsQueryBuilder.toString();
         
     }
 }

@@ -33,7 +33,6 @@ public class StorageService {
 
     DateTimeFormatter fmt = DateTimeFormat.forPattern("dd-MM-yyyy-HH-mm");
 
-
     @Context
     private ServletContext application;
 
@@ -43,8 +42,8 @@ public class StorageService {
     public void initialize() {
         try {
             statisticsStorage = new StatisticsStorage((String) application.getAttribute(AppProperties.PropKey.STATS_OUTPUT_PATH_PROP.toString()));
-        } catch (Exception sqle) {
-            AppLog.getLogger().error("Exception", sqle);
+        } catch (Exception ex) {
+            AppLog.getLogger().error("Exception", ex);
         }
     }
 
@@ -72,11 +71,11 @@ public class StorageService {
             resourcesMap.put(MonitorProperties.SVRCHNL_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.SVRCHNL_RESOURCE_TYPE));
             
             // Add the extensions of DH
-resourcesMap.put(MonitorProperties.HOSTMACHINE_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.HOSTMACHINE_RESOURCE_TYPE));
-resourcesMap.put(MonitorProperties.JVM_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.JVM_RESOURCE_TYPE));
+			resourcesMap.put(MonitorProperties.HOSTMACHINE_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.HOSTMACHINE_RESOURCE_TYPE));
+			resourcesMap.put(MonitorProperties.JVM_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.JVM_RESOURCE_TYPE));
             
-        } catch (IOException e) {
-            AppLog.getLogger().error("Error while getting resources", e);
+        } catch (IOException ex) {
+            AppLog.getLogger().error("Error while getting resources", ex);
         }
         return resourcesMap;
     }
@@ -117,13 +116,14 @@ resourcesMap.put(MonitorProperties.JVM_RESOURCE_TYPE, statisticsStorage.getResou
 
         try {
 
-System.out.println("StorageService - userAgent is [" + userAgent + "]");
-System.out.println("StorageService - scope is [" + scope + "]");
-System.out.println("StorageService - startTime is [" + startTime + "]");
-System.out.println("StorageService - endTime is [" + endTime + "]");
+/*
+//System.out.println("StorageService - userAgent is [" + userAgent + "]");
+//System.out.println("StorageService - startTime is [" + startTime + "]");
+//System.out.println("StorageService - endTime is [" + endTime + "]");
+System.out.println("StorageService - scope [1] is [" + scope + "]");
 System.out.println("StorageService - resourceType is [" + resourceType + "]");
 System.out.println("StorageService - resource is [" + resource + "]");
-
+*/
 			Map<String, List<Map>> result = new LinkedHashMap<>();
 
             DateTime start = fmt.parseDateTime(startTime);
@@ -137,7 +137,7 @@ System.out.println("StorageService - resource is [" + resource + "]");
                 scope = statisticsStorage.getAllPossibleServerNames(conn);
             }
             
-System.out.println("StorageService - scope [2] is [" + scope + "]");
+//System.out.println("StorageService - scope [2] is [" + scope + "]");
 
             Map<String, DateAmountDataSet> dataMap = null;
 
@@ -148,8 +148,6 @@ System.out.println("StorageService - scope [2] is [" + scope + "]");
                     //case "core":
                 	case MonitorProperties.CORE_RESOURCE_TYPE:
                 		
-System.out.println("StorageService - [" + MonitorProperties.CORE_RESOURCE_TYPE + "]");
-
                 		/*
                         coreProps.add("HeapUsedCurrent");
                         coreProps.add("OpenSocketsCurrentCount");
@@ -202,8 +200,6 @@ System.out.println("StorageService - [" + MonitorProperties.CORE_RESOURCE_TYPE +
                     //case "datasource":
                     case MonitorProperties.DATASOURCE_RESOURCE_TYPE:
                     	
-System.out.println("StorageService - [" + MonitorProperties.DATASOURCE_RESOURCE_TYPE + "]");
-
                     	/*
                     	coreProps.add("NumAvailable");
                         coreProps.add("NumUnavailable");
@@ -232,9 +228,7 @@ System.out.println("StorageService - [" + MonitorProperties.DATASOURCE_RESOURCE_
 
                     //case "destination":
                     case MonitorProperties.DESTINATION_RESOURCE_TYPE:
-                    	
-System.out.println("StorageService - [" + MonitorProperties.DESTINATION_RESOURCE_TYPE + "]");
-                    	
+                    	                    	
                     	/*
                         coreProps.add("MessagesCurrentCount");
                         coreProps.add("MessagesReceivedCount");
@@ -257,9 +251,7 @@ System.out.println("StorageService - [" + MonitorProperties.DESTINATION_RESOURCE
 
                     //case "ejb":
                     case MonitorProperties.EJB_RESOURCE_TYPE:
-                    	
-System.out.println("StorageService - [" + MonitorProperties.EJB_RESOURCE_TYPE + "]");
-                    	
+                    	                    	
                     	/*
                         coreProps.add("PooledBeansCurrentCount");
                         coreProps.add("AccessTotalCount");
@@ -285,8 +277,6 @@ System.out.println("StorageService - [" + MonitorProperties.EJB_RESOURCE_TYPE + 
                     //case "saf":
                     case MonitorProperties.SAF_RESOURCE_TYPE:
                     	
-System.out.println("StorageService - [" + MonitorProperties.SAF_RESOURCE_TYPE + "]");
-
                     	/*
                         coreProps.add("MessagesCurrentCount");
                         coreProps.add("MessagesPendingCount");
@@ -303,9 +293,6 @@ System.out.println("StorageService - [" + MonitorProperties.SAF_RESOURCE_TYPE + 
 
                     //case "webapp":
                     case MonitorProperties.WEBAPP_RESOURCE_TYPE:
-                    	
-System.out.println("StorageService - [" + MonitorProperties.WEBAPP_RESOURCE_TYPE + "]");
-
 
                     	/*
                         coreProps.add("OpenSessionsCurrentCount");
@@ -321,8 +308,6 @@ System.out.println("StorageService - [" + MonitorProperties.WEBAPP_RESOURCE_TYPE
 
                     //case "svrchnl":
                     case MonitorProperties.SVRCHNL_RESOURCE_TYPE:
-
-System.out.println("StorageService - [" + MonitorProperties.SVRCHNL_RESOURCE_TYPE + "]");
                     	
                     	/*
                         coreProps.add("AcceptCount");
@@ -341,8 +326,6 @@ System.out.println("StorageService - [" + MonitorProperties.SVRCHNL_RESOURCE_TYP
                     //case "workmgr":
                     case MonitorProperties.WORKMGR_RESOURCE_TYPE:
                     	
-System.out.println("StorageService - [" + MonitorProperties.WORKMGR_RESOURCE_TYPE + "]");
-
                     	/*
                         coreProps.add("CompletedRequests");
                         coreProps.add("PendingRequests");
@@ -356,9 +339,7 @@ System.out.println("StorageService - [" + MonitorProperties.WORKMGR_RESOURCE_TYP
                         break;
                         
                     case MonitorProperties.HOSTMACHINE_RESOURCE_TYPE:
-                    	
-System.out.println("StorageService - [" + MonitorProperties.HOSTMACHINE_RESOURCE_TYPE + "]");
-                    	
+                    	                    	
                     	coreProps.add(WebLogicMBeanPropConstants.JVM_INSTANCE_CORES_USED);
                         coreProps.add(WebLogicMBeanPropConstants.JVM_INSTANCE_PHYSICAL_MEMORY_USED_MEGABYTES);
                         coreProps.add(WebLogicMBeanPropConstants.NATIVE_PROCESSES_COUNT);
@@ -399,13 +380,12 @@ System.out.println("StorageService - [" + MonitorProperties.HOSTMACHINE_RESOURCE
                         coreProps.add(WebLogicMBeanPropConstants.TOTAL_PHYSICAL_MEMORY_SIZE_MEGABYTES);
                         coreProps.add(WebLogicMBeanPropConstants.TOTAL_SWAP_SPACE_SIZE_MEGABYTES);
                         
-                        //resource = null;
+                        // Is important to find the file to read
+                        resource = MonitorProperties.HOST_MACHINE_MBEAN_NAME;
                         break;
                         
                     case MonitorProperties.JVM_RESOURCE_TYPE:
-                    	
-System.out.println("StorageService - [" + MonitorProperties.JVM_RESOURCE_TYPE + "]");
-                    	
+                    	                    	
                     	coreProps.add(WebLogicMBeanPropConstants.HEAP_MEMORY_INIT);
                         coreProps.add(WebLogicMBeanPropConstants.HEAP_MEMORY_USED);
                         coreProps.add(WebLogicMBeanPropConstants.HEAP_MEMORY_COMMITTED);
@@ -415,7 +395,8 @@ System.out.println("StorageService - [" + MonitorProperties.JVM_RESOURCE_TYPE + 
                         coreProps.add(WebLogicMBeanPropConstants.NON_HEAP_MEMORY_COMMITTED);
                         coreProps.add(WebLogicMBeanPropConstants.NON_HEAP_MEMORY_MAX);
                         
-                        //resource = null;
+                        // Is important to find the file to read
+                        resource = MonitorProperties.JVM_MBEAN_NAME;
                         break;                        
                 }
 
@@ -424,11 +405,13 @@ System.out.println("StorageService - [" + MonitorProperties.JVM_RESOURCE_TYPE + 
                 Set prp = new LinkedHashSet(coreProps);
                 dataMap = statisticsStorage.getPropertyData(resourceType, resource, prp, interval, server);
 
+//System.out.println("StorageService - Size of dataMap is [" + dataMap.size() + "]");
+                
                 for (String res:dataMap.keySet()) {
 
                     DateAmountDataSet dataSet  = dataMap.get(res);
                     String property = dataSet.getResourceProperty();
-
+                    
                     List dataList = new LinkedList();
                     for (DateAmountDataItem dateAmountDataItem:dataSet.getData()) {
                         dataList.add(new BigDecimal[]{BigDecimal.valueOf(dateAmountDataItem.getDateTime().getTime()), BigDecimal.valueOf(dateAmountDataItem.getAmount())});
@@ -444,7 +427,6 @@ System.out.println("StorageService - [" + MonitorProperties.JVM_RESOURCE_TYPE + 
                     }
                     listMap.add(map);
                 }
-
             }
 
             long t1 = System.currentTimeMillis();
