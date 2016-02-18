@@ -117,15 +117,14 @@ resourcesMap.put(MonitorProperties.JVM_RESOURCE_TYPE, statisticsStorage.getResou
 
         try {
 
-AppLog.getLogger().info("StorageService - resourceType is [" + resourceType + "]");
+System.out.println("StorageService - userAgent is [" + userAgent + "]");
+System.out.println("StorageService - scope is [" + scope + "]");
+System.out.println("StorageService - startTime is [" + startTime + "]");
+System.out.println("StorageService - endTime is [" + endTime + "]");
 System.out.println("StorageService - resourceType is [" + resourceType + "]");
-
-AppLog.getLogger().info("StorageService - resource is [" + resource + "]");
 System.out.println("StorageService - resource is [" + resource + "]");
-        	
-            //System.out.println(userAgent);
 
-            Map<String, List<Map>> result = new LinkedHashMap<>();
+			Map<String, List<Map>> result = new LinkedHashMap<>();
 
             DateTime start = fmt.parseDateTime(startTime);
             DateTime end = fmt.parseDateTime(endTime);
@@ -137,6 +136,8 @@ System.out.println("StorageService - resource is [" + resource + "]");
                 conn = new DomainRuntimeServiceMBeanConnection();
                 scope = statisticsStorage.getAllPossibleServerNames(conn);
             }
+            
+System.out.println("StorageService - scope [2] is [" + scope + "]");
 
             Map<String, DateAmountDataSet> dataMap = null;
 
@@ -147,8 +148,8 @@ System.out.println("StorageService - resource is [" + resource + "]");
                     //case "core":
                 	case MonitorProperties.CORE_RESOURCE_TYPE:
                 		
-AppLog.getLogger().info("StorageService - [" + MonitorProperties.CORE_RESOURCE_TYPE + "]");
-System.out.println("StorageService - [" + MonitorProperties.CORE_RESOURCE_TYPE + "]");                		
+System.out.println("StorageService - [" + MonitorProperties.CORE_RESOURCE_TYPE + "]");
+
                 		/*
                         coreProps.add("HeapUsedCurrent");
                         coreProps.add("OpenSocketsCurrentCount");
@@ -201,7 +202,6 @@ System.out.println("StorageService - [" + MonitorProperties.CORE_RESOURCE_TYPE +
                     //case "datasource":
                     case MonitorProperties.DATASOURCE_RESOURCE_TYPE:
                     	
-AppLog.getLogger().info("StorageService - [" + MonitorProperties.DATASOURCE_RESOURCE_TYPE + "]");
 System.out.println("StorageService - [" + MonitorProperties.DATASOURCE_RESOURCE_TYPE + "]");
 
                     	/*
@@ -233,7 +233,6 @@ System.out.println("StorageService - [" + MonitorProperties.DATASOURCE_RESOURCE_
                     //case "destination":
                     case MonitorProperties.DESTINATION_RESOURCE_TYPE:
                     	
-AppLog.getLogger().info("StorageService - [" + MonitorProperties.DESTINATION_RESOURCE_TYPE + "]");
 System.out.println("StorageService - [" + MonitorProperties.DESTINATION_RESOURCE_TYPE + "]");
                     	
                     	/*
@@ -258,7 +257,7 @@ System.out.println("StorageService - [" + MonitorProperties.DESTINATION_RESOURCE
 
                     //case "ejb":
                     case MonitorProperties.EJB_RESOURCE_TYPE:
-AppLog.getLogger().info("StorageService - [" + MonitorProperties.EJB_RESOURCE_TYPE + "]");                    	
+                    	
 System.out.println("StorageService - [" + MonitorProperties.EJB_RESOURCE_TYPE + "]");
                     	
                     	/*
@@ -286,7 +285,6 @@ System.out.println("StorageService - [" + MonitorProperties.EJB_RESOURCE_TYPE + 
                     //case "saf":
                     case MonitorProperties.SAF_RESOURCE_TYPE:
                     	
-AppLog.getLogger().info("StorageService - [" + MonitorProperties.SAF_RESOURCE_TYPE + "]");                    	
 System.out.println("StorageService - [" + MonitorProperties.SAF_RESOURCE_TYPE + "]");
 
                     	/*
@@ -306,7 +304,6 @@ System.out.println("StorageService - [" + MonitorProperties.SAF_RESOURCE_TYPE + 
                     //case "webapp":
                     case MonitorProperties.WEBAPP_RESOURCE_TYPE:
                     	
-AppLog.getLogger().info("StorageService - [" + MonitorProperties.WEBAPP_RESOURCE_TYPE + "]");
 System.out.println("StorageService - [" + MonitorProperties.WEBAPP_RESOURCE_TYPE + "]");
 
 
@@ -325,7 +322,6 @@ System.out.println("StorageService - [" + MonitorProperties.WEBAPP_RESOURCE_TYPE
                     //case "svrchnl":
                     case MonitorProperties.SVRCHNL_RESOURCE_TYPE:
 
-AppLog.getLogger().info("StorageService - [" + MonitorProperties.SVRCHNL_RESOURCE_TYPE + "]");
 System.out.println("StorageService - [" + MonitorProperties.SVRCHNL_RESOURCE_TYPE + "]");
                     	
                     	/*
@@ -345,7 +341,6 @@ System.out.println("StorageService - [" + MonitorProperties.SVRCHNL_RESOURCE_TYP
                     //case "workmgr":
                     case MonitorProperties.WORKMGR_RESOURCE_TYPE:
                     	
-AppLog.getLogger().info("StorageService - [" + MonitorProperties.WORKMGR_RESOURCE_TYPE + "]");
 System.out.println("StorageService - [" + MonitorProperties.WORKMGR_RESOURCE_TYPE + "]");
 
                     	/*
@@ -362,7 +357,6 @@ System.out.println("StorageService - [" + MonitorProperties.WORKMGR_RESOURCE_TYP
                         
                     case MonitorProperties.HOSTMACHINE_RESOURCE_TYPE:
                     	
-AppLog.getLogger().info("StorageService - [" + MonitorProperties.HOSTMACHINE_RESOURCE_TYPE + "]");
 System.out.println("StorageService - [" + MonitorProperties.HOSTMACHINE_RESOURCE_TYPE + "]");
                     	
                     	coreProps.add(WebLogicMBeanPropConstants.JVM_INSTANCE_CORES_USED);
@@ -410,7 +404,6 @@ System.out.println("StorageService - [" + MonitorProperties.HOSTMACHINE_RESOURCE
                         
                     case MonitorProperties.JVM_RESOURCE_TYPE:
                     	
-AppLog.getLogger().info("StorageService - [" + MonitorProperties.JVM_RESOURCE_TYPE + "]");
 System.out.println("StorageService - [" + MonitorProperties.JVM_RESOURCE_TYPE + "]");
                     	
                     	coreProps.add(WebLogicMBeanPropConstants.HEAP_MEMORY_INIT);
@@ -423,12 +416,7 @@ System.out.println("StorageService - [" + MonitorProperties.JVM_RESOURCE_TYPE + 
                         coreProps.add(WebLogicMBeanPropConstants.NON_HEAP_MEMORY_MAX);
                         
                         //resource = null;
-                        break;
-                        
-                    default:
-AppLog.getLogger().info("StorageService - [TYPE_NOT_MANAGED]");
-System.out.println("StorageService - [TYPE_NOT_MANAGED]");
-                    	break;
+                        break;                        
                 }
 
                 // Temp solution for ordering gui
