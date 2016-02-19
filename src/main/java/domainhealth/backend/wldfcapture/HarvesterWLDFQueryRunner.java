@@ -109,9 +109,7 @@ public class HarvesterWLDFQueryRunner {
 	 */
 	private String createCursor() throws WebLogicMBeanException {
 		long currentTime = System.currentTimeMillis();		
-		return (String) conn.invoke(harvesterArchiveRuntime, OPEN_CURSOR_OPERTN,
-				new Object [] {(currentTime - queryIntervalMillis), 
-				currentTime, wldfQuery, queryTimeoutMillis}, OPEN_CURSOR_PARAMTYPES);		
+		return (String) conn.invoke(harvesterArchiveRuntime, OPEN_CURSOR_OPERTN, new Object [] {(currentTime - queryIntervalMillis), currentTime, wldfQuery, queryTimeoutMillis}, OPEN_CURSOR_PARAMTYPES);		
 	}
 
 	/**
@@ -122,8 +120,7 @@ public class HarvesterWLDFQueryRunner {
 	 * @throws WebLogicMBeanException Indicates problem accessing the server to retrieve the data
 	 */
 	private boolean checkHasMoreData(String cursorId) throws WebLogicMBeanException {
-		return ((Boolean) conn.invoke(harvesterArchiveRuntime, HAS_DATA_OPERTN, 
-				new Object [] {cursorId}, HAS_DATA_PARAMTYPES)).booleanValue();
+		return ((Boolean) conn.invoke(harvesterArchiveRuntime, HAS_DATA_OPERTN, new Object [] {cursorId}, HAS_DATA_PARAMTYPES)).booleanValue();
 	}
 
 	/**
@@ -134,8 +131,7 @@ public class HarvesterWLDFQueryRunner {
 	 * @throws WebLogicMBeanException Indicates problem accessing the server to retrieve the data
 	 */
 	private Object[] getNextDataChunk(String cursorId) throws WebLogicMBeanException { 
-		return (Object[]) conn.invoke(harvesterArchiveRuntime, FETCH_OPERTN, 
-				new Object [] {cursorId, MAX_RECORDS_FETCH}, FETCH_PARAMTYPES);
+		return (Object[]) conn.invoke(harvesterArchiveRuntime, FETCH_OPERTN, new Object [] {cursorId, MAX_RECORDS_FETCH}, FETCH_PARAMTYPES);
 	}
 	
 	/**
@@ -145,8 +141,7 @@ public class HarvesterWLDFQueryRunner {
 	 * @throws WebLogicMBeanException Indicates problem accessing the server to retrieve the data
 	 */
 	private void closeCursor(String cursorId) throws WebLogicMBeanException {
-		conn.invoke(harvesterArchiveRuntime, CLOSE_CURSOR_OPERTN, 
-				new Object [] {cursorId}, CLOSE_CURSOR_PARAMTYPES);		
+		conn.invoke(harvesterArchiveRuntime, CLOSE_CURSOR_OPERTN, new Object [] {cursorId}, CLOSE_CURSOR_PARAMTYPES);		
 	}
 	
 	// Constants

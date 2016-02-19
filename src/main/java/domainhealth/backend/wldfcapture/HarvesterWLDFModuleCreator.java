@@ -271,8 +271,7 @@ AppLog.getLogger().notice("HarvesterWLDFModuleCreator - DoesNotExist");
 	 * @throws WebLogicMBeanException Indicates problem occurred in deleting resources
 	 */
 	private void deleteOldDHHarvesterModuleAndPolicy(EditServiceMBeanConnection conn, ObjectName domainConfig) throws WebLogicMBeanException {		
-		ObjectName wldfResource =  (ObjectName) conn.invoke(domainConfig, LOOKUP_WLDFRSC_OPERTN, 
-				new Object[] { HARVESTER_MODULE_NAME }, LOOKUP_WLDFRSC_PARAMTYPES);
+		ObjectName wldfResource =  (ObjectName) conn.invoke(domainConfig, LOOKUP_WLDFRSC_OPERTN, new Object[] { HARVESTER_MODULE_NAME }, LOOKUP_WLDFRSC_PARAMTYPES);
 		conn.invoke(domainConfig, DESTROY_WLDFRSC_OPERTN, new Object[] {wldfResource}, DESTROY_WLDFRSC_PARAMTYPES);
 
 		ObjectName[] servers = conn.getChildren(domainConfig, SERVERS);
@@ -280,8 +279,7 @@ AppLog.getLogger().notice("HarvesterWLDFModuleCreator - DoesNotExist");
 		for (ObjectName server : servers) {
 			String serverName = conn.getTextAttr(server, NAME);
 			ObjectName serverDiagConf = conn.getChild(server, SERVER_DIAG_CONFIG);
-			ObjectName retirePolicy = (ObjectName) conn.invoke(serverDiagConf, LOOKUP_RETIREPOLICY_OPERTN, 
-					new Object[] {String.format(RETIRE_POLICY_NAME_TEMPLATE, serverName)}, LOOKUP_RETIREPOLICY_PARAMTYPES);
+			ObjectName retirePolicy = (ObjectName) conn.invoke(serverDiagConf, LOOKUP_RETIREPOLICY_OPERTN, new Object[] {String.format(RETIRE_POLICY_NAME_TEMPLATE, serverName)}, LOOKUP_RETIREPOLICY_PARAMTYPES);
 		
 			if (retirePolicy != null) {
 				conn.invoke(serverDiagConf, DESTROY_RETIREPOLICY_OPERTN, new Object[] {retirePolicy}, DESTROY_RETIREPOLICY_PARAMTYPES);			

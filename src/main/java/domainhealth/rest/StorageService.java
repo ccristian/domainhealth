@@ -60,7 +60,7 @@ public class StorageService {
     @Context
     private ServletContext application;
 
-    StatisticsStorage statisticsStorage;
+    private StatisticsStorage statisticsStorage;
 
     /**
      * 
@@ -104,9 +104,13 @@ public class StorageService {
             resourcesMap.put(MonitorProperties.SVRCHNL_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.SVRCHNL_RESOURCE_TYPE));
             
             // Add the extensions of DH
-			resourcesMap.put(MonitorProperties.HOSTMACHINE_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.HOSTMACHINE_RESOURCE_TYPE));
-			resourcesMap.put(MonitorProperties.JVM_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.JVM_RESOURCE_TYPE));
+			//resourcesMap.put(MonitorProperties.HOSTMACHINE_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.HOSTMACHINE_RESOURCE_TYPE));
+			//resourcesMap.put(MonitorProperties.JVM_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.JVM_RESOURCE_TYPE));
             
+			// Add the dashboard
+			//resourcesMap.put(MonitorProperties.JMS_DASHBOARD_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.JMS_DASHBOARD_RESOURCE_TYPE));
+			//resourcesMap.put(MonitorProperties.SAF_DASHBOARD_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.SAF_DASHBOARD_RESOURCE_TYPE));
+			
         } catch (IOException ex) {
             AppLog.getLogger().error("Error while getting resources", ex);
         }
@@ -168,13 +172,28 @@ public class StorageService {
             DateTime start = fmt.parseDateTime(startTime);
             DateTime end = fmt.parseDateTime(endTime);
             Interval interval = new Interval(start, end);
-            DomainRuntimeServiceMBeanConnection conn = null;
-
-            // //ex: StorageUtil.getPropertyData(statisticsStorage,"core",null,"HeapUsedCurrent",new Date(),1,"AdminServer");
+            
+            // --------------------------------------------------------------------------
+            // TODO
+        	// ----
+        	
+        	// In case of scope definition, the "conn" object will not be set !!!
+        	/*
+        	DomainRuntimeServiceMBeanConnection conn = null;
+            
             if (scope == null || scope.size() == 0) {
                 conn = new DomainRuntimeServiceMBeanConnection();
                 scope = statisticsStorage.getAllPossibleServerNames(conn);
             }
+            */
+            
+            // For me, it should be : 
+        	DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();;
+        	
+            if (scope == null || scope.size() == 0) {
+                scope = statisticsStorage.getAllPossibleServerNames(conn);
+            }
+            // --------------------------------------------------------------------------
             
             Map<String, DateAmountDataSet> dataMap = null;
 
@@ -182,32 +201,7 @@ public class StorageService {
                 List<String> coreProps = new LinkedList<>();
                 switch (resourceType) {
                 
-                    //case "core":
                 	case MonitorProperties.CORE_RESOURCE_TYPE:
-                		
-                		/*
-                        coreProps.add("HeapUsedCurrent");
-                        coreProps.add("OpenSocketsCurrentCount");
-                        coreProps.add("HeapSizeCurrent");
-                        coreProps.add("HeapFreeCurrent");
-                        coreProps.add("HeapFreePercent");
-                        coreProps.add("ExecuteThreadTotalCount");
-                        coreProps.add("HoggingThreadCount");
-                        coreProps.add("PendingUserRequestCount");
-                        coreProps.add("QueueLength");
-                        coreProps.add("CompletedRequestCount");
-                        coreProps.add("ExecuteThreadIdleCount");
-                        coreProps.add("MinThreadsConstraintsCompleted");
-                        coreProps.add("MinThreadsConstraintsPending");
-                        coreProps.add("StandbyThreadCount");
-                        coreProps.add("Throughput");
-                        coreProps.add("TransactionTotalCount");
-                        coreProps.add("TransactionCommittedTotalCount");
-                        coreProps.add("TransactionRolledBackTotalCount");
-                        coreProps.add("TransactionHeuristicsTotalCount");
-                        coreProps.add("TransactionAbandonedTotalCount");
-                        coreProps.add("ActiveTransactionsTotalCount");
-                        */
                 		
                         coreProps.add(WebLogicMBeanPropConstants.OPEN_SOCKETS_CURRENT_COUNT);
                         coreProps.add(WebLogicMBeanPropConstants.HEAP_USED_CURRENT);
@@ -234,21 +228,7 @@ public class StorageService {
                         resource = null;
                         break;
                         
-                    //case "datasource":
                     case MonitorProperties.DATASOURCE_RESOURCE_TYPE:
-                    	
-                    	/*
-                    	coreProps.add("NumAvailable");
-                        coreProps.add("NumUnavailable");
-                        coreProps.add("ActiveConnectionsCurrentCount");
-                        coreProps.add("ConnectionDelayTime");
-                        coreProps.add("FailedReserveRequestCount");
-                        coreProps.add("FailuresToReconnectCount");
-                        coreProps.add("LeakedConnectionCount");
-                        coreProps.add("WaitingForConnectionCurrentCount");
-                        coreProps.add("WaitingForConnectionFailureTotal");
-                        coreProps.add("WaitSecondsHighCount");
-                        */
                     	
                     	coreProps.add(WebLogicMBeanPropConstants.NUM_AVAILABLE);
                         coreProps.add(WebLogicMBeanPropConstants.NUM_UNAVAILABLE);
@@ -263,18 +243,7 @@ public class StorageService {
                     	
                         break;
 
-                    //case "destination":
                     case MonitorProperties.DESTINATION_RESOURCE_TYPE:
-                    	                    	
-                    	/*
-                        coreProps.add("MessagesCurrentCount");
-                        coreProps.add("MessagesReceivedCount");
-                        coreProps.add("MessagesPendingCount");
-                        coreProps.add("MessagesHighCount");
-                        coreProps.add("ConsumersCurrentCount");
-                        coreProps.add("ConsumersHighCount");
-                        coreProps.add("ConsumersTotalCount");
-                        */
                     	
                     	coreProps.add(WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT);
                         coreProps.add(WebLogicMBeanPropConstants.MESSAGES_RECEIVED_COUNT);
@@ -286,19 +255,7 @@ public class StorageService {
                     	
                         break;
 
-                    //case "ejb":
                     case MonitorProperties.EJB_RESOURCE_TYPE:
-                    	                    	
-                    	/*
-                        coreProps.add("PooledBeansCurrentCount");
-                        coreProps.add("AccessTotalCount");
-                        coreProps.add("BeansInUseCurrentCount");
-                        coreProps.add("WaiterCurrentCount");
-                        coreProps.add("WaiterTotalCount");
-                        coreProps.add("TransactionsCommittedTotalCount");
-                        coreProps.add("TransactionsRolledBackTotalCount");
-                        coreProps.add("TransactionsTimedOutTotalCount");
-                        */
                     	
                     	coreProps.add(WebLogicMBeanPropConstants.BEANS_POOLED_CURRENT_COUNT);
                         coreProps.add(WebLogicMBeanPropConstants.BEAN_ACCESS_TOTAL_COUNT);
@@ -311,15 +268,7 @@ public class StorageService {
                     	
                     	break;
                         
-                    //case "saf":
                     case MonitorProperties.SAF_RESOURCE_TYPE:
-                    	
-                    	/*
-                        coreProps.add("MessagesCurrentCount");
-                        coreProps.add("MessagesPendingCount");
-                        coreProps.add("MessagesReceivedCount");
-                        coreProps.add("MessagesHighCount");
-                        */
                     	
                     	coreProps.add(WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT);
                         coreProps.add(WebLogicMBeanPropConstants.MESSAGES_PENDING_COUNT);
@@ -328,14 +277,7 @@ public class StorageService {
                     	
                         break;
 
-                    //case "webapp":
                     case MonitorProperties.WEBAPP_RESOURCE_TYPE:
-
-                    	/*
-                        coreProps.add("OpenSessionsCurrentCount");
-                        coreProps.add("OpenSessionsHighCount");
-                        coreProps.add("SessionsOpenedTotalCount");
-                        */
                     	
                     	coreProps.add(WebLogicMBeanPropConstants.SESSIONS_CURRENT_COUNT);
                         coreProps.add(WebLogicMBeanPropConstants.SESSIONS_HIGH_COUNT);
@@ -343,15 +285,7 @@ public class StorageService {
                     	
                         break;
 
-                    //case "svrchnl":
                     case MonitorProperties.SVRCHNL_RESOURCE_TYPE:
-                    	
-                    	/*
-                        coreProps.add("AcceptCount");
-                        coreProps.add("ConnectionsCount");
-                        coreProps.add("MessagesReceivedCount");
-                        coreProps.add("MessagesSentCount");
-                        */
                     	
                     	coreProps.add(WebLogicMBeanPropConstants.ACCEPT_COUNT);
                         coreProps.add(WebLogicMBeanPropConstants.CONNECTIONS_COUNT);
@@ -360,14 +294,7 @@ public class StorageService {
                     	
                         break;
 
-                    //case "workmgr":
                     case MonitorProperties.WORKMGR_RESOURCE_TYPE:
-                    	
-                    	/*
-                        coreProps.add("CompletedRequests");
-                        coreProps.add("PendingRequests");
-                        coreProps.add("StuckThreadCount");
-                        */
                     	
                     	coreProps.add(WebLogicMBeanPropConstants.COMPLETED_REQUESTS);
                         coreProps.add(WebLogicMBeanPropConstants.PENDING_REQUESTS);
@@ -419,6 +346,7 @@ public class StorageService {
                         
                         // Is important to find the file to read
                         resource = MonitorProperties.HOST_MACHINE_MBEAN_NAME;
+                        
                         break;
                         
                     case MonitorProperties.JVM_RESOURCE_TYPE:
@@ -434,6 +362,7 @@ public class StorageService {
                         
                         // Is important to find the file to read
                         resource = MonitorProperties.JVM_MBEAN_NAME;
+                        
                         break;                        
                 }
 
@@ -468,8 +397,10 @@ public class StorageService {
             }
 
             long t1 = System.currentTimeMillis();
+            
             // TODO add misssing data
             // addMissingData(result,start,end);
+            
             long t2 = System.currentTimeMillis();
             return result;
         } catch (Exception ex) {
@@ -495,12 +426,27 @@ public class StorageService {
     													@PathParam("resource") String resource) {
         try {
         	
-            DomainRuntimeServiceMBeanConnection conn = null;
-
+        	// --------------------------------------------------------------------------
+            // TODO
+        	// ----
+        	
+        	// In case of scope definition, the "conn" object will not be set !!!
+        	/*
+        	DomainRuntimeServiceMBeanConnection conn = null;
+            
             if (scope == null || scope.size() == 0) {
                 conn = new DomainRuntimeServiceMBeanConnection();
                 scope = statisticsStorage.getAllPossibleServerNames(conn);
             }
+            */
+            
+            // For me, it should be : 
+        	DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();;
+        	
+            if (scope == null || scope.size() == 0) {
+                scope = statisticsStorage.getAllPossibleServerNames(conn);
+            }
+            // --------------------------------------------------------------------------
                         
             for (String server : scope) {
                 List<String> coreProps = new LinkedList<>();
@@ -520,14 +466,10 @@ public class StorageService {
 						coreProps.add(WebLogicMBeanPropConstants.CONSUMERS_TOTAL_COUNT);
 						*/
                 		
-						//result = getJMSServerDashboard(conn, resource);
-						//return result;
-                		
-                		return getJMSServerDashboard(conn, resource);
+						return getJMSServerDashboard(conn, resource);
                 		
                 	case MonitorProperties.SAF_DASHBOARD_RESOURCE_TYPE:
                 		
-System.out.println("SAF Dashboard generation");
                 		/*
                 		coreProps.add(WebLogicMBeanPropConstants.NAME);
                 		coreProps.add(WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT);
@@ -541,9 +483,6 @@ System.out.println("SAF Dashboard generation");
 						coreProps.add(WebLogicMBeanPropConstants.UPTIME_HIGH);
 						coreProps.add(WebLogicMBeanPropConstants.UPTIME_TOTAL);
 						*/
-                		
-                		//result = getSAFAgentDashboard(conn, resource);
-                		//return result;
                 		
                 		return getSAFAgentDashboard(conn, resource);
                 }

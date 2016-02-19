@@ -683,11 +683,10 @@ public interface WebLogicMBeanPropConstants {
 	 */
 	public final static String CHNL_MESSAGES_SENT_COUNT = "MessagesSentCount";
 	
-// Added by gregoan
-	
 	/**
 	 * 'wljvmstats.mbeans.WLJvmStats' MBean property
 	 */
+	// Added by gregoan
 	public final static String JAVA_JVM_MBEAN = "wljvmstats.mbeans.WLJvmStats";
 	
 	public final static String HEAP_MEMORY_INIT = "HeapMemoryInit";
@@ -830,6 +829,7 @@ public interface WebLogicMBeanPropConstants {
 	 */
 	public final static String TCP_TIME_WAIT_COUNT = "TcpTimeWaitCount";
 	
+	// Added by gregoan
 	public final static String AVAILABLE_PROCESSORS = "AvailableProcessors";
 	public final static String SYSTEM_LOAD_AVERAGE = "SystemLoadAverage";
 	public final static String COMMITTED_VIRTUAL_MEMORY_SIZE_MEGABYTES = "CommittedVirtualMemorySizeMegabytes";
@@ -842,6 +842,16 @@ public interface WebLogicMBeanPropConstants {
 	public final static String SYSTEM_CPU_LOAD = "SystemCpuLoad";
 	public final static String TOTAL_PHYSICAL_MEMORY_SIZE_MEGABYTES = "TotalPhysicalMemorySizeMegabytes";
 	public final static String TOTAL_SWAP_SPACE_SIZE_MEGABYTES = "TotalSwapSpaceSizeMegabytes";
+	
+	/*
+	// JMS actions on queues
+	public final static String PAUSE_PRODUCTON = "pauseProduction";
+	public final static String RESUME_PRODUCTON = "resumeProduction";
+	public final static String PAUSE_CONSUMPTION = "pauseConsumption";
+	public final static String RESUME_CONSUMPTION = "resumeConsumption";
+	public final static String PAUSE_INSERTION = "pauseInsertion";
+	public final static String RESUME_INSERTION = "resumeInsertion";
+	*/
 	
 	// -----------------------------------------------------------
 	// Added by gregoan

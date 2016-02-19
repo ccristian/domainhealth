@@ -384,12 +384,15 @@ public class StatisticsStorage {
         DateTime start = interval.getStart();
         DateTime stop = interval.getEnd();
         DateTime inter = start;
+        
         // Loop through each day in the span
         while (inter.compareTo(stop) <= 0) {
-            // Go to next
+            
+        	// Go to next
             Date dateTime = inter.toDate();
             Properties properties;
             properties = retrieveOneDayResoureNameList(dateTime, resourceType);
+            
             //System.out.println(properties);
             Enumeration<Object> keysEnum = properties.keys();
             while (keysEnum.hasMoreElements()) {
@@ -400,7 +403,6 @@ public class StatisticsStorage {
         }
         return resourceKeys;
     }
-
 
     /**
      * Clean up day statistics directories for all the days older than the
