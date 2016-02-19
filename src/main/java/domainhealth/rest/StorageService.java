@@ -173,9 +173,9 @@ public class StorageService {
             DateTime end = fmt.parseDateTime(endTime);
             Interval interval = new Interval(start, end);
             
-            // --------------------------------------------------------------------------
-            // TODO
-        	// ----
+// --------------------------------------------------------------------------
+// TO CHECK
+// --------
         	
         	// In case of scope definition, the "conn" object will not be set !!!
         	/*
@@ -426,9 +426,9 @@ public class StorageService {
     													@PathParam("resource") String resource) {
         try {
         	
-        	// --------------------------------------------------------------------------
-            // TODO
-        	// ----
+// --------------------------------------------------------------------------
+// TO CHECK
+// --------
         	
         	// In case of scope definition, the "conn" object will not be set !!!
         	/*
