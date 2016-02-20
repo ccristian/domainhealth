@@ -699,6 +699,26 @@ public interface WebLogicMBeanPropConstants {
 	public final static String NON_HEAP_MEMORY_COMMITTED = "NonHeapMemoryCommitted";
 	public final static String NON_HEAP_MEMORY_MAX = "NonHeapMemoryMax";
 	
+	public final static String EDEN_SPACE_INIT = "EdenSpaceInit";
+	public final static String EDEN_SPACE_USED = "EdenSpaceUsed";
+	public final static String EDEN_SPACE_COMMITTED = "EdenSpaceCommitted";
+	public final static String EDEN_SPACE_MAX = "EdenSpaceMax";
+	
+	public final static String SURVIVOR_SPACE_INIT = "SuvivorSpaceInit";
+	public final static String SURVIVOR_SPACE_USED = "SurvivorSpaceUsed";
+	public final static String SURVIVOR_SPACE_COMMITTED = "SurvivorSpaceCommitted";
+	public final static String SURVIVOR_SPACE_MAX = "SurvivorSpaceMax";
+	
+	public final static String TENURED_GEN_INIT = "TenuredGenInit";
+	public final static String TENURED_GEN_USED = "TenuredGenUsed";
+	public final static String TENURED_GEN_COMMITTED = "TenuredGenCommitted";
+	public final static String TENURED_GEN_MAX = "TenuredGenMax";
+	
+	public final static String PERM_GEN_INIT = "PermGenInit";
+	public final static String PERM_GEN_USED = "PermGenUsed";
+	public final static String PERM_GEN_COMMITTED = "PermGenCommitted";
+	public final static String PERM_GEN_MAX = "PermGenMax";
+	
 	/**
 	 * 'wlhostmachinestats.mbeans.WLHostMachineStats' MBean property
 	 */

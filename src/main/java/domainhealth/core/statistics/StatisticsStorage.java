@@ -295,8 +295,8 @@ public class StatisticsStorage {
      * @throws IOException Indicates that list could not be saved to file
      */
     public void appendSavedOneDayResourceNameList(Date dateTime, String resourceType, Properties extraPropList) throws IOException {
-        // Lock per resource type enabling threads reading/writing from/to
-        // different resource files to still work in parallel
+        
+    	// Lock per resource type enabling threads reading/writing from/to different resource files to still work in parallel
         synchronized (getResourceMonitorObject(resourceType)) {
             Properties propList = retrieveOneDayResoureNameList(dateTime, resourceType);
             OutputStream propsOut = null;

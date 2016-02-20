@@ -238,7 +238,8 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
      * @throws DataRetrievalException Indicates a problem occurred in retrieving the WLDF data
      */
     private void logResourceStats(String resourceType, String mbeanPropertyName, String[] monitorAttrList, String wldfQuery) throws DataRetrievalException {
-        try {
+            	
+    	try {
             String headerLine = constructHeaderLine(monitorAttrList);
             Date nowDate = new Date();
             String now = (new SimpleDateFormat(DATETIME_PARAM_FORMAT)).format(nowDate);
@@ -252,14 +253,6 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
             while (names.hasNext()) {
                 String name = (String) names.next();
                 if (name.contains("\"")) continue;
-                // Skip resources which are on blacklist (unless this is for the WLHostMachine resource type in which case allow anyway)
-                /*
-				if ((resourceType.equals(HOSTMACHINE_RESOURCE_TYPE)) || (!getComponentBlacklist().contains(name))) {										
-					String contentLine = constructStatsLine(objectRecords.get(name), monitorAttrList);
-					getCSVStats().appendToResourceStatisticsCSV(nowDate, getServerName(), resourceType, name, headerLine, contentLine);
-					artifactList.put(name, now);
-				}
-				*/
 
                 Iterator<String> iteratorBlacklist = getComponentBlacklist().iterator();
                 boolean blacklist = false;
@@ -268,19 +261,19 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
                     String element = iteratorBlacklist.next();
 
                     if (name.contains(element)) {
-
-//System.out.println("StatisticCapturerWLDFQuery::logResourceStats() - A part of the element " + name + " is blacklisted [" + element + "]");
-
                         blacklist = true;
                         break;
                     }
                 }
 
-                if ((resourceType.equals(HOSTMACHINE_RESOURCE_TYPE)) || !blacklist) {
-
+                //if (resourceType.equals(HOSTMACHINE_RESOURCE_TYPE) || !blacklist) {
+                if ( 	resourceType.equals(HOSTMACHINE_RESOURCE_TYPE) || 
+                		resourceType.equals(JVM_RESOURCE_TYPE) || 
+                		!blacklist) {
+                	
                     String contentLine = constructStatsLine(objectRecords.get(name), monitorAttrList);
                     getCSVStats().appendToResourceStatisticsCSV(nowDate, getServerName(), resourceType, name, headerLine, contentLine);
-                    artifactList.put(name, now);
+                    artifactList.put(name, now);                	
                 }
             }
             getCSVStats().appendSavedOneDayResourceNameList(nowDate, resourceType, artifactList);
@@ -343,19 +336,6 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
             while (poolObjectNames.hasNext()) {
                 String name = (String) poolObjectNames.next();
 
-
-				
-				/*
-				if (!getComponentBlacklist().contains(name)) {										
-					InstanceDataRecord poolObjRecord = poolObjectRecords.get(name);
-					InstanceDataRecord txObjRecord = txObjectRecords.get(name);
-					StringBuilder contentLine = new StringBuilder(constructStatsLine(poolObjRecord, EJB_POOL_MBEAN_MONITOR_ATTR_LIST));
-					appendToStatsLine(contentLine, txObjRecord, EJB_TRANSACTION_MBEAN_MONITOR_ATTR_LIST);
-					getCSVStats().appendToResourceStatisticsCSV(nowDate, getServerName(), EJB_RESOURCE_TYPE, name, headerLine, contentLine.toString());
-					artifactList.put(name, now);
-				}
-				*/
-
                 Iterator<String> iteratorBlacklist = getComponentBlacklist().iterator();
                 boolean blacklist = false;
 
@@ -363,9 +343,6 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
                     String element = iteratorBlacklist.next();
 
                     if (name.contains(element)) {
-
-//System.out.println("StatisticCapturerWLDFQuery::logResourceEJBStats() - A part of the element " + name + " is blacklisted [" + element + "]");
-
                         blacklist = true;
                         break;
                     }
@@ -504,6 +481,7 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
         appendWLDFQueryPart(svrChnlStatsQueryBuilder, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, SERVER_CHANNEL_RUNTIME), SVR_CHANNEL_MBEAN_MONITOR_ATTR_LIST);
         svrChnlStatsQuery = svrChnlStatsQueryBuilder.toString();
         
+        // Added by gregoan
         StringBuilder hostMachineStatsQueryBuilder = new StringBuilder(100);
         appendWLDFQueryPart(hostMachineStatsQueryBuilder, HOST_MACHINE_MBEAN, HOST_MACHINE_STATS_MBEAN_MONITOR_ATTR_LIST);
         hostMachineStatsQuery = hostMachineStatsQueryBuilder.toString();

@@ -355,10 +355,31 @@ public class StorageService {
                         coreProps.add(WebLogicMBeanPropConstants.HEAP_MEMORY_USED);
                         coreProps.add(WebLogicMBeanPropConstants.HEAP_MEMORY_COMMITTED);
                         coreProps.add(WebLogicMBeanPropConstants.HEAP_MEMORY_MAX);
+                        
                         coreProps.add(WebLogicMBeanPropConstants.NON_HEAP_MEMORY_INIT);
                         coreProps.add(WebLogicMBeanPropConstants.NON_HEAP_MEMORY_USED);
                         coreProps.add(WebLogicMBeanPropConstants.NON_HEAP_MEMORY_COMMITTED);
                         coreProps.add(WebLogicMBeanPropConstants.NON_HEAP_MEMORY_MAX);
+                        
+                        coreProps.add(WebLogicMBeanPropConstants.EDEN_SPACE_INIT);
+                        coreProps.add(WebLogicMBeanPropConstants.EDEN_SPACE_USED);
+                        coreProps.add(WebLogicMBeanPropConstants.EDEN_SPACE_COMMITTED);
+                        coreProps.add(WebLogicMBeanPropConstants.EDEN_SPACE_MAX);
+                    	
+                        coreProps.add(WebLogicMBeanPropConstants.SURVIVOR_SPACE_INIT);
+                        coreProps.add(WebLogicMBeanPropConstants.SURVIVOR_SPACE_USED);
+                        coreProps.add(WebLogicMBeanPropConstants.SURVIVOR_SPACE_COMMITTED);
+                        coreProps.add(WebLogicMBeanPropConstants.SURVIVOR_SPACE_MAX);
+                    	
+                        coreProps.add(WebLogicMBeanPropConstants.TENURED_GEN_INIT);
+                        coreProps.add(WebLogicMBeanPropConstants.TENURED_GEN_USED);
+                        coreProps.add(WebLogicMBeanPropConstants.TENURED_GEN_COMMITTED);
+                    	coreProps.add(WebLogicMBeanPropConstants.TENURED_GEN_MAX);
+                    	
+                    	coreProps.add(WebLogicMBeanPropConstants.PERM_GEN_INIT);
+                    	coreProps.add(WebLogicMBeanPropConstants.PERM_GEN_USED);
+                    	coreProps.add(WebLogicMBeanPropConstants.PERM_GEN_COMMITTED);
+                    	coreProps.add(WebLogicMBeanPropConstants.PERM_GEN_MAX);
                         
                         // Is important to find the file to read
                         resource = MonitorProperties.JVM_MBEAN_NAME;
@@ -602,9 +623,7 @@ public class StorageService {
 			        		for (ObjectName destination : conn.getChildren(jmsServer, DESTINATIONS)) {
 						    	
 			        			String destinationName = ResourceNameNormaliser.normalise(JMSSVR_RESOURCE_TYPE, conn.getTextAttr(destination, NAME));
-			        			
-//System.out.println("Get metrics for the JMS destination [" + destinationName + "]");
-			        			
+			        						        			
 			        			metrics.put(MESSAGES_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_CURRENT_COUNT)).toString());
 			        			metrics.put(MESSAGES_PENDING_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_PENDING_COUNT)).toString());
 			        			metrics.put(MESSAGES_RECEIVED_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_RECEIVED_COUNT)).toString());
@@ -657,9 +676,7 @@ public class StorageService {
 			        		for (ObjectName destination : conn.getChildren(safAgent, REMOTE_END_POINTS)) {
 			        			
 						    	String destinationName = ResourceNameNormaliser.normalise(SAFAGENT_RESOURCE_TYPE, conn.getTextAttr(destination, NAME));
-						    	
-//System.out.println("Get metrics for the SAF destination [" + destinationName + "]");
-						    	
+						    							    	
 								metrics.put(MESSAGES_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_CURRENT_COUNT)).toString());
 			        			metrics.put(MESSAGES_PENDING_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_PENDING_COUNT)).toString());
 			        			metrics.put(MESSAGES_RECEIVED_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_RECEIVED_COUNT)).toString());

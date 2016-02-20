@@ -57,7 +57,7 @@ public class JMSActionService {
 								@PathParam("action") String action) {
         try {
 
-			DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();;
+			DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();
 			
         	if(isValidAction(action)) {
         		return executeOperation(conn, jmsServer, queue, action);
