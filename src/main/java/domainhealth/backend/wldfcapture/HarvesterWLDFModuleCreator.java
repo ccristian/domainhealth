@@ -64,11 +64,17 @@ public class HarvesterWLDFModuleCreator {
 	 */
 	public boolean isDomainHealthAbleToUseWLDF() throws WebLogicMBeanException {
 		
-AppLog.getLogger().notice("HarvesterWLDFModuleCreator - Checking if wlsVersionNumber [" + wlsVersionNumber + "] is <= [" + WLS_MIN_VERSION_FOR_MULTI_WLDF_MODULES + "]");
+AppLog.getLogger().notice("HarvesterWLDFModuleCreator - isDomainHealthAbleToUseWLDF() - Checking if wlsVersionNumber [" + wlsVersionNumber + "] is >= [" + WLS_MIN_VERSION_FOR_MULTI_WLDF_MODULES + "]");
 		
 		if (ProductVersionUtil.isVersion_X_GreaterThanOrEqualTo_Y(wlsVersionNumber, WLS_MIN_VERSION_FOR_MULTI_WLDF_MODULES)) {
+			
+AppLog.getLogger().notice("HarvesterWLDFModuleCreator - isDomainHealthAbleToUseWLDF() - wlsVersionNumber [" + wlsVersionNumber + "] is >= [" + WLS_MIN_VERSION_FOR_MULTI_WLDF_MODULES + "]");
+			
 			return true;
-		}
+		} 
+else {
+	AppLog.getLogger().notice("HarvesterWLDFModuleCreator - isDomainHealthAbleToUseWLDF() - wlsVersionNumber [" + wlsVersionNumber + "] IS NOT >= [" + WLS_MIN_VERSION_FOR_MULTI_WLDF_MODULES + "]");
+}
 		
 		DomainRuntimeServiceMBeanConnection domainSvcConn = null;
 
@@ -97,7 +103,7 @@ AppLog.getLogger().notice("HarvesterWLDFModuleCreator - Checking if wlsVersionNu
 	 */
 	public void createIfNeeded() throws WebLogicMBeanException {
 		AppLog.getLogger().debug("Attempting to create WLDF harvester module");
-AppLog.getLogger().notice("HarvesterWLDFModuleCreator - Attempting to create WLDF harvester module");
+AppLog.getLogger().notice("HarvesterWLDFModuleCreator - createIfNeeded() - Attempting to create WLDF harvester module");
 		
 		EditServiceMBeanConnection editSvcConn = null;
 		boolean edited = false;
@@ -116,7 +122,7 @@ AppLog.getLogger().notice("HarvesterWLDFModuleCreator - Attempting to create WLD
 			}
 			
 			AppLog.getLogger().debug("Existing WLDF module type: " + existingDHModuleType);
-AppLog.getLogger().notice("HarvesterWLDFModuleCreator - Existing WLDF module type: " + existingDHModuleType);
+AppLog.getLogger().notice("HarvesterWLDFModuleCreator - createIfNeeded() - Existing WLDF module type: " + existingDHModuleType);
 			editSvcConn = new EditServiceMBeanConnection();
 
 			// Unfortunately have to do the module 'delete' action in a different
@@ -168,22 +174,27 @@ AppLog.getLogger().notice("HarvesterWLDFModuleCreator - Existing WLDF module typ
 			String sysModName = conn.getTextAttr(sysModule, NAME);
 			
 // gregoan
-AppLog.getLogger().notice("HarvesterWLDFModuleCreator - sysModName is [" + sysModName + "]");
-AppLog.getLogger().notice("HarvesterWLDFModuleCreator - HarvesterModuleName is [" + HARVESTER_MODULE_NAME + "]");
+AppLog.getLogger().notice("HarvesterWLDFModuleCreator - doOtherTargetedWLDFSystemModulesExist() - sysModName is [" + sysModName + "]");
+AppLog.getLogger().notice("HarvesterWLDFModuleCreator - doOtherTargetedWLDFSystemModulesExist() - HarvesterModuleName is [" + HARVESTER_MODULE_NAME + "]");
 			
 			if (!sysModName.equals(HARVESTER_MODULE_NAME)) {
 				ObjectName[] targets = conn.getChildren(sysModule, TARGETS);
 				
+AppLog.getLogger().notice("HarvesterWLDFModuleCreator - doOtherTargetedWLDFSystemModulesExist() - sysModName [" + sysModName + "] IS NOT equals to [" + HARVESTER_MODULE_NAME + "]");
+				
 				if ((targets !=null) && (targets.length > 0)) {
 					AppLog.getLogger().warning("Unable to create WLDF Harvester Module because a targeted WLDF system module ('" + sysModName + "') already exists");
 					
-AppLog.getLogger().notice("HarvesterWLDFModuleCreator - Return [true]");
+AppLog.getLogger().notice("HarvesterWLDFModuleCreator - doOtherTargetedWLDFSystemModulesExist() - Return [true]");
 					return true;
 				}
 			}
+else {
+	AppLog.getLogger().notice("HarvesterWLDFModuleCreator - doOtherTargetedWLDFSystemModulesExist() - sysModName [" + sysModName + "] IS equals to [" + HARVESTER_MODULE_NAME + "]");
+}
 		}
 		
-AppLog.getLogger().notice("HarvesterWLDFModuleCreator - Return [false]");
+AppLog.getLogger().notice("HarvesterWLDFModuleCreator - doOtherTargetedWLDFSystemModulesExist() - Return [false]");
 		
 		return false;
 	}	
@@ -207,18 +218,18 @@ AppLog.getLogger().notice("HarvesterWLDFModuleCreator - Return [false]");
 
 			if (doesModuleDescriptionContainCurrentModuleVersion(description)) {
 				if (isModuleTargettedToAllServers(conn, wldfResource)) {
-AppLog.getLogger().notice("HarvesterWLDFModuleCreator - CurrentModule");					
+AppLog.getLogger().notice("HarvesterWLDFModuleCreator - whatTypeOfDHModuleAlreadyExists() - CurrentModule");					
 					return ExistingDHModuleType.CURRENT_MODULE;
 				} else {
-AppLog.getLogger().notice("HarvesterWLDFModuleCreator - MissingTargetModuke");
+AppLog.getLogger().notice("HarvesterWLDFModuleCreator - whatTypeOfDHModuleAlreadyExists() - MissingTargetModuke");
 					return ExistingDHModuleType.MISSING_TARGETS_MODULE;				
 				}
 			} else {
-AppLog.getLogger().notice("HarvesterWLDFModuleCreator - OlderModule");
+AppLog.getLogger().notice("HarvesterWLDFModuleCreator - whatTypeOfDHModuleAlreadyExists() - OlderModule");
 				return ExistingDHModuleType.OLDER_MODULE;							
 			}
 		} else {
-AppLog.getLogger().notice("HarvesterWLDFModuleCreator - DoesNotExist");
+AppLog.getLogger().notice("HarvesterWLDFModuleCreator - whatTypeOfDHModuleAlreadyExists() - DoesNotExist");
 			return ExistingDHModuleType.DOES_NOT_EXIST;
 		}
 	}
@@ -326,10 +337,11 @@ AppLog.getLogger().notice("HarvesterWLDFModuleCreator - DoesNotExist");
 		
 		addMetric(conn, harvester, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, JROCKIT_RUNTIME), JVM_MBEAN_MONITOR_ATTR_LIST, true);		
 		addMetric(conn, harvester, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, THREAD_POOL_RUNTIME), THREADPOOL_MBEAN_MONITOR_ATTR_LIST, true);
+		
 		/* Example of restricting mbean type query to a fixed set of known mbean instance names
-		addMetric(conn, harvester, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, WORK_MANAGER_RUNTIME), 
-				getDefaultWorkManagerServerTextObjectNames(serverNames), WKMGR_MBEAN_MONITOR_ATTR_LIST, true);
+		addMetric(conn, harvester, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, WORK_MANAGER_RUNTIME), getDefaultWorkManagerServerTextObjectNames(serverNames), WKMGR_MBEAN_MONITOR_ATTR_LIST, true);
 		*/
+		
 		addMetric(conn, harvester, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, JTA_RUNTIME), JTA_MBEAN_MONITOR_ATTR_LIST, true);
 		addMetric(conn, harvester, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, JDBC_DATASOURCE_RUNTIME), JDBC_MBEAN_MONITOR_ATTR_LIST, true);
 		addMetric(conn, harvester, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, JMS_DESTINATION_RUNTIME), JMS_DESTINATION_MBEAN_MONITOR_ATTR_LIST, true);
@@ -433,8 +445,7 @@ AppLog.getLogger().notice("HarvesterWLDFModuleCreator - DoesNotExist");
 			}
 
 			conn.setBooleanAttr(serverDiagConf, DATA_RETIREMNT_ENABLED, true);
-			ObjectName retirePolicy = (ObjectName) conn.invoke(serverDiagConf, CREATE_RETIREPOLICY_OPERTN, 
-					new Object[] {String.format(RETIRE_POLICY_NAME_TEMPLATE, serverName)}, CREATE_RETIREPOLICY_PARAMTYPES);	
+			ObjectName retirePolicy = (ObjectName) conn.invoke(serverDiagConf, CREATE_RETIREPOLICY_OPERTN, new Object[] {String.format(RETIRE_POLICY_NAME_TEMPLATE, serverName)}, CREATE_RETIREPOLICY_PARAMTYPES);	
 			conn.setBooleanAttr(retirePolicy, ENABLED, true);
 			conn.setTextAttr(retirePolicy, ARCHIVE_NAME, HAVESTER_ARCHIVE_NAME);
 			conn.setNumberAttr(retirePolicy, RETIREMENT_AGE, OLD_DATA_AGE_HOURS);

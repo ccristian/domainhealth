@@ -18,8 +18,12 @@
 		<!--The run-as-role-assignment element maps a run-as role name
 		(a subelement of the servlet element) in web.xml to a valid user name in the system-->
 		<role-name>SystemAdministrator</role-name>
-		<run-as-principal-name>weblogic</run-as-principal-name>
-
+		
+		<!--
+		Updated by gregoan
+		<run-as-principal-name>weblogic</run-as-principal-name
+		-->
+		<run-as-principal-name>system</run-as-principal-name>
 
 	</run-as-role-assignment>
 
