@@ -372,9 +372,8 @@ $(function () {
 
   function getAndDisplayCharts(resname,respath,value) {
     $.ajax({
-      url: '/domainhealth/rest/jsonp/stats/' + respath + '/' + value + '?',
+      url: '/domainhealth/rest/stats/' + respath + '/' + value + '?',
       cache: false,
-      dataType:'JSONP',
       data: {startTime: startTime, endTime: endTime},
       success: function (response) {
         $.AdminLTE.renderedData = response;
@@ -404,8 +403,7 @@ $(function () {
   //http://wltrtd06.cc.cec.eu.int:2241/domainhealth/rest/stats/core/params?&startTime=15-02-2016-14-08&endTime=15-02-2016-14-12
 
   $.ajax({
-    url: '/domainhealth/rest/jsonp/resources',
-    dataType:'JSONP',
+    url: '/domainhealth/rest/resources',
     data:{startTime:startTime,endTime: endTime},
     success: function(response) {
 
