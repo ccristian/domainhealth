@@ -60,27 +60,22 @@ public class HarvesterWLDFModuleCreator {
 	 * case this method will ALWAYS return true.
 	 * 
 	 * @return True of WLDF harvesting can be use for Domain Health statistics retrieval; otherwise false
-	 * @throws WebLogicMBeanException Indicates that there is a problem in trying to query the doamin to see if WLDF can be used
+	 * @throws WebLogicMBeanException Indicates that there is a problem in trying to query the domain to see if WLDF can be used
 	 */
 	public boolean isDomainHealthAbleToUseWLDF() throws WebLogicMBeanException {
-		
-AppLog.getLogger().notice("HarvesterWLDFModuleCreator - isDomainHealthAbleToUseWLDF() - Checking if wlsVersionNumber [" + wlsVersionNumber + "] is >= [" + WLS_MIN_VERSION_FOR_MULTI_WLDF_MODULES + "]");
-		
+				
 		if (ProductVersionUtil.isVersion_X_GreaterThanOrEqualTo_Y(wlsVersionNumber, WLS_MIN_VERSION_FOR_MULTI_WLDF_MODULES)) {
-			
-AppLog.getLogger().notice("HarvesterWLDFModuleCreator - isDomainHealthAbleToUseWLDF() - wlsVersionNumber [" + wlsVersionNumber + "] is >= [" + WLS_MIN_VERSION_FOR_MULTI_WLDF_MODULES + "]");
-			
+			AppLog.getLogger().info("The version [" + wlsVersionNumber + "] is comptatible with multiple WLDF module for the same target");
 			return true;
 		} 
-else {
-	AppLog.getLogger().notice("HarvesterWLDFModuleCreator - isDomainHealthAbleToUseWLDF() - wlsVersionNumber [" + wlsVersionNumber + "] IS NOT >= [" + WLS_MIN_VERSION_FOR_MULTI_WLDF_MODULES + "]");
-}
+		else {
+			AppLog.getLogger().info("The version [" + wlsVersionNumber + "] is not comptatible with multiple WLDF module for the same target - Checking if there is WDLF module on admin server");
+		}
 		
 		DomainRuntimeServiceMBeanConnection domainSvcConn = null;
 
 		try {
 			domainSvcConn = new DomainRuntimeServiceMBeanConnection();
-			
 			if (doOtherTargetedWLDFSystemModulesExist(domainSvcConn)) {
 				return false;
 			}
@@ -102,8 +97,7 @@ else {
 	 * @throws WebLogicMBeanException Indicates that there was a problem with trying to create a WLDF Module
 	 */
 	public void createIfNeeded() throws WebLogicMBeanException {
-		AppLog.getLogger().debug("Attempting to create WLDF harvester module");
-AppLog.getLogger().notice("HarvesterWLDFModuleCreator - createIfNeeded() - Attempting to create WLDF harvester module");
+		AppLog.getLogger().info("Attempting to create WLDF harvester module");
 		
 		EditServiceMBeanConnection editSvcConn = null;
 		boolean edited = false;
@@ -121,8 +115,7 @@ AppLog.getLogger().notice("HarvesterWLDFModuleCreator - createIfNeeded() - Attem
 				}				
 			}
 			
-			AppLog.getLogger().debug("Existing WLDF module type: " + existingDHModuleType);
-AppLog.getLogger().notice("HarvesterWLDFModuleCreator - createIfNeeded() - Existing WLDF module type: " + existingDHModuleType);
+			AppLog.getLogger().info("Existing WLDF module type: " + existingDHModuleType);
 			editSvcConn = new EditServiceMBeanConnection();
 
 			// Unfortunately have to do the module 'delete' action in a different
@@ -133,6 +126,8 @@ AppLog.getLogger().notice("HarvesterWLDFModuleCreator - createIfNeeded() - Exist
 				deleteOldDHHarvesterModuleAndPolicy(editSvcConn, domainConfig);
 				editSvcConn.saveAndActivate();
 				editSvcConn.cancelEdit();
+				
+				AppLog.getLogger().info("Deleting the WLDF module - Is an old one or target are not properly defined");
 			}
 			
 			if ((existingDHModuleType == ExistingDHModuleType.DOES_NOT_EXIST) || (existingDHModuleType == ExistingDHModuleType.OLDER_MODULE)  || (existingDHModuleType == ExistingDHModuleType.MISSING_TARGETS_MODULE)) {			
@@ -140,6 +135,7 @@ AppLog.getLogger().notice("HarvesterWLDFModuleCreator - createIfNeeded() - Exist
 				ObjectName domainConfig = editSvcConn.startEdit();
 				createNewDHHarvesterModuleAndPolicy(editSvcConn, domainConfig);
 				editSvcConn.saveAndActivate();
+				AppLog.getLogger().info("Create new WLDF module");
 			}
 		} catch (Exception e) {
 			AppLog.getLogger().critical("Unable to configure WDLF Harvester module. Cause: " + e.getMessage());
@@ -173,29 +169,15 @@ AppLog.getLogger().notice("HarvesterWLDFModuleCreator - createIfNeeded() - Exist
 		for (ObjectName sysModule : sysModules) {
 			String sysModName = conn.getTextAttr(sysModule, NAME);
 			
-// gregoan
-AppLog.getLogger().notice("HarvesterWLDFModuleCreator - doOtherTargetedWLDFSystemModulesExist() - sysModName is [" + sysModName + "]");
-AppLog.getLogger().notice("HarvesterWLDFModuleCreator - doOtherTargetedWLDFSystemModulesExist() - HarvesterModuleName is [" + HARVESTER_MODULE_NAME + "]");
-			
 			if (!sysModName.equals(HARVESTER_MODULE_NAME)) {
 				ObjectName[] targets = conn.getChildren(sysModule, TARGETS);
-				
-AppLog.getLogger().notice("HarvesterWLDFModuleCreator - doOtherTargetedWLDFSystemModulesExist() - sysModName [" + sysModName + "] IS NOT equals to [" + HARVESTER_MODULE_NAME + "]");
-				
+								
 				if ((targets !=null) && (targets.length > 0)) {
-					AppLog.getLogger().warning("Unable to create WLDF Harvester Module because a targeted WLDF system module ('" + sysModName + "') already exists");
-					
-AppLog.getLogger().notice("HarvesterWLDFModuleCreator - doOtherTargetedWLDFSystemModulesExist() - Return [true]");
+					AppLog.getLogger().warning("Unable to create WLDF Harvester Module because a targeted WLDF system module ('" + sysModName + "') already exists");					
 					return true;
 				}
 			}
-else {
-	AppLog.getLogger().notice("HarvesterWLDFModuleCreator - doOtherTargetedWLDFSystemModulesExist() - sysModName [" + sysModName + "] IS equals to [" + HARVESTER_MODULE_NAME + "]");
-}
-		}
-		
-AppLog.getLogger().notice("HarvesterWLDFModuleCreator - doOtherTargetedWLDFSystemModulesExist() - Return [false]");
-		
+		}	
 		return false;
 	}	
 	
@@ -218,18 +200,14 @@ AppLog.getLogger().notice("HarvesterWLDFModuleCreator - doOtherTargetedWLDFSyste
 
 			if (doesModuleDescriptionContainCurrentModuleVersion(description)) {
 				if (isModuleTargettedToAllServers(conn, wldfResource)) {
-AppLog.getLogger().notice("HarvesterWLDFModuleCreator - whatTypeOfDHModuleAlreadyExists() - CurrentModule");					
 					return ExistingDHModuleType.CURRENT_MODULE;
 				} else {
-AppLog.getLogger().notice("HarvesterWLDFModuleCreator - whatTypeOfDHModuleAlreadyExists() - MissingTargetModuke");
 					return ExistingDHModuleType.MISSING_TARGETS_MODULE;				
 				}
 			} else {
-AppLog.getLogger().notice("HarvesterWLDFModuleCreator - whatTypeOfDHModuleAlreadyExists() - OlderModule");
 				return ExistingDHModuleType.OLDER_MODULE;							
 			}
 		} else {
-AppLog.getLogger().notice("HarvesterWLDFModuleCreator - whatTypeOfDHModuleAlreadyExists() - DoesNotExist");
 			return ExistingDHModuleType.DOES_NOT_EXIST;
 		}
 	}
@@ -239,8 +217,8 @@ AppLog.getLogger().notice("HarvesterWLDFModuleCreator - whatTypeOfDHModuleAlread
 	 * all current configured servers in the domain.
 	 * 
 	 * @param conn Domain MBean server connection
-	 * @param wldfResource Existing DomainHealth havester module resource
-	 * @return True if current module targetted to all configured servers, otherwise false
+	 * @param wldfResource Existing DomainHealth harvester module resource
+	 * @return True if current module targeted to all configured servers, otherwise false
 	 * @throws WebLogicMBeanException Indicates that there was a problem querying the domain's config
 	 */
 	private boolean isModuleTargettedToAllServers(DomainRuntimeServiceMBeanConnection conn, ObjectName wldfResource) throws WebLogicMBeanException {
@@ -297,7 +275,7 @@ AppLog.getLogger().notice("HarvesterWLDFModuleCreator - whatTypeOfDHModuleAlread
 			}
 		}
 		
-		AppLog.getLogger().notice("Removed old version of DomainHealth WLDF Harvester Module: " + HARVESTER_MODULE_NAME);
+		AppLog.getLogger().info("Removed old version of DomainHealth WLDF Harvester Module: " + HARVESTER_MODULE_NAME);
 	}
 
 	/**
@@ -354,12 +332,10 @@ AppLog.getLogger().notice("HarvesterWLDFModuleCreator - whatTypeOfDHModuleAlread
 		addMetric(conn, harvester, HOST_MACHINE_MBEAN, HOST_MACHINE_STATS_MBEAN_MONITOR_ATTR_LIST, false);
 		
 		// Added by gregoan
-		// The JVM mbean are JAVA based and not WebLogic based
-		// -> Apply the same procedure than for wlhostmachinestats (register mbean)
 		addMetric(conn, harvester, JAVA_JVM_MBEAN, JAVA_JVM_MBEAN_MONITOR_ATTR_LIST, false);
 		
 		createNewRetirementPolicy(conn, domainConfig);
-		AppLog.getLogger().notice("Created new DomainHealth WLDF Harvester Module called: " + HARVESTER_MODULE_NAME + " (" + domainhealthVersionNumber + ")");
+		AppLog.getLogger().info("Created new DomainHealth WLDF Harvester Module called: " + HARVESTER_MODULE_NAME + " (" + domainhealthVersionNumber + ")");
 	}
 
 	/**
@@ -440,7 +416,7 @@ AppLog.getLogger().notice("HarvesterWLDFModuleCreator - whatTypeOfDHModuleAlread
 			ObjectName serverDiagConf = conn.getChild(server, SERVER_DIAG_CONFIG);
 			
 			if (doesAnyHarvesterRetirementPolicyAlreadyExist(conn, serverDiagConf)) {
-				AppLog.getLogger().warning("Unable to create new harvester retirement policy for server '" + serverName + "' because one already exists");
+				AppLog.getLogger().warning("Unable to create new harvester retirement policy for server [" + serverName + "] because one already exists");
 				continue;
 			}
 
