@@ -268,6 +268,12 @@ desired effect
   {{/each}}
 </script>
 
+<script id="menu-dashboard" type="text/x-handlebars-template">
+  {{#each this}}
+  <li><a  id="dashboard{{this}}" data-toggle="tooltip" title="{{this}}" href="#">{{shortName this}}</a></li>
+  {{/each}}
+</script>
+
 <script id="dashboard-template" type="text/x-handlebars-template">
 
   <section class="content-header">

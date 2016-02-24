@@ -300,6 +300,9 @@ $(function () {
   var source = $("#menu-template").html();
   var template = Handlebars.compile(source);
 
+  var sourceMenuDashboard = $("#menu-dashboard").html();
+  var templateMenuDashboard = Handlebars.compile(sourceMenuDashboard);
+
   var sourceGraph = $("#graph-template").html();
   var templateHighstock = Handlebars.compile(sourceGraph);
 
@@ -399,7 +402,7 @@ $(function () {
 
   function addDashboardListener(res,resname,respath){
     $.each( res, function( key, value ) {
-      $("#"+value).click(function () {
+      $("#dashboard"+value).click(function () {
        getAndDisplayDashboard(resname,respath,value);
       });
     });
@@ -451,11 +454,11 @@ $(function () {
       addListener(res,"Channels","svrchnl");
 
       res = resources["jmsdashboard"];
-      $("#jmsdashboard").html(template(res));
+      $("#jmsdashboard").html(templateMenuDashboard(res));
       addDashboardListener(res,"JMS Dashboard","jmsdashboard");
       
       res = resources["safdashboard"];
-      $("#safdashboard").html(template(res));
+      $("#safdashboard").html(templateMenuDashboard(res));
       addDashboardListener(res,"SAF Dashboard","safdashboard");
 
     },
