@@ -452,11 +452,7 @@ public class StorageService {
             // --------------------------------------------------------------------------
             // for now we should get all jmsservers/safagent and skip the scope cause it just does a loop now and not used as param
                         
-            //for (String server : scope) {
-
-System.out.println("StorageService::getStatsForDashboard() - resourceType is [" + resourceType + "]");
-System.out.println("StorageService::getStatsForDashboard() - resource is [" + resource + "]");
-        	
+            //for (String server : scope) {        	
                 switch (resourceType) {
                 
                 	case MonitorProperties.JMS_DASHBOARD_RESOURCE_TYPE:
