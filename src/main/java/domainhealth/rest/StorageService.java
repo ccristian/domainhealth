@@ -93,8 +93,9 @@ public class StorageService {
             DateTime start = fmt.parseDateTime(startTime);
             DateTime end = fmt.parseDateTime(endTime);
             Interval interval = new Interval(start, end);
-            
-            resourcesMap.put(MonitorProperties.CORE_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.CORE_RESOURCE_TYPE));
+
+            //no resources for core...just properties
+            //resourcesMap.put(MonitorProperties.CORE_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.CORE_RESOURCE_TYPE));
             resourcesMap.put(MonitorProperties.DATASOURCE_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.DATASOURCE_RESOURCE_TYPE));
             resourcesMap.put(MonitorProperties.DESTINATION_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.DESTINATION_RESOURCE_TYPE));
             resourcesMap.put(MonitorProperties.SAF_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.SAF_RESOURCE_TYPE));
@@ -108,8 +109,8 @@ public class StorageService {
 			//resourcesMap.put(MonitorProperties.JVM_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.JVM_RESOURCE_TYPE));
             
 			// Add the dashboard
-			//resourcesMap.put(MonitorProperties.JMS_DASHBOARD_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.JMS_DASHBOARD_RESOURCE_TYPE));
-			//resourcesMap.put(MonitorProperties.SAF_DASHBOARD_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.SAF_DASHBOARD_RESOURCE_TYPE));
+			resourcesMap.put(MonitorProperties.JMS_DASHBOARD_RESOURCE_TYPE, getResourceNamesForJmsDashboard());
+			resourcesMap.put(MonitorProperties.SAF_DASHBOARD_RESOURCE_TYPE, getResourceNamesForSafDashboard());
 			
         } catch (IOException ex) {
             AppLog.getLogger().error("Error while getting resources", ex);
@@ -178,6 +179,7 @@ public class StorageService {
 // --------
         	
         	// In case of scope definition, the "conn" object will not be set !!!
+            // Yes no problem with that here cause it is used only if there is no scope.
         	/*
         	DomainRuntimeServiceMBeanConnection conn = null;
             
@@ -442,79 +444,101 @@ public class StorageService {
     @Path("dashboard/{resourceType}/{resource}")
     @Produces({MediaType.APPLICATION_JSON})
     public Map<String, Map<String, String>> getStatsForDashboard(	@HeaderParam("user-agent") String userAgent,
-    													@QueryParam("scope") Set<String> scope,
-    													@PathParam("resourceType") String resourceType,
-    													@PathParam("resource") String resource) {
+			    													@QueryParam("scope") Set<String> scope,
+			    													@PathParam("resourceType") String resourceType,
+			    													@PathParam("resource") String resource) {
         try {
-        	
-// --------------------------------------------------------------------------
-// TO CHECK
-// --------
-        	
-        	// In case of scope definition, the "conn" object will not be set !!!
-        	/*
-        	DomainRuntimeServiceMBeanConnection conn = null;
-            
-            if (scope == null || scope.size() == 0) {
-                conn = new DomainRuntimeServiceMBeanConnection();
-                scope = statisticsStorage.getAllPossibleServerNames(conn);
-            }
-            */
-            
-            // For me, it should be : 
         	DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();;
-        	
-            if (scope == null || scope.size() == 0) {
-                scope = statisticsStorage.getAllPossibleServerNames(conn);
-            }
             // --------------------------------------------------------------------------
+            // for now we should get all jmsservers/safagent and skip the scope cause it just does a loop now and not used as param
                         
-            for (String server : scope) {
-                List<String> coreProps = new LinkedList<>();
+            //for (String server : scope) {
+
+System.out.println("StorageService::getStatsForDashboard() - resourceType is [" + resourceType + "]");
+System.out.println("StorageService::getStatsForDashboard() - resource is [" + resource + "]");
+        	
                 switch (resourceType) {
                 
                 	case MonitorProperties.JMS_DASHBOARD_RESOURCE_TYPE:
-                		
-                		/*
-                		coreProps.add(WebLogicMBeanPropConstants.NAME);
-						coreProps.add(WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT);
-						coreProps.add(WebLogicMBeanPropConstants.MESSAGES_PENDING_COUNT);
-						coreProps.add(WebLogicMBeanPropConstants.MESSAGES_RECEIVED_COUNT);
-						coreProps.add(WebLogicMBeanPropConstants.MESSAGES_HIGH_COUNT);
-
-						coreProps.add(WebLogicMBeanPropConstants.CONSUMERS_CURRENT_COUNT);
-						coreProps.add(WebLogicMBeanPropConstants.CONSUMERS_HIGH_COUNT);
-						coreProps.add(WebLogicMBeanPropConstants.CONSUMERS_TOTAL_COUNT);
-						*/
-                		
 						return getJMSServerDashboard(conn, resource);
                 		
                 	case MonitorProperties.SAF_DASHBOARD_RESOURCE_TYPE:
-                		
-                		/*
-                		coreProps.add(WebLogicMBeanPropConstants.NAME);
-                		coreProps.add(WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT);
-        				coreProps.add(WebLogicMBeanPropConstants.MESSAGES_PENDING_COUNT);
-						coreProps.add(WebLogicMBeanPropConstants.MESSAGES_RECEIVED_COUNT);
-						coreProps.add(WebLogicMBeanPropConstants.MESSAGES_HIGH_COUNT);
-                		
-						coreProps.add(WebLogicMBeanPropConstants.FAILED_MESSAGES_TOTAL);
-                		coreProps.add(WebLogicMBeanPropConstants.DOWNTIME_HIGH);
-        				coreProps.add(WebLogicMBeanPropConstants.DOWNTIME_TOTAL);
-						coreProps.add(WebLogicMBeanPropConstants.UPTIME_HIGH);
-						coreProps.add(WebLogicMBeanPropConstants.UPTIME_TOTAL);
-						*/
-                		
                 		return getSAFAgentDashboard(conn, resource);
                 }
-            }
+            //}
                         
         } catch (Exception ex) {
-            ex.printStackTrace();
+            AppLog.getLogger().error("Error getting dashboard WS",ex);
         }
-        return null;
+        return new LinkedHashMap<>();
     }
 
+
+    /**
+     * 
+     * @return
+     */
+    private Set<String> getResourceNamesForJmsDashboard()  {
+    	
+        Set<String> result = new LinkedHashSet<>();
+        try {
+            // Is not expensive to instantiate cause there is a local cache.
+            DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();
+            ObjectName[] serverRuntimes = conn.getAllServerRuntimes();
+            
+            // Find the Admin server
+            for (int index = 0; index < serverRuntimes.length; index++){
+                // I do not see the reason of this if here (it is used on startup to detect where DH is running)
+                if(DomainRuntimeServiceMBeanConnection.isThisTheAdminServer()){
+                    ObjectName serverRuntime = serverRuntimes[index];
+                    ObjectName jmsRuntime = conn.getChild(serverRuntime, JMS_RUNTIME);
+                    ObjectName[] jmsServers = conn.getChildren(jmsRuntime, JMS_SERVERS);
+                    for (ObjectName jmsServer : jmsServers)
+                    {
+                        String currentJmsServerName = conn.getTextAttr(jmsServer, NAME);
+                        result.add(currentJmsServerName);
+                    }
+                }
+            }
+        } catch(Exception ex){
+            AppLog.getLogger().error("Error during getResourceNamesForJmsDashboard",ex);
+        }
+        return result;
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    private Set<String> getResourceNamesForSafDashboard()  {
+    	
+        Set<String> result = new LinkedHashSet<>();
+        try {
+            // Is not expensive to instantiate cause there is a local cache.
+            DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();
+            ObjectName[] serverRuntimes = conn.getAllServerRuntimes();
+            
+            // Find the Admin server
+            for (int index = 0; index < serverRuntimes.length; index++){
+            	
+                // I do not see the reason of this if here (it is used on startup to detect where DH is running)
+                if(DomainRuntimeServiceMBeanConnection.isThisTheAdminServer()){
+                    ObjectName serverRuntime = serverRuntimes[index];
+                    ObjectName safRuntime = conn.getChild(serverRuntime, SAF_RUNTIME);
+                    ObjectName[] safServers = conn.getChildren(safRuntime, AGENTS);
+                    for (ObjectName safServer : safServers)
+                    {
+                        String currentSafServerName = conn.getTextAttr(safServer, NAME);
+                        result.add(currentSafServerName);
+                    }
+                }
+            }
+        } catch(Exception ex){
+            AppLog.getLogger().error("Error during getResourceNamesForSafDashboard",ex);
+        }
+        return result;
+    }
+    
     /**
      * 
      * @param data

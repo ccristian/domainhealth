@@ -4,7 +4,7 @@
 		<prefer-web-inf-classes>true</prefer-web-inf-classes>
 
 	</container-descriptor>
-    <security-role-assignment>
+	<security-role-assignment>
 		<!--The security-role-assignment element declares a mapping between
 		a Web application security role and one or more principals in WebLogic Server-->
 		<role-name>SystemAdministrator</role-name>
@@ -12,6 +12,7 @@
 			a) a user defined in any realm or
 			b) a group defined in any realm-->
 		<principal-name>Administrators</principal-name>
+		<principal-name>Monitors</principal-name>
 	</security-role-assignment>
 
 	<run-as-role-assignment>
@@ -27,7 +28,7 @@
 
 	</run-as-role-assignment>
 
-	<context-root>domainhealth</context-root>
+	<context-root>/domainhealth</context-root>
 
 	<work-manager>
 		<name>DomainHealth_IndividualServerStatCapturerWorkMngr</name>
@@ -38,6 +39,8 @@
 	</work-manager>
 
 	<session-descriptor>
-		<timeout-secs>20</timeout-secs>
+		<timeout-secs>600</timeout-secs>
 	</session-descriptor>
 </weblogic-web-app>
+
+

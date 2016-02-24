@@ -84,7 +84,7 @@ desired effect
           <li>
             <a href="#"><i class="fa fa-angle-left" id="move-left"></i></a>
           </li>
-          
+
           <!-- User Account Menu -->
           <li class="dropdown user user-menu">
             <!-- Menu Toggle Button -->
@@ -93,11 +93,11 @@ desired effect
               <span class="hidden-xs" id="daterange-btn"></span>
             </a>
           </li>
-          
+
           <li>
             <a href="#"><i class="fa fa-angle-right" id="move-right"></i></a>
           </li>
-          
+
           <!-- Control Sidebar Toggle Button -->
           <li>
             <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
@@ -115,7 +115,7 @@ desired effect
       <!-- Sidebar Menu -->
       <ul class="sidebar-menu">
         <li class="header">Resources</li>
-        
+
         <!-- Optionally, you can add icons to the links -->
         <li id ="core" class="active"><a href="#"><i class="fa fa-pie-chart"></i>
           <span>Core</span></a>
@@ -144,34 +144,34 @@ desired effect
           <a href="#"><i class="fa fa-ioxhost"></i><span>Channels</span> <i class="fa fa-angle-left pull-right"></i></a>
           <ul id="svrchnl" class="treeview-menu"></ul>
         </li>
-		
+
+
 		<!--
 			<c:if test="${showhosts}">
 				<li><a href='<c:out value="${contexturl}"/>/hostmachinestats?<dh:link-ctx-params/>'>Host</a></li>
 			</c:if>
-			
+
 			<c:if test="${showdashboards}">
 				<li><a href='<c:out value="${contexturl}"/>/jmssrvdashboard?<dh:link-ctx-params/>'>JMS Dashboard</a></li>
 				<li><a href='<c:out value="${contexturl}"/>/safagentdashboard?<dh:link-ctx-params/>'>SAF Dashboard</a></li>
 			</c:if>
 		-->
-        
+
         <li id ="hostmachine"><a href="#"><i class="fa fa-pie-chart"></i>
           <span>HostMachine</span></a>
         </li>
         <li id ="jvm"><a href="#"><i class="fa fa-pie-chart"></i>
           <span>JVM</span></a>
         </li>
-        
-        <!--
-        JMS and SAF dashboard
-        <li id ="jmsdashboard"><a href="#"><i class="fa fa-pie-chart"></i>
-          <span>JMS Dashboard</span></a>
+
+        <li class="treeview">
+          <a href="#"><i class="fa fa-ioxhost"></i><span>JMS Dashboard</span> <i class="fa fa-angle-left pull-right"></i></a>
+          <ul id="jmsdashboard" class="treeview-menu"></ul>
         </li>
-        <li id ="safdashboard"><a href="#"><i class="fa fa-pie-chart"></i>
-          <span>SAF Dashboard</span></a>
+        <li class="treeview">
+          <a href="#"><i class="fa fa-ioxhost"></i><span>SAF Dashboard</span> <i class="fa fa-angle-left pull-right"></i></a>
+          <ul id="safdashboard" class="treeview-menu"></ul>
         </li>
-        -->
         
       </ul><!-- /.sidebar-menu -->
 
@@ -208,10 +208,10 @@ desired effect
 
   <!-- Main Footer -->
   <footer class="main-footer">
-  
+
     <!-- To the right -->
     <div class="pull-right hidden-xs">DomainHealth</div>
-    
+
     <!-- Default to the left Cristian Chiovari -->
     <strong>2015 <a href="#">DH2</a>.</strong>
   </footer>
@@ -268,30 +268,72 @@ desired effect
   {{/each}}
 </script>
 
-<script id="graph-template" type="text/x-handlebars-template">
+<script id="dashboard-template" type="text/x-handlebars-template">
 
+  <section class="content-header">
+
+  </section>
+
+  <div class="row">
+    <div class="col-xs-12" >
+      <!--margin: 0 auto !important;float: none !important;-->
+      <div class="box">
+        <div class="box-header">
+          <h3 class="box-title">{{this.selectedPath}}</h3>
+          <div class="box-tools">
+
+          </div>
+        </div><!-- /.box-header -->
+        <div class="box-body table-responsive no-padding">
+          <table class="table table-hover">
+            <tr>
+              <th class="col-xs-2">Name</th>
+              {{#each this.renderedData}}
+              {{#if @first}}
+              {{#each this}}
+              <th class="col-xs-2" style="text-align: center;">
+                {{@key}}
+              </th>
+            {{/each}}
+              {{/if}}
+            {{/each}}
+            </tr>
+            {{#each this.renderedData}}
+            <tr>
+              <td> {{@key}}</td>
+              {{#each this}}
+              <td style="text-align: center;">
+              <span class = "badge bg-blue text-left"  >
+                {{this}}
+                </span>
+              </td>
+              {{/each}}
+            </tr>
+            {{/each}}
+
+          </table>
+        </div><!-- /.box-body -->
+      </div><!-- /.box -->
+    </div>
+  </div>
+
+</script>
+
+<script id="graph-template" type="text/x-handlebars-template">
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
         <small>{{this.selectedPath}}</small>
       </h1>
     </section>
-
     <section class="content">
-
       <div class="grid-stack"  data-gs-animate="true">
-
         {{#each this.renderedData}}
-
         {{#if_even @index}}
         <div class="grid-stack-item" data-gs-x="0" data-gs-y="0" data-gs-no-resize ="true" data-gs-width="6" data-gs-height="6">
-
         {{else}}
-
         <div class="grid-stack-item"  data-gs-x="6" data-gs-y="0" data-gs-no-resize ="true" data-gs-width="6" data-gs-height="6">
-
           {{/if_even}}
-
           <div class="grid-stack-item-content">
             <div class="box box-primary ">
               <div class="box-header with-border">
@@ -304,17 +346,12 @@ desired effect
             </div>
           </div>
         </div>
-
         {{/each}}
-
       </div>
-
   </div>
-
   </section>
 
   <script type="text/javascript">
-
     $(function () {
       var options = {
         cell_height: 80,
@@ -326,13 +363,10 @@ desired effect
     });
 
     {{#each this.renderedData}}
-
     $('#{{@key}}').highcharts('StockChart', {
-
       rangeSelector: {
         selected: 4
       },
-
       yAxis: {
         plotLines: [{
           value: 0,
@@ -343,12 +377,10 @@ desired effect
       title : {
         text : ''
       },
-
       tooltip: {
         valueDecimals: 2
       },
       rangeSelector: {
-
         buttons: [
           {
             type: 'day',
@@ -372,7 +404,6 @@ desired effect
           }],
         selected: 3
       },
-
       legend: {
         enabled: true,
         maxHeight: 100
@@ -380,12 +411,9 @@ desired effect
       navigator: {
         enabled: $("#dhnavigator").is(':checked')
       },
-
       series :$.AdminLTE.renderedData["{{@key}}"]
-
     });
     {{/each}}
-
     <{{!}}/script>
 
 </script>

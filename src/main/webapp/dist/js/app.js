@@ -300,8 +300,11 @@ $(function () {
   var source = $("#menu-template").html();
   var template = Handlebars.compile(source);
 
-  var source1 = $("#graph-template").html();
-  var templateHighstock = Handlebars.compile(source1);
+  var sourceGraph = $("#graph-template").html();
+  var templateHighstock = Handlebars.compile(sourceGraph);
+
+  var sourceDashboard = $("#dashboard-template").html();
+  var templateDashboard = Handlebars.compile(sourceDashboard);
 
   $("#move-left").click(function () {
     var duration = moment.duration($.AdminLTE.options.endTimeVal.diff($.AdminLTE.options.startTimeVal));
@@ -351,6 +354,22 @@ $(function () {
     }
   }
 
+
+  function getAndDisplayDashboard(resname,respath,value) {
+    $.ajax({
+      url: '/domainhealth/rest/dashboard/' + respath + '/' + value ,
+      cache: false,
+      success: function (response) {
+        $.AdminLTE.selectedPath = resname + " > " + value;
+        $.AdminLTE.renderedData = response;
+        $(".content-wrapper").html(templateDashboard($.AdminLTE));
+      },
+      error: function (xhr) {
+        alert("error");
+      }
+    });
+  }
+
   function getAndDisplayCharts(resname,respath,value) {
     $.ajax({
       url: '/domainhealth/rest/stats/' + respath + '/' + value + '?',
@@ -374,6 +393,14 @@ $(function () {
     $.each( res, function( key, value ) {
       $("#"+value).click(function () {
         getAndDisplayCharts(resname,respath,value);
+      });
+    });
+  }
+
+  function addDashboardListener(res,resname,respath){
+    $.each( res, function( key, value ) {
+      $("#"+value).click(function () {
+       getAndDisplayDashboard(resname,respath,value);
       });
     });
   }
@@ -422,6 +449,14 @@ $(function () {
       res = resources["svrchnl"];
       $("#svrchnl").html(template(res));
       addListener(res,"Channels","svrchnl");
+
+      res = resources["jmsdashboard"];
+      $("#jmsdashboard").html(template(res));
+      addDashboardListener(res,"JMS Dashboard","jmsdashboard");
+      
+      res = resources["safdashboard"];
+      $("#safdashboard").html(template(res));
+      addDashboardListener(res,"SAF Dashboard","safdashboard");
 
     },
     error: function(xhr) {
