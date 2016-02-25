@@ -11,9 +11,13 @@
 		<!--The <principal-name> can map to
 			a) a user defined in any realm or
 			b) a group defined in any realm-->
+			
+		<!-- Default WL groups -->
 		<principal-name>Administrators</principal-name>
-		<principal-name>digit-adminGroup</principal-name>
 		<principal-name>Monitors</principal-name>
+		
+		<!-- Custom EC groups - Admin and ReadOnly -->
+		<principal-name>digit-adminGroup</principal-name>
 		<principal-name>dg-monitorGroup</principal-name>
 	</security-role-assignment>
 
@@ -24,7 +28,11 @@
 		<!--The <principal-name> can map to
 			a) a user defined in any realm or
 			b) a group defined in any realm-->
+			
+		<!-- Default WL groups -->
 		<principal-name>Administrators</principal-name>
+		
+		<!-- Custom EC groups - Admin and special jmsOperator -->
 		<principal-name>digit-adminGroup</principal-name>
 		<principal-name>dg-jmsoperatorGroup</principal-name>
 	</security-role-assignment>
@@ -41,6 +49,8 @@
 		<run-as-principal-name>system</run-as-principal-name>
 
 	</run-as-role-assignment>
+	
+	
 
 	<context-root>/domainhealth</context-root>
 

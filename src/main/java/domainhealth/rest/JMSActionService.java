@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.security.RolesAllowed;
 import javax.management.ObjectName;
 import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
@@ -48,8 +47,8 @@ public class JMSActionService {
     @Context
     private ServletContext application;
     
-    //@Context
-    //private SecurityContext securityContext;
+    @Context
+    private SecurityContext securityContext;
     
     /**
      * 
@@ -63,53 +62,50 @@ public class JMSActionService {
      * @return
      */
     @GET
-    @Path("validateSecuredAccess")
+    @Path("validateAccess")
     @Produces({MediaType.APPLICATION_JSON})
-    public boolean validateSecuredAccess(@Context SecurityContext securityContext) {
+    public boolean validateAccess(@Context SecurityContext securityContext) {
     
 		AppProperties appProps = new AppProperties(application);
 		Boolean restrictedAction = new Boolean(appProps.getProperty(PropKey.RESTRICTED_ACTION));
 
 		if(restrictedAction) {
 			
-System.out.println("JMSActionService::validateAccess() - The restriction mode is set");
+System.out.println("JMSActionService::validateSecuredAccess() - The restriction mode is set");
+System.out.println("JMSActionService::validateSecuredAccess() - Principal is [" + securityContext.getUserPrincipal().getName() + "]");
 
 			String restrictedRoles = appProps.getProperty(PropKey.RESTRICTED_ROLES);
 			List<String> rolesList = tokenizeRestrictedRolesText(restrictedRoles);
 			
-System.out.println("JMSActionService::validateAccess() - restrictedRoles is [" + restrictedRoles + "]");
+System.out.println("JMSActionService::validateSecuredAccess() - restrictedRoles is [" + restrictedRoles + "]");
 			
 			Iterator<String> iteratorRolesList = rolesList.iterator();
 	        boolean allowed = false;
-	        
-System.out.println("JMSActionService::validateAccess() - There is [" + rolesList.size() + "] roles defined");
-	
+	        	
 	        while (iteratorRolesList.hasNext()) {
 	            String role = iteratorRolesList.next();
 	
-System.out.println("JMSActionService::validateAccess() - Current role is [" + role + "]");
-	
+System.out.println("JMSActionService::validateSecuredAccess() - Current role is [" + role + "]");
+
 	            if(securityContext.isUserInRole(role)) {
-System.out.println("JMSActionService::validateAccess() - The username is part of the role [" + role + "]");
+System.out.println("JMSActionService::validateSecuredAccess() - The username is part of the role [" + role + "]");
 	            	allowed = true;
 	                break;
-	    		}
-else {
-	System.out.println("JMSActionService::validateAccess() - The username IS NOT part of the role [" + role + "]");
-}
+	    		} else {
+System.out.println("JMSActionService::validateSecuredAccess() - The username IS NOT part of the role [" + role + "]");
+				}
 	        }
 	        
 	        if(allowed){
-System.out.println("JMSActionService::validateAccess() - The user is allowed");
+System.out.println("JMSActionService::validateSecuredAccess() - The user is allowed");
 	        	return true;
+	        } else{
+System.out.println("JMSActionService::validateSecuredAccess() - The user is not allowed");
+return false;
 	        }
-else{
-	System.out.println("JMSActionService::validateAccess() - The user is not allowed");
-	return false;
-}
 		}
 else{
-	System.out.println("JMSActionService::validateAccess() - The restriction mode is not set");
+	System.out.println("JMSActionService::validateSecuredAccess() - The restriction mode is not set");
 	return true;
 }		
     }
@@ -142,29 +138,6 @@ else{
      * @return
      */
     @GET
-    @Path("getUserPrincipal")
-    @Produces({MediaType.APPLICATION_JSON})
-    public String getUserPrincipal(@Context SecurityContext securityContext) {
-        return securityContext.getUserPrincipal().getName();
-    }
-    
-    /**
-     * 
-     * @return
-     */
-    @GET
-    @Path("checkAccess")
-    @RolesAllowed({"administrators", "Administrators", "Operators"})
-    @Produces({MediaType.APPLICATION_JSON})
-    public boolean checkAccess() {
-        return true;
-    }
-    
-    /**
-     * 
-     * @return
-     */
-    @GET
     @Path("isUserInRole/{role}")
     @Produces({MediaType.APPLICATION_JSON})
     public boolean isUserInRole(@Context SecurityContext securityContext,
@@ -172,16 +145,6 @@ else{
         return securityContext.isUserInRole(role);
     }
     
-    @GET
-    @Produces("text/plain;charset=UTF-8")
-    @Path("/sayHello")
-    public String sayHello(@Context SecurityContext securityContext) {
-        if (securityContext.isUserInRole("admin"))  return "Hello World!";
-        
-        return null;
-        //throw new SecurityException("User is unauthorized.");
-    }
-
     /**
      * 
      * @param userAgent
@@ -200,13 +163,19 @@ else{
 											@PathParam("destination") String destination,
 											@PathParam("action") String action) {
         try {
-
-			DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();
-			
-        	if(isValidActionForDestination(action)) {
-        		return executeDestinationOperation(conn, jmsServer, destination, action);
-        	} else {
-        		AppLog.getLogger().error("The action [" + action + "] is not a valid action - Nothing will be done");
+        	
+        	if(isAuthenticated()) {
+        		
+        		//AppLog.getLogger().notice("The username is allowed - Executing the action");
+        		
+	        	if(isValidActionForDestination(action)) {
+	        		DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();
+	        		return executeDestinationOperation(conn, jmsServer, destination, action);
+	        	} else {
+	        		AppLog.getLogger().error("The action [" + action + "] is not a valid action - Nothing will be done");
+	        	}
+        	} else{
+        		AppLog.getLogger().error("The username is not allowed - Skipping the action");
         	}
             	
         } catch (Exception ex) {
@@ -232,12 +201,18 @@ else{
 									@PathParam("action") String action) {
         try {
 
-			DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();;
-			
-        	if(isValidActionForDestination(action)) {
-        		return executeDestinationOperation(conn, jmsServer, action);
-        	} else {
-        		AppLog.getLogger().error("The action [" + action + "] is not a valid action - Nothing will be done");
+        	if(isAuthenticated()) {
+    			
+        		//AppLog.getLogger().notice("The username is allowed - Executing the action");
+        		
+	        	if(isValidActionForDestination(action)) {
+	        		DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();
+	        		return executeDestinationOperation(conn, jmsServer, action);
+	        	} else {
+	        		AppLog.getLogger().error("The action [" + action + "] is not a valid action - Nothing will be done");
+	        	}
+        	} else{
+        		AppLog.getLogger().error("The username is not allowed - Skipping the action");
         	}
             	
         } catch (Exception ex) {
@@ -265,12 +240,18 @@ else{
 											@PathParam("action") String action) {
         try {
 
-			DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();
-			
-        	if(isValidActionForSaf(action)) {
-        		return executeSafOperation(conn, safAgent, saf, action);
-        	} else {
-        		AppLog.getLogger().error("The action [" + action + "] is not a valid action - Nothing will be done");
+        	if(isAuthenticated()) {
+        		
+        		//AppLog.getLogger().notice("The username is allowed - Executing the action");
+        		
+	        	if(isValidActionForSaf(action)) {
+	        		DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();
+	        		return executeSafOperation(conn, safAgent, saf, action);
+	        	} else {
+	        		AppLog.getLogger().error("The action [" + action + "] is not a valid action - Nothing will be done");
+	        	}
+        	} else{
+        		AppLog.getLogger().error("The username is not allowed - Skipping the action");
         	}
             	
         } catch (Exception ex) {
@@ -295,13 +276,19 @@ else{
 									@PathParam("safAgent") String safAgent,
 									@PathParam("action") String action) {
         try {
-
-			DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();;
-			
-        	if(isValidActionForSaf(action)) {
-        		return executeSafOperation(conn, safAgent, action);
-        	} else {
-        		AppLog.getLogger().error("The action [" + action + "] is not a valid action - Nothing will be done");
+        	
+        	if(isAuthenticated()) {
+				
+        		//AppLog.getLogger().notice("The username is allowed - Executing the action");
+        		
+	        	if(isValidActionForSaf(action)) {
+	        		DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();
+	        		return executeSafOperation(conn, safAgent, action);
+	        	} else {
+	        		AppLog.getLogger().error("The action [" + action + "] is not a valid action - Nothing will be done");
+	        	}
+        	} else{
+        		AppLog.getLogger().error("The username is not allowed - Skipping the action");
         	}
             	
         } catch (Exception ex) {
@@ -374,6 +361,48 @@ else{
     
     /**
      * 
+     * @return
+     */
+    private boolean isAuthenticated() {
+    	
+    	AppProperties appProps = new AppProperties(application);
+		Boolean restrictedAction = new Boolean(appProps.getProperty(PropKey.RESTRICTED_ACTION));
+
+		if(restrictedAction) {
+			
+			String username = securityContext.getUserPrincipal().getName();
+			AppLog.getLogger().notice("The restriction mode is set");
+			AppLog.getLogger().notice("Principal is [" + username + "]");
+
+			String restrictedRoles = appProps.getProperty(PropKey.RESTRICTED_ROLES);
+			List<String> rolesList = tokenizeRestrictedRolesText(restrictedRoles);
+			    			
+			Iterator<String> iteratorRolesList = rolesList.iterator();
+	        boolean allowed = false;
+	        	
+	        while (iteratorRolesList.hasNext()) {
+	            String role = iteratorRolesList.next();
+	
+	            if(securityContext.isUserInRole(role)) {
+	            	AppLog.getLogger().notice("The username [" + username + "] is part of the role [" + role + "]");
+	            	allowed = true;
+	                break;
+	    		}
+	        }
+	        
+	        if(allowed){
+	        	return true;
+	        } else{
+	        	return false;
+	        }
+		} else{
+	    	AppLog.getLogger().notice("The restriction mode is not set - This action cannot be executed without to be authenticated");
+	    	return false;
+	    }
+    }
+    
+    /**
+     * 
      * @param conn
      * @param jmsServerName
      * @param queueName
@@ -406,9 +435,8 @@ else{
 		        			if(destinationName.equals(queueName)) {
 		        				
 		        				conn.invoke(destination, action, null, null);
-		        				
-		        				System.out.println("Action [" + action + "] executed for the queue [" + queueName + "] deployed on JMS server [" + jmsServerName + "]");
-		        				AppLog.getLogger().info("Action [" + action + "] executed for the queue [" + queueName + "] deployed on JMS server [" + jmsServerName + "]");
+		        				String username = securityContext.getUserPrincipal().getName();
+		        				AppLog.getLogger().notice("The username [" + username + "] executed the action [" + action + "] for the queue [" + queueName + "] deployed on JMS server [" + jmsServerName + "]");
 		        				return true;
 		        			}
 		        		}	
@@ -419,8 +447,8 @@ else{
 			AppLog.getLogger().error("Error during execution of action [" + action + "] for the queue [" + queueName + "] deployed on JMS server [" + jmsServerName + "]", ex);
 		}
 		
-		AppLog.getLogger().info("Action [" + action + "] to be executed for the queue [" + queueName + "] deployed on JMS server [" + jmsServerName + "] was not executed");
-		AppLog.getLogger().info("-> Possible reason is wrong JMS server or JMS queue name");
+		AppLog.getLogger().error("Action [" + action + "] to be executed for the queue [" + queueName + "] deployed on JMS server [" + jmsServerName + "] was not executed");
+		AppLog.getLogger().error("-> Possible reason is wrong JMS server or JMS queue name");
 		return false;
 	}
     
@@ -450,9 +478,8 @@ else{
 		        	if(currentJmsServerName.equals(jmsServerName)){
 		        		
         				conn.invoke(jmsServer, action, null, null);
-        				
-        				System.out.println("Action [" + action + "] executed for the JMS server [" + jmsServerName + "]");
-        				AppLog.getLogger().info("Action [" + action + "] executed for the JMS server [" + jmsServerName + "]");
+        				String username = securityContext.getUserPrincipal().getName();
+        				AppLog.getLogger().notice("The username [" + username + "] executed the action [" + action + "] for the JMS server [" + jmsServerName + "]");
         				return true;
 		        	}	    
 		        }
@@ -461,8 +488,8 @@ else{
 			AppLog.getLogger().error("Error during execution of action [" + action + "] for the JMS server [" + jmsServerName + "]", ex);
 		}
 		
-		AppLog.getLogger().info("Action [" + action + "] to be executed for the JMS server [" + jmsServerName + "] was not executed");
-		AppLog.getLogger().info("-> Possible reason is wrong JMS server");
+		AppLog.getLogger().error("Action [" + action + "] to be executed for the JMS server [" + jmsServerName + "] was not executed");
+		AppLog.getLogger().error("-> Possible reason is wrong JMS server");
 		return false;
 	}
     
@@ -500,9 +527,8 @@ else{
 		        			if(currentSafName.equals(safName)) {
 		        				
 		        				conn.invoke(remoteEndPoint, action, null, null);
-		        				
-		        				System.out.println("Action [" + action + "] executed for the SAF [" + safName + "] deployed on SAF agent [" + safAgentName + "]");
-		        				AppLog.getLogger().info("Action [" + action + "] executed for the SAF [" + safName + "] deployed on SAF agent [" + safAgentName + "]");
+		        				String username = securityContext.getUserPrincipal().getName();
+		        				AppLog.getLogger().notice("The username [" + username + "] executed the action [" + action + "] for the SAF [" + safName + "] deployed on SAF agent [" + safAgentName + "]");
 		        				return true;
 		        			}
 		        		}	
@@ -513,8 +539,8 @@ else{
 			AppLog.getLogger().error("Error during execution of action [" + action + "] for the SAF [" + safName + "] deployed on SAF agent [" + safAgentName + "]", ex);
 		}
 		
-		AppLog.getLogger().info("Action [" + action + "] to be executed for the SAF [" + safName + "] deployed on SAF agent [" + safAgentName + "] was not executed");
-		AppLog.getLogger().info("-> Possible reason is wrong SAF agent or SAF name");
+		AppLog.getLogger().error("Action [" + action + "] to be executed for the SAF [" + safName + "] deployed on SAF agent [" + safAgentName + "] was not executed");
+		AppLog.getLogger().error("-> Possible reason is wrong SAF agent or SAF name");
 		return false;
 	}
     
@@ -544,9 +570,8 @@ else{
 		        	if(currentSafAgentName.equals(safAgent)){
 		        		
         				conn.invoke(safAgent, action, null, null);
-        				
-        				System.out.println("Action [" + action + "] executed for the SAF agent [" + safAgentName + "]");
-        				AppLog.getLogger().info("Action [" + action + "] executed for the SAF agent [" + safAgent + "]");
+        				String username = securityContext.getUserPrincipal().getName();
+        				AppLog.getLogger().notice("The username [" + username + "] executed the action [" + action + "] for the SAF agent [" + safAgent + "]");
         				return true;
 		        	}	    
 		        }
@@ -555,8 +580,8 @@ else{
 			AppLog.getLogger().error("Error during execution of action [" + action + "] for the SAF agent [" + safAgentName + "]", ex);
 		}
 		
-		AppLog.getLogger().info("Action [" + action + "] to be executed for the SAF agent [" + safAgentName + "] was not executed");
-		AppLog.getLogger().info("-> Possible reason is wrong SAF agent");
+		AppLog.getLogger().error("Action [" + action + "] to be executed for the SAF agent [" + safAgentName + "] was not executed");
+		AppLog.getLogger().error("-> Possible reason is wrong SAF agent");
 		return false;
 	}
 }
