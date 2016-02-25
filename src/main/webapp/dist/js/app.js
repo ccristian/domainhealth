@@ -255,6 +255,8 @@ $(function () {
     }
   });
 
+
+
   //initial view loading the first page
   getAndDisplayCharts("Core","core","params");
 
