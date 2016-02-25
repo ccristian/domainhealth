@@ -322,13 +322,7 @@ desired effect
     </div>
   </div>
 
-  <script>
-  $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
-  checkboxClass: 'icheckbox_minimal-blue',
-  radioClass: 'iradio_minimal-blue'
-  });
 
-  <{{!}}/script>
 
 
 </script>
@@ -351,8 +345,8 @@ desired effect
             <div class="box-tools">
                 <div class="margin">
                     <div class="btn-group">
-                        <button type="button" class="btn btn-success">Production</button>
-                        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                        <button type="label" class="btn btn-success" id="prdbtn" >Production</button>
+                        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" id="prdtgl">
                             <span class="caret"></span>
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
@@ -363,8 +357,8 @@ desired effect
                         </ul>
                     </div>
                     <div class="btn-group">
-                        <button type="button" class="btn btn-info">Consumption</button>
-                        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                        <button type="label" class="btn btn-info" id="consbtn">Consumption</button>
+                        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" id="constgl">
                             <span class="caret"></span>
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
@@ -375,8 +369,8 @@ desired effect
                         </ul>
                     </div>
                     <div class="btn-group">
-                        <button type="button" class="btn btn-danger">Insertion</button>
-                        <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+                        <button type="button" class="btn btn-danger" id="insbtn">Insertion</button>
+                        <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" id="instgl">
                             <span class="caret"></span>
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
@@ -436,6 +430,24 @@ desired effect
       </div><!-- /.box -->
     </div>
   </div>
+
+
+  <script>
+      $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+          checkboxClass: 'icheckbox_minimal-blue',
+          radioClass: 'iradio_minimal-blue'
+      });
+
+      //$("#prdbtn").prop("disabled",true);
+      $("#prdtgl").prop("disabled",true);
+      //$("#consbtn").prop("disabled",true);
+      $("#constgl").prop("disabled",true);
+      //$("#insbtn").prop("disabled",true);
+      $("#instgl").prop("disabled",true);
+
+
+
+      <{{!}}/script>
 
 </script>
 
