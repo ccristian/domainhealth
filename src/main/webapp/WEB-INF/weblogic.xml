@@ -26,7 +26,7 @@
 			b) a group defined in any realm-->
 		<principal-name>Administrators</principal-name>
 		<principal-name>digit-adminGroup</principal-name>
-		<principal-name>jmsOperator</principal-name>
+		<principal-name>dg-jmsoperatorGroup</principal-name>
 	</security-role-assignment>
 	
 	<run-as-role-assignment>
