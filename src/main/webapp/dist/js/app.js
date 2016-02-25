@@ -435,6 +435,8 @@ $(function () {
   
   
   
+  
+  
   // Added by gregoan
   $("#inout_stop").click(function () {
     alert("Click on In/Out Stop ...")
