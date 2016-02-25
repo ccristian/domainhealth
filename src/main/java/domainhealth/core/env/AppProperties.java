@@ -73,9 +73,14 @@ public class AppProperties extends Properties {
 		VERSION_DATE_PROP { public String toString() { return "dh_version_date"; } },
 		
 		/**
-		 * The domain health version date property name ("dh_showdashboard")
+		 * The restricted action property name ("dh_restricted_action")
 		 */
-		SHOW_DASHBOARD_PROP { public String toString() { return "dh_showdashboard"; } }
+		RESTRICTED_ACTION { public String toString() { return "dh_restricted_action"; } },
+		
+		/**
+		 * The restricted action property name ("dh_restricted_action")
+		 */
+		RESTRICTED_ROLES { public String toString() { return "dh_restricted_roles"; } }
 	};
 
 	/**

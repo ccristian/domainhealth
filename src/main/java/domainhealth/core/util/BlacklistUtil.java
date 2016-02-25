@@ -12,9 +12,23 @@ public class BlacklistUtil {
 	private final static String BLACKLIST_TOKENIZER_PATTERN = ",\\s*";
 	private List<String> componentBlacklist;
 	
+	/**
+	 * 
+	 * @param appProps
+	 */
 	public BlacklistUtil(AppProperties appProps) {
 		componentBlacklist = tokenizeBlacklistText(appProps.getProperty(PropKey.COMPONENT_BLACKLIST_PROP));
 	}
+	
+	/**
+	 * 
+	 * @param blacklistString
+	 */
+	/*
+	public BlacklistUtil(String blacklistString) {		
+		componentBlacklist = tokenizeBlacklistText(blacklistString);
+	}
+	*/
 
 	/**
 	 * Gets list of names of web-app and ejb components which should not have 

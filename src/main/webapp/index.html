@@ -117,8 +117,8 @@ desired effect
         <li class="header">Resources</li>
 
         <!-- Optionally, you can add icons to the links -->
-        <li id ="core" class="active"><a href="#"><i class="fa fa-pie-chart"></i>
-          <span>Core</span></a>
+        <li id ="core" class="active">
+          <a href="#"><i class="fa fa-pie-chart"></i><span>Core</span></a>
         </li>
         <li class="treeview">
           <a href="#"><i class="fa fa-area-chart"></i><span>Datasources</span> <i class="fa fa-angle-left pull-right"></i></a>
@@ -144,17 +144,6 @@ desired effect
           <a href="#"><i class="fa fa-ioxhost"></i><span>Channels</span> <i class="fa fa-angle-left pull-right"></i></a>
           <ul id="svrchnl" class="treeview-menu"></ul>
         </li>
-
-		<!--
-			<c:if test="${showhosts}">
-				<li><a href='<c:out value="${contexturl}"/>/hostmachinestats?<dh:link-ctx-params/>'>Host</a></li>
-			</c:if>
-
-			<c:if test="${showdashboards}">
-				<li><a href='<c:out value="${contexturl}"/>/jmssrvdashboard?<dh:link-ctx-params/>'>JMS Dashboard</a></li>
-				<li><a href='<c:out value="${contexturl}"/>/safagentdashboard?<dh:link-ctx-params/>'>SAF Dashboard</a></li>
-			</c:if>
-		-->
 
         <li id ="hostmachine"><a href="#"><i class="fa fa-pie-chart"></i>
           <span>HostMachine</span></a>
@@ -291,27 +280,132 @@ desired effect
         </div><!-- /.box-header -->
         <div class="box-body table-responsive no-padding">
           <table class="table table-hover">
+
             <tr>
+
               <th class="col-xs-2">Name</th>
+
               {{#each this.renderedData}}
-              {{#if @first}}
-              {{#each this}}
-              <th class="col-xs-2" style="text-align: center;">
-                {{@key}}
-              </th>
-            {{/each}}
-              {{/if}}
-            {{/each}}
+              	{{#if @first}}
+              	  {{#each this}}
+              		<th class="col-xs-2" style="text-align: center;">
+                	{{@key}}
+              		</th>
+            	  {{/each}}
+              	{{/if}}
+              {{/each}}
             </tr>
+
             {{#each this.renderedData}}
             <tr>
-              <td> {{@key}}</td>
+              <td>{{@key}}</td>
               {{#each this}}
-              <td style="text-align: center;">
-              <span class = "badge bg-blue text-left"  >
-                {{this}}
-                </span>
+              	<td style="text-align: center;">
+              	  <span class = "badge bg-blue text-left">
+                    {{this}}
+                  </span>
+              	</td>
+              {{/each}}
+            </tr>
+            {{/each}}
+
+          </table>
+        </div><!-- /.box-body -->
+      </div><!-- /.box -->
+    </div>
+  </div>
+
+</script>
+
+<script id="dashboard-action-template" type="text/x-handlebars-template">
+
+  <section class="content-header">
+
+  </section>
+
+  <div class="row">
+    <div class="col-xs-12" >
+      <!--margin: 0 auto !important;float: none !important;-->
+      <div class="box">
+        <div class="box-header">
+          <h3 class="box-title">{{this.selectedPath}}</h3>
+          <div class="box-tools">
+
+          </div>
+        </div><!-- /.box-header -->
+        <div class="box-body table-responsive no-padding">
+          <table class="table table-hover">
+
+            <tr>
+			
+<!-- ************************************************************************** -->
+<!-- Added by gregoan -->
+			  <!-- Add the "Action" column -->
+			  <th class="col-xs-2" style="text-align: center;">Action</th>
+<!-- ************************************************************************** -->
+
+              <th class="col-xs-2">Name</th>
+
+              {{#each this.renderedData}}
+              	{{#if @first}}
+              	  {{#each this}}
+              		<th class="col-xs-2" style="text-align: center;">
+                	{{@key}}
+              		</th>
+            	  {{/each}}
+              	{{/if}}
+              {{/each}}
+            </tr>
+
+            {{#each this.renderedData}}
+            <tr>
+
+<!-- ************************************************************************** -->
+<!-- Added by gregoan -->
+<!--
+			  <td style="text-align: center;">
+                <span class="badge bg-blue text-left" id="inout_stop">In/Out Stop</span>
+				<span class="badge bg-red text-left" id="inout_start">In/Out Start</span>
+				<span class="badge bg-blue text-left" id="in_stop">In Stop</span>
+				<span class="badge bg-red text-left" id="in_start">In Start</span>
+				<span class="badge bg-blue text-left" id="out_stop">Out Stop</span>
+				<span class="badge bg-red text-left" id="out_start">Out Start</span>
               </td>
+-->
+
+<!-- Bullet should be removed -->
+			  <td style="text-align: center;">
+				<ul>
+        			<li>
+          				<a href="#" id="inout_stop"><span class="badge bg-blue text-left" >In/Out Stop</span></a>
+        			</li>
+					<li>
+          				<a href="#" id="inout_start"><span class="badge bg-red text-left" >In/Out Start</span></a>
+        			</li>
+					<li>
+          				<a href="#" id="in_stop"><span class="badge bg-blue text-left" >In Stop</span></a>
+        			</li>
+					<li>
+          				<a href="#" id="in_start"><span class="badge bg-red text-left" >In Start</span></a>
+        			</li>
+					<li>
+          				<a href="#" id="out_stop"><span class="badge bg-blue text-left" >Out Stop</span></a>
+        			</li>
+					<li>
+          				<a href="#" id="out_start"><span class="badge bg-red text-left" >Out Start</span></a>
+        			</li>
+      			</ul>
+              </td>
+
+<!-- ************************************************************************** -->
+
+              <td>{{@key}}</td>
+              {{#each this}}
+              	<td style="text-align: center;">
+              	  <span class = "badge bg-blue text-left">
+                    {{this}}
+                  </span>
+              	</td>
               {{/each}}
             </tr>
             {{/each}}

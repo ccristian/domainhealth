@@ -2,8 +2,8 @@
 <weblogic-web-app xmlns="http://xmlns.oracle.com/weblogic/weblogic-web-app">
 	<container-descriptor>
 		<prefer-web-inf-classes>true</prefer-web-inf-classes>
-
 	</container-descriptor>
+	
 	<security-role-assignment>
 		<!--The security-role-assignment element declares a mapping between
 		a Web application security role and one or more principals in WebLogic Server-->
@@ -12,9 +12,23 @@
 			a) a user defined in any realm or
 			b) a group defined in any realm-->
 		<principal-name>Administrators</principal-name>
+		<principal-name>digit-adminGroup</principal-name>
 		<principal-name>Monitors</principal-name>
+		<principal-name>dg-monitorGroup</principal-name>
 	</security-role-assignment>
 
+	<security-role-assignment>
+		<!--The security-role-assignment element declares a mapping between
+		a Web application security role and one or more principals in WebLogic Server-->
+		<role-name>jmsOperator</role-name>
+		<!--The <principal-name> can map to
+			a) a user defined in any realm or
+			b) a group defined in any realm-->
+		<principal-name>Administrators</principal-name>
+		<principal-name>digit-adminGroup</principal-name>
+		<principal-name>jmsOperator</principal-name>
+	</security-role-assignment>
+	
 	<run-as-role-assignment>
 		<!--The run-as-role-assignment element maps a run-as role name
 		(a subelement of the servlet element) in web.xml to a valid user name in the system-->

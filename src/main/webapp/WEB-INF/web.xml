@@ -32,12 +32,26 @@
     </context-param>
 
 	<!-- Added by gregoan -->
-	<!-- Dashboard -->
+	<!-- 
+		If dh_restricted_action is set to TRUE then the role will be checked to execute action on JMS Queue/Topic elements (see JMSActionService)
+		   -> Only Operator, Deployer and Administrator could execute actions
+		If dh_restricted_action is set to FALSE then the role will be checked to execute action on JMS Queue/Topic elements (see JMSActionService)
+		   -> Actions could be execute by everybody
+	-->
 	<context-param>
-		<param-name>dh_showdashboard</param-name>
-		<param-value>true</param-value>
-	</context-param>
-
+        <param-name>dh_restricted_action</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    
+    <!-- 
+		If dh_restricted_action is set to TRUE, this parameter will be used
+		Is representing the roles which should have access to power actions
+	-->
+    <context-param>
+        <param-name>dh_restricted_roles</param-name>
+        <param-value>jmsOperator</param-value>
+    </context-param>
+    
     <servlet>
         <servlet-name>AppStartStopListener</servlet-name>
         <servlet-class>domainhealth.lifecycle.AppStartStopListener</servlet-class>
@@ -78,6 +92,10 @@
 
     <security-role>
         <role-name>SystemAdministrator</role-name>
+    </security-role>
+    
+    <security-role>
+        <role-name>jmsOperator</role-name>
     </security-role>
     
     <servlet>

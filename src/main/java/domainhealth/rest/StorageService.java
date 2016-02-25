@@ -6,6 +6,7 @@ import domainhealth.core.jmx.DomainRuntimeServiceMBeanConnection;
 import domainhealth.core.statistics.MonitorProperties;
 import domainhealth.core.statistics.ResourceNameNormaliser;
 import domainhealth.core.statistics.StatisticsStorage;
+import domainhealth.core.util.BlacklistUtil;
 import domainhealth.frontend.data.DateAmountDataItem;
 import domainhealth.frontend.data.DateAmountDataSet;
 import domainhealth.frontend.data.Statistics;
@@ -482,18 +483,42 @@ public class StorageService {
             DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();
             ObjectName[] serverRuntimes = conn.getAllServerRuntimes();
             
-            // Find the Admin server
             for (int index = 0; index < serverRuntimes.length; index++){
-                // I do not see the reason of this if here (it is used on startup to detect where DH is running)
-                if(DomainRuntimeServiceMBeanConnection.isThisTheAdminServer()){
-                    ObjectName serverRuntime = serverRuntimes[index];
-                    ObjectName jmsRuntime = conn.getChild(serverRuntime, JMS_RUNTIME);
-                    ObjectName[] jmsServers = conn.getChildren(jmsRuntime, JMS_SERVERS);
-                    for (ObjectName jmsServer : jmsServers)
-                    {
-                        String currentJmsServerName = conn.getTextAttr(jmsServer, NAME);
-                        result.add(currentJmsServerName);
+                
+                ObjectName serverRuntime = serverRuntimes[index];
+                ObjectName jmsRuntime = conn.getChild(serverRuntime, JMS_RUNTIME);
+                ObjectName[] jmsServers = conn.getChildren(jmsRuntime, JMS_SERVERS);
+                for (ObjectName jmsServer : jmsServers)
+                {
+                    String currentElement = conn.getTextAttr(jmsServer, NAME);
+                    
+// Check if not blacklisted
+                    //String blackListString = (String)application.getAttribute(AppProperties.PropKey.COMPONENT_BLACKLIST_PROP.toString());
+                    //List<String> componentBlacklist = new BlacklistUtil(blackListString).getComponentBlacklist();
+                    
+                    AppProperties appProps = new AppProperties(application);
+                    List<String> componentBlacklist = new BlacklistUtil(appProps).getComponentBlacklist();
+                    Iterator<String> iteratorBlacklist = componentBlacklist.iterator();
+                    boolean blacklist = false;
+
+                    while (iteratorBlacklist.hasNext()) {
+                        String element = iteratorBlacklist.next();
+
+//System.out.println("StorageService::getResourceNamesForJmsDashboard() - The blacklisted element is [" + element + "]");
+
+                        if (currentElement.contains(element)) {
+                            blacklist = true;
+                            break;
+                        }
                     }
+                    
+                    if (!blacklist) {
+                    	result.add(currentElement);
+System.out.println("StorageService::getResourceNamesForJmsDashboard() - The element [" + currentElement + "] is not blacklisted");
+                    }
+else{
+	System.out.println("StorageService::getResourceNamesForJmsDashboard() - The element [" + currentElement + "] is blacklisted");
+}
                 }
             }
         } catch(Exception ex){
@@ -514,19 +539,42 @@ public class StorageService {
             DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();
             ObjectName[] serverRuntimes = conn.getAllServerRuntimes();
             
-            // Find the Admin server
             for (int index = 0; index < serverRuntimes.length; index++){
             	
-                // I do not see the reason of this if here (it is used on startup to detect where DH is running)
-                if(DomainRuntimeServiceMBeanConnection.isThisTheAdminServer()){
-                    ObjectName serverRuntime = serverRuntimes[index];
-                    ObjectName safRuntime = conn.getChild(serverRuntime, SAF_RUNTIME);
-                    ObjectName[] safServers = conn.getChildren(safRuntime, AGENTS);
-                    for (ObjectName safServer : safServers)
-                    {
-                        String currentSafServerName = conn.getTextAttr(safServer, NAME);
-                        result.add(currentSafServerName);
+                ObjectName serverRuntime = serverRuntimes[index];
+                ObjectName safRuntime = conn.getChild(serverRuntime, SAF_RUNTIME);
+                ObjectName[] safAgents = conn.getChildren(safRuntime, AGENTS);
+                for (ObjectName safAgent : safAgents)
+                {
+                    String currentElement = conn.getTextAttr(safAgent, NAME);
+                                            
+// Check if not blacklisted
+                    //String blackListString = (String)application.getAttribute(AppProperties.PropKey.COMPONENT_BLACKLIST_PROP.toString());
+                    //List<String> componentBlacklist = new BlacklistUtil(blackListString).getComponentBlacklist();
+                    
+                    AppProperties appProps = new AppProperties(application);
+                    List<String> componentBlacklist = new BlacklistUtil(appProps).getComponentBlacklist();
+                    Iterator<String> iteratorBlacklist = componentBlacklist.iterator();
+                    boolean blacklist = false;
+
+                    while (iteratorBlacklist.hasNext()) {
+                        String element = iteratorBlacklist.next();
+
+//System.out.println("StorageService::getResourceNamesForSafDashboard() - The blacklisted element is [" + element + "]");
+
+                        if (currentElement.contains(element)) {
+                            blacklist = true;
+                            break;
+                        }
                     }
+                        
+                    if (!blacklist) {
+                    	result.add(currentElement);
+System.out.println("StorageService::getResourceNamesForSafDashboard() - The element [" + currentElement + "] is not blacklisted");
+                    }
+else{
+	System.out.println("StorageService::getResourceNamesForSafDashboard() - The element [" + currentElement + "] is blacklisted");
+}                        
                 }
             }
         } catch(Exception ex){
@@ -626,38 +674,35 @@ public class StorageService {
 			
 			ObjectName[] serverRuntimes = conn.getAllServerRuntimes();
 			
-			// Find the Admin server
 			for (int index = 0; index < serverRuntimes.length; index++){
-				if(DomainRuntimeServiceMBeanConnection.isThisTheAdminServer()){
 			
-					ObjectName serverRuntime = serverRuntimes[index]; 
-			    	ObjectName jmsRuntime = conn.getChild(serverRuntime, JMS_RUNTIME);			    	
-			        ObjectName[] jmsServers = conn.getChildren(jmsRuntime, JMS_SERVERS);
-			        
-			        for (ObjectName jmsServer : jmsServers)
-			        {
-			        	String currentJmsServerName = conn.getTextAttr(jmsServer, NAME);
-			        	if(currentJmsServerName.equals(jmsServerName)){
-			        		
-			        		Map<String, String> metrics = new LinkedHashMap<String, String>();
-			        		for (ObjectName destination : conn.getChildren(jmsServer, DESTINATIONS)) {
-						    	
-			        			String destinationName = ResourceNameNormaliser.normalise(JMSSVR_RESOURCE_TYPE, conn.getTextAttr(destination, NAME));
-			        						        			
-			        			metrics.put(MESSAGES_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_CURRENT_COUNT)).toString());
-			        			metrics.put(MESSAGES_PENDING_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_PENDING_COUNT)).toString());
-			        			metrics.put(MESSAGES_RECEIVED_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_RECEIVED_COUNT)).toString());
-			        			metrics.put(MESSAGES_HIGH_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_HIGH_COUNT)).toString());
-								
-			        			metrics.put(CONSUMERS_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(destination, CONSUMERS_CURRENT_COUNT)).toString());
-			        			metrics.put(CONSUMERS_HIGH_COUNT, new Integer((int)conn.getNumberAttr(destination, CONSUMERS_HIGH_COUNT)).toString());
-			        			metrics.put(CONSUMERS_TOTAL_COUNT, new Integer((int)conn.getNumberAttr(destination, CONSUMERS_TOTAL_COUNT)).toString());
-			        			
-			        			result.put(destinationName, metrics);
-			        		}
-			        	}			    
-			        }
-				}
+				ObjectName serverRuntime = serverRuntimes[index]; 
+		    	ObjectName jmsRuntime = conn.getChild(serverRuntime, JMS_RUNTIME);			    	
+		        ObjectName[] jmsServers = conn.getChildren(jmsRuntime, JMS_SERVERS);
+		        
+		        for (ObjectName jmsServer : jmsServers)
+		        {
+		        	String currentJmsServerName = conn.getTextAttr(jmsServer, NAME);
+		        	if(currentJmsServerName.equals(jmsServerName)){
+		        		
+		        		Map<String, String> metrics = new LinkedHashMap<String, String>();
+		        		for (ObjectName destination : conn.getChildren(jmsServer, DESTINATIONS)) {
+					    	
+		        			String destinationName = ResourceNameNormaliser.normalise(JMSSVR_RESOURCE_TYPE, conn.getTextAttr(destination, NAME));
+		        						        			
+		        			metrics.put(MESSAGES_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_CURRENT_COUNT)).toString());
+		        			metrics.put(MESSAGES_PENDING_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_PENDING_COUNT)).toString());
+		        			metrics.put(MESSAGES_RECEIVED_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_RECEIVED_COUNT)).toString());
+		        			metrics.put(MESSAGES_HIGH_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_HIGH_COUNT)).toString());
+							
+		        			metrics.put(CONSUMERS_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(destination, CONSUMERS_CURRENT_COUNT)).toString());
+		        			metrics.put(CONSUMERS_HIGH_COUNT, new Integer((int)conn.getNumberAttr(destination, CONSUMERS_HIGH_COUNT)).toString());
+		        			metrics.put(CONSUMERS_TOTAL_COUNT, new Integer((int)conn.getNumberAttr(destination, CONSUMERS_TOTAL_COUNT)).toString());
+		        			
+		        			result.put(destinationName, metrics);
+		        		}
+		        	}			    
+		        }
 			}
 		} catch(Exception ex){
 			AppLog.getLogger().error("Error during generation of JMS dashboard");
@@ -675,48 +720,54 @@ public class StorageService {
 		
 		Map<String, Map<String, String>> result = new LinkedHashMap<>();
 		
+System.out.println("StorageService::getSAFAgentDashboard() - Get the information for the agent [" + safAgentName + "]");
+		
 		try {
 			
 			ObjectName[] serverRuntimes = conn.getAllServerRuntimes();
 			
-			// Find the Admin server
 			for (int index = 0; index < serverRuntimes.length; index++){
-				if(DomainRuntimeServiceMBeanConnection.isThisTheAdminServer()){
 			
-					ObjectName serverRuntime = serverRuntimes[index]; 
-			    	ObjectName safRuntime = conn.getChild(serverRuntime, SAF_RUNTIME);			    	
-			        ObjectName[] safAgents = conn.getChildren(safRuntime, AGENTS);
+				ObjectName serverRuntime = serverRuntimes[index]; 
+			    ObjectName safRuntime = conn.getChild(serverRuntime, SAF_RUNTIME);			    	
+			    ObjectName[] safAgents = conn.getChildren(safRuntime, AGENTS);
 			        
-			        for (ObjectName safAgent : safAgents)
-			        {			        	
-			        	String currentSafAgentName = conn.getTextAttr(safAgent, NAME);
-			        	if(currentSafAgentName.equals(safAgentName)){
+		        for (ObjectName safAgent : safAgents)
+		        {	
+		        	String currentSafAgentName = conn.getTextAttr(safAgent, NAME);
+			        	
+System.out.println("StorageService::getSAFAgentDashboard() - currentSafAgentName is [" + currentSafAgentName + "]");
+		        	
+		        	if(currentSafAgentName.equals(safAgentName)){
 
-			        		Map<String, String> metrics = new LinkedHashMap<String, String>();
-			        		for (ObjectName destination : conn.getChildren(safAgent, REMOTE_END_POINTS)) {
+		        		Map<String, String> metrics = new LinkedHashMap<String, String>();
+		        		for (ObjectName remoteEndPoint : conn.getChildren(safAgent, REMOTE_END_POINTS)) {
 			        			
-						    	String destinationName = ResourceNameNormaliser.normalise(SAFAGENT_RESOURCE_TYPE, conn.getTextAttr(destination, NAME));
-						    							    	
-								metrics.put(MESSAGES_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_CURRENT_COUNT)).toString());
-			        			metrics.put(MESSAGES_PENDING_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_PENDING_COUNT)).toString());
-			        			metrics.put(MESSAGES_RECEIVED_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_RECEIVED_COUNT)).toString());
-			        			metrics.put(MESSAGES_HIGH_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_HIGH_COUNT)).toString());
-								
-			        			metrics.put(DOWNTIME_HIGH, new Integer((int)conn.getNumberAttr(destination, DOWNTIME_HIGH)).toString());
-								metrics.put(DOWNTIME_TOTAL, new Integer((int)conn.getNumberAttr(destination, DOWNTIME_TOTAL)).toString());
-								metrics.put(UPTIME_HIGH, new Integer((int)conn.getNumberAttr(destination, UPTIME_HIGH)).toString());
-								metrics.put(UPTIME_TOTAL, new Integer((int)conn.getNumberAttr(destination, UPTIME_TOTAL)).toString());
-								metrics.put(FAILED_MESSAGES_TOTAL, new Integer((int)conn.getNumberAttr(destination, FAILED_MESSAGES_TOTAL)).toString());
-								
-			        			result.put(destinationName, metrics);
-			        		}
-			        	}			    
-			        }
-				}
+		        			String safName = ResourceNameNormaliser.normalise(SAFAGENT_RESOURCE_TYPE, conn.getTextAttr(remoteEndPoint, NAME));
+						    	
+System.out.println("StorageService::getSAFAgentDashboard() - safName is [" + safName + "]");
+					    							    	
+							metrics.put(MESSAGES_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(remoteEndPoint, MESSAGES_CURRENT_COUNT)).toString());
+		        			metrics.put(MESSAGES_PENDING_COUNT, new Integer((int)conn.getNumberAttr(remoteEndPoint, MESSAGES_PENDING_COUNT)).toString());
+		        			metrics.put(MESSAGES_RECEIVED_COUNT, new Integer((int)conn.getNumberAttr(remoteEndPoint, MESSAGES_RECEIVED_COUNT)).toString());
+		        			metrics.put(MESSAGES_HIGH_COUNT, new Integer((int)conn.getNumberAttr(remoteEndPoint, MESSAGES_HIGH_COUNT)).toString());
+							
+		        			metrics.put(DOWNTIME_HIGH, new Integer((int)conn.getNumberAttr(remoteEndPoint, DOWNTIME_HIGH)).toString());
+							metrics.put(DOWNTIME_TOTAL, new Integer((int)conn.getNumberAttr(remoteEndPoint, DOWNTIME_TOTAL)).toString());
+							metrics.put(UPTIME_HIGH, new Integer((int)conn.getNumberAttr(remoteEndPoint, UPTIME_HIGH)).toString());
+							metrics.put(UPTIME_TOTAL, new Integer((int)conn.getNumberAttr(remoteEndPoint, UPTIME_TOTAL)).toString());
+							metrics.put(FAILED_MESSAGES_TOTAL, new Integer((int)conn.getNumberAttr(remoteEndPoint, FAILED_MESSAGES_TOTAL)).toString());
+							
+		        			result.put(safName, metrics);
+		        		}
+		        	}			    
+		        }
 			}
 		} catch(Exception ex){
 			AppLog.getLogger().error("Error during generation of SAF dashboard");
 		}
+System.out.println("StorageService::getSAFAgentDashboard() - Returning [" + result.size() + "] elements");
+
 		return result;
 	}
 }

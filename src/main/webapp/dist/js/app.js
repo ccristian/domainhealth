@@ -306,8 +306,17 @@ $(function () {
   var sourceGraph = $("#graph-template").html();
   var templateHighstock = Handlebars.compile(sourceGraph);
 
+  // Simple dashboard without any action
   var sourceDashboard = $("#dashboard-template").html();
   var templateDashboard = Handlebars.compile(sourceDashboard);
+  
+  // ----------------------------------------------------------------
+  // Added by gregoan
+  // JMS contains an ACTION column
+  // -----------------------------
+  var sourceDashboardAction = $("#dashboard-action-template").html();
+  var templateDashboardAction = Handlebars.compile(sourceDashboardAction);
+  //----------------------------------------------------------------
 
   $("#move-left").click(function () {
     var duration = moment.duration($.AdminLTE.options.endTimeVal.diff($.AdminLTE.options.startTimeVal));
@@ -357,7 +366,6 @@ $(function () {
     }
   }
 
-
   function getAndDisplayDashboard(resname,respath,value) {
     $.ajax({
       url: '/domainhealth/rest/dashboard/' + respath + '/' + value ,
@@ -365,7 +373,18 @@ $(function () {
       success: function (response) {
         $.AdminLTE.selectedPath = resname + " > " + value;
         $.AdminLTE.renderedData = response;
-        $(".content-wrapper").html(templateDashboard($.AdminLTE));
+        
+        // ------------------------------------------------
+        // Updated by gregoan
+        // ------------------
+        //$(".content-wrapper").html(templateDashboard($.AdminLTE));
+        if(respath == "safdashboard") {
+        	$(".content-wrapper").html(templateDashboard($.AdminLTE));
+        } else {
+        	$(".content-wrapper").html(templateDashboardAction($.AdminLTE));
+        }
+        // ------------------------------------------------
+        
       },
       error: function (xhr) {
         alert("error");
@@ -407,6 +426,33 @@ $(function () {
       });
     });
   }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  // Added by gregoan
+  $("#inout_stop").click(function () {
+    alert("Click on In/Out Stop ...")
+    
+    // REST API should be called here ...
+  });
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
   $("#core").click(function () {
     getAndDisplayCharts("Core","core","params");

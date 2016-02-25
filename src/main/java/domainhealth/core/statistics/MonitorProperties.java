@@ -86,20 +86,6 @@ public class MonitorProperties {
 	public final static String WKMGR_MBEAN_NAME_TEMPLATE = "com.bea:Name=weblogic.kernel.Default,ServerRuntime=%s,Type=WorkManagerRuntime";	
 
 	/**
-	 * 'JMSDashboard' MBean instance name
-	 */
-	// Added by gregoan
-	// Commented by gregoan
-	//public final static String JMS_DASHBOARD_MBEAN_NAME = "JMSDashboard";
-
-	/**
-	 * 'jmsdashboard=%s,name=JMSDashboard' MBean name template
-	 */
-	// Added by gregoan
-	// Commented by gregoan
-	//public final static String JMS_DASHBOARD_MBEAN_FULLNAME_TEMPLATE = "jmsdashboard:Location=%s,name=" + JMS_DASHBOARD_MBEAN_NAME;
-	
-	/**
 	 * 'WLHostMachineStats' MBean instance name
 	 */
 	public final static String HOST_MACHINE_MBEAN_NAME = "WLHostMachineStats";
@@ -305,14 +291,25 @@ public class MonitorProperties {
 	// Added by gregoan
 	
 	// -----------------------------------------------------------------
-	// JMS actions on queues
-	// ---------------------
+	// Actions for queues/topics
+	// -------------------------
 	public final static String PAUSE_PRODUCTON = "pauseProduction";
 	public final static String RESUME_PRODUCTON = "resumeProduction";
 	public final static String PAUSE_CONSUMPTION = "pauseConsumption";
 	public final static String RESUME_CONSUMPTION = "resumeConsumption";
 	public final static String PAUSE_INSERTION = "pauseInsertion";
 	public final static String RESUME_INSERTION = "resumeInsertion";
+	// -----------------------------------------------------------------
+	
+	// -----------------------------------------------------------------
+	// Actions for SAF
+	// ---------------------
+	public final static String PAUSE_INCOMING = "pauseIncoming";
+	public final static String RESUME_INCOMING = "resumeIncoming";
+	public final static String PAUSE_FORWARDING = "pauseForwarding";
+	public final static String RESUME_FORWARDING = "resumeForwarding";
+	public final static String PAUSE_RECEIVING = "pauseReceiving";
+	public final static String RESUME_RECEIVING = "resumeReceiving";
 	// -----------------------------------------------------------------
 	
 	/**
@@ -388,35 +385,13 @@ public class MonitorProperties {
 	 * The 'showhosts' pamameter to indicate whether to show the 'Hosts' link 
 	 * in the top menu.
 	 */
-	public final static String SHOW_HOSTS_PARAM = "showhosts";
+	//public final static String SHOW_HOSTS_PARAM = "showhosts";
 	
 	/**
 	 * The 'showdashboards' pamameter to indicate whether to show the 'JMS Dashboard' link 
 	 * in the top menu.
 	 */
-	public final static String SHOW_DASHBOARDS_PARAM = "showdashboards";
-	
-	/*
-	// Servlet should be created with this piece of code
-	
-		// Indicate to only show Hosts top menu link if any data has been retrieved from WLHostMachineStats custom mbeans
-		Set<String> hostmachinesSet = statisticsStorage.getResourceNamesFromPropsList(endDateTime, HOSTMACHINE_RESOURCE_TYPE);
-		request.setAttribute(SHOW_HOSTS_PARAM, ((hostmachinesSet != null) && (!hostmachinesSet.isEmpty())));
-		
-		// Indicate to only show Jvm top menu link if any data has been retrieved from WLJvmStats custom mbeans
-		Set<String> jvmSet = statisticsStorage.getResourceNamesFromPropsList(endDateTime, JVM_RESOURCE_TYPE);
-		request.setAttribute(SHOW_HOSTS_PARAM, ((jvmSet != null) && (!jvmSet.isEmpty())));
-		
-		// Indicate to only show Hosts top menu link if any data has been retrieved from WLHostMachineStats custom mbeans
-		boolean showDashboard = appProps.getBoolProperty(PropKey.SHOW_DASHBOARD_PROP);
-		if(showDashboard){
-			request.setAttribute(SHOW_DASHBOARDS_PARAM, true);
-		}
-	*/
-	
-	
-
-	
+	//public final static String SHOW_DASHBOARDS_PARAM = "showdashboards";
 	
 	
 	
