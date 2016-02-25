@@ -492,7 +492,7 @@ public class StorageService {
                 {
                     String currentElement = conn.getTextAttr(jmsServer, NAME);
                     
-// Check if not blacklisted
+                    // Check if not blacklisted
                     //String blackListString = (String)application.getAttribute(AppProperties.PropKey.COMPONENT_BLACKLIST_PROP.toString());
                     //List<String> componentBlacklist = new BlacklistUtil(blackListString).getComponentBlacklist();
                     
@@ -503,9 +503,6 @@ public class StorageService {
 
                     while (iteratorBlacklist.hasNext()) {
                         String element = iteratorBlacklist.next();
-
-//System.out.println("StorageService::getResourceNamesForJmsDashboard() - The blacklisted element is [" + element + "]");
-
                         if (currentElement.contains(element)) {
                             blacklist = true;
                             break;
@@ -514,11 +511,7 @@ public class StorageService {
                     
                     if (!blacklist) {
                     	result.add(currentElement);
-System.out.println("StorageService::getResourceNamesForJmsDashboard() - The element [" + currentElement + "] is not blacklisted");
                     }
-else{
-	System.out.println("StorageService::getResourceNamesForJmsDashboard() - The element [" + currentElement + "] is blacklisted");
-}
                 }
             }
         } catch(Exception ex){
@@ -548,7 +541,7 @@ else{
                 {
                     String currentElement = conn.getTextAttr(safAgent, NAME);
                                             
-// Check if not blacklisted
+                    // Check if not blacklisted
                     //String blackListString = (String)application.getAttribute(AppProperties.PropKey.COMPONENT_BLACKLIST_PROP.toString());
                     //List<String> componentBlacklist = new BlacklistUtil(blackListString).getComponentBlacklist();
                     
@@ -559,9 +552,6 @@ else{
 
                     while (iteratorBlacklist.hasNext()) {
                         String element = iteratorBlacklist.next();
-
-//System.out.println("StorageService::getResourceNamesForSafDashboard() - The blacklisted element is [" + element + "]");
-
                         if (currentElement.contains(element)) {
                             blacklist = true;
                             break;
@@ -570,11 +560,7 @@ else{
                         
                     if (!blacklist) {
                     	result.add(currentElement);
-System.out.println("StorageService::getResourceNamesForSafDashboard() - The element [" + currentElement + "] is not blacklisted");
-                    }
-else{
-	System.out.println("StorageService::getResourceNamesForSafDashboard() - The element [" + currentElement + "] is blacklisted");
-}                        
+                    }                     
                 }
             }
         } catch(Exception ex){
