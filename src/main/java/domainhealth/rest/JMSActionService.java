@@ -85,8 +85,6 @@ System.out.println("JMSActionService::validateSecuredAccess() - restrictedRoles 
 	        while (iteratorRolesList.hasNext()) {
 	            String role = iteratorRolesList.next();
 	
-System.out.println("JMSActionService::validateSecuredAccess() - Current role is [" + role + "]");
-
 	            if(securityContext.isUserInRole(role)) {
 System.out.println("JMSActionService::validateSecuredAccess() - The username is part of the role [" + role + "]");
 	            	allowed = true;
@@ -106,7 +104,7 @@ return false;
 		}
 else{
 	System.out.println("JMSActionService::validateSecuredAccess() - The restriction mode is not set");
-	return true;
+	return false;
 }		
     }
     
