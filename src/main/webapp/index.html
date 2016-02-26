@@ -436,18 +436,27 @@ desired effect
 
   <script>
 
-      $('#DistributedQueue-0').on('ifChecked', function(event){
-          alert(event.type + ' callback');
-      });
-
-      $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+      /*$('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
           checkboxClass: 'icheckbox_minimal-blue',
           radioClass: 'iradio_minimal-blue'
+      });*/
+
+
+      var checkboxes = $("input[type='checkbox']");
+
+      console.log(checkboxes);
+
+
+      checkboxes.click(function() {
+
+         $("#prdtgl").attr("disabled", !checkboxes.is(":checked"));
+          $("#constgl").attr("disabled", !checkboxes.is(":checked"));
+          $("#instgl").attr("disabled", !checkboxes.is(":checked"));
       });
 
 
 
-      //$("#prdtgl").prop("disabled",true);
+      $("#prdtgl").prop("disabled",true);
       $("#constgl").prop("disabled",true);
       $("#instgl").prop("disabled",true);
 
