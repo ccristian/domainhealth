@@ -139,8 +139,21 @@ else{
     @Path("isUserInRole/{role}")
     @Produces({MediaType.APPLICATION_JSON})
     public boolean isUserInRole(@Context SecurityContext securityContext,
-    							@QueryParam("role") String role) {
-        return securityContext.isUserInRole(role);
+    							@PathParam("role") String role) {
+    	
+    	if(securityContext.getUserPrincipal() != null) {
+    		String username = securityContext.getUserPrincipal().getName();
+    		if(securityContext.isUserInRole(role)) {
+    			AppLog.getLogger().notice("The username [" + username + "] is part of the role [" + role + "]");
+    			return true;
+    		} else {
+    			AppLog.getLogger().error("The username [" + username + "] is not part of the role [" + role + "]");
+    			return false;
+    		}
+    	} else {
+    		AppLog.getLogger().notice("The username is not logged/authenticated");
+    		return false;
+    	}
     }
     
     /**
