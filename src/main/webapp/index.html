@@ -345,8 +345,10 @@ desired effect
             <div class="box-tools">
                 <div class="margin">
                     <div class="btn-group">
-                        <button type="label" class="btn btn-success" id="prdbtn" >Production</button>
+
+
                         <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" id="prdtgl">
+                            <span>Production</span>
                             <span class="caret"></span>
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
@@ -357,8 +359,8 @@ desired effect
                         </ul>
                     </div>
                     <div class="btn-group">
-                        <button type="label" class="btn btn-info" id="consbtn">Consumption</button>
                         <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" id="constgl">
+                            <span>Consumption</span>
                             <span class="caret"></span>
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
@@ -369,8 +371,8 @@ desired effect
                         </ul>
                     </div>
                     <div class="btn-group">
-                        <button type="button" class="btn btn-danger" id="insbtn">Insertion</button>
                         <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" id="instgl">
+                            <span>Insertion</span>
                             <span class="caret"></span>
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
@@ -433,17 +435,23 @@ desired effect
 
 
   <script>
+
+      $('#DistributedQueue-0').on('ifChecked', function(event){
+          alert(event.type + ' callback');
+      });
+
       $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
           checkboxClass: 'icheckbox_minimal-blue',
           radioClass: 'iradio_minimal-blue'
       });
 
-      //$("#prdbtn").prop("disabled",true);
-      $("#prdtgl").prop("disabled",true);
-      //$("#consbtn").prop("disabled",true);
+
+
+      //$("#prdtgl").prop("disabled",true);
       $("#constgl").prop("disabled",true);
-      //$("#insbtn").prop("disabled",true);
       $("#instgl").prop("disabled",true);
+
+
 
 
 

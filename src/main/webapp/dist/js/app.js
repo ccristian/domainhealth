@@ -425,6 +425,8 @@ $(function () {
     $.each( res, function( key, value ) {
       $("#dashboard"+value).click(function () {
        getAndDisplayDashboard(resname,respath,value);
+
+
       });
     });
   }
