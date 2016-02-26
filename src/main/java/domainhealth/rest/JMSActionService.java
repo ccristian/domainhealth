@@ -446,7 +446,7 @@ else{
 		}
 		
 		AppLog.getLogger().error("Action [" + action + "] to be executed for the queue [" + queueName + "] deployed on JMS server [" + jmsServerName + "] was not executed");
-		AppLog.getLogger().error("-> Possible reason is wrong JMS server or JMS queue name");
+		AppLog.getLogger().error("   -> Possible reason is wrong JMS server or JMS queue name");
 		return false;
 	}
     
@@ -487,7 +487,7 @@ else{
 		}
 		
 		AppLog.getLogger().error("Action [" + action + "] to be executed for the JMS server [" + jmsServerName + "] was not executed");
-		AppLog.getLogger().error("-> Possible reason is wrong JMS server");
+		AppLog.getLogger().error("   -> Possible reason is wrong JMS server");
 		return false;
 	}
     
@@ -538,7 +538,7 @@ else{
 		}
 		
 		AppLog.getLogger().error("Action [" + action + "] to be executed for the SAF [" + safName + "] deployed on SAF agent [" + safAgentName + "] was not executed");
-		AppLog.getLogger().error("-> Possible reason is wrong SAF agent or SAF name");
+		AppLog.getLogger().error("   -> Possible reason is wrong SAF agent or SAF name");
 		return false;
 	}
     
@@ -579,7 +579,7 @@ else{
 		}
 		
 		AppLog.getLogger().error("Action [" + action + "] to be executed for the SAF agent [" + safAgentName + "] was not executed");
-		AppLog.getLogger().error("-> Possible reason is wrong SAF agent");
+		AppLog.getLogger().error("   -> Possible reason is wrong SAF agent");
 		return false;
 	}
 }

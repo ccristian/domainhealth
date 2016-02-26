@@ -65,11 +65,11 @@ public class HarvesterWLDFModuleCreator {
 	public boolean isDomainHealthAbleToUseWLDF() throws WebLogicMBeanException {
 				
 		if (ProductVersionUtil.isVersion_X_GreaterThanOrEqualTo_Y(wlsVersionNumber, WLS_MIN_VERSION_FOR_MULTI_WLDF_MODULES)) {
-			AppLog.getLogger().notice("The version [" + wlsVersionNumber + "] is comptatible with multiple WLDF module for the same target");
+			AppLog.getLogger().notice("The version [" + wlsVersionNumber + "] is comptatible with multiple WLDF system module for the same target");
 			return true;
 		} 
 		else {
-			AppLog.getLogger().notice("The version [" + wlsVersionNumber + "] is not comptatible with multiple WLDF module for the same target - Checking if there is WDLF module on admin server");
+			AppLog.getLogger().notice("The version [" + wlsVersionNumber + "] is not comptatible with multiple WLDF system module for the same target - Checking if there is WDLF module on admin server");
 		}
 		
 		DomainRuntimeServiceMBeanConnection domainSvcConn = null;
@@ -77,7 +77,10 @@ public class HarvesterWLDFModuleCreator {
 		try {
 			domainSvcConn = new DomainRuntimeServiceMBeanConnection();
 			if (doOtherTargetedWLDFSystemModulesExist(domainSvcConn)) {
+				AppLog.getLogger().notice("There is another WLDF system module deployed on the same targets");
 				return false;
+			} else {
+				AppLog.getLogger().notice("There is not another WLDF system module deployed on the same targets");
 			}
 		} finally {
 			if (domainSvcConn != null) {
@@ -163,17 +166,19 @@ public class HarvesterWLDFModuleCreator {
 	 * @throws WebLogicMBeanException Indicates that there was a problem querying the domain's config
 	 */
 	private boolean doOtherTargetedWLDFSystemModulesExist(DomainRuntimeServiceMBeanConnection conn) throws WebLogicMBeanException {
+		
 		ObjectName domainConfig = conn.getDomainConfiguration();
 		ObjectName[] sysModules = conn.getChildren(domainConfig, WLDF_SYS_RESOURCES);
-		
+				
 		for (ObjectName sysModule : sysModules) {
 			String sysModName = conn.getTextAttr(sysModule, NAME);
-			
+						
 			if (!sysModName.equals(HARVESTER_MODULE_NAME)) {
-				ObjectName[] targets = conn.getChildren(sysModule, TARGETS);
 								
+				ObjectName[] targets = conn.getChildren(sysModule, TARGETS);
+												
 				if ((targets !=null) && (targets.length > 0)) {
-					AppLog.getLogger().warning("Unable to create WLDF Harvester Module because a targeted WLDF system module ('" + sysModName + "') already exists");					
+					AppLog.getLogger().warning("Unable to create WLDF Harvester Module because a targeted WLDF system module [" + sysModName + "] already exists");					
 					return true;
 				}
 			}
