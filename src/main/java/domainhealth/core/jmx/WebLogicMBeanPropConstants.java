@@ -904,4 +904,12 @@ public interface WebLogicMBeanPropConstants {
 	 * 'FailedMessagesTotal' MBean property
 	 */
 	public final static String FAILED_MESSAGES_TOTAL = "FailedMessagesTotal";
+
+	//added for Dashboard
+	final static String CONSUMPTION_PAUSED = "ConsumptionPaused";
+	final static String INSERTION_PAUSED = "InsertionPaused";
+	final static String PRODUCTION_PAUSED = "ProductionPaused";
+
+
+
 }

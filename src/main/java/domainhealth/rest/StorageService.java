@@ -24,25 +24,7 @@ import javax.ws.rs.core.MediaType;
 
 import domainhealth.core.jmx.WebLogicMBeanPropConstants;
 
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.AGENTS;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.CONSUMERS_CURRENT_COUNT;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.CONSUMERS_HIGH_COUNT;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.CONSUMERS_TOTAL_COUNT;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.DESTINATIONS;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.DOWNTIME_HIGH;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.DOWNTIME_TOTAL;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.FAILED_MESSAGES_TOTAL;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.JMS_RUNTIME;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.JMS_SERVERS;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.MESSAGES_HIGH_COUNT;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.MESSAGES_PENDING_COUNT;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.MESSAGES_RECEIVED_COUNT;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.NAME;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.REMOTE_END_POINTS;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.SAF_RUNTIME;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.UPTIME_HIGH;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.UPTIME_TOTAL;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.*;
 import static domainhealth.core.statistics.MonitorProperties.JMSSVR_RESOURCE_TYPE;
 import static domainhealth.core.statistics.MonitorProperties.SAFAGENT_RESOURCE_TYPE;
 
@@ -684,7 +666,13 @@ public class StorageService {
 		        			metrics.put(CONSUMERS_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(destination, CONSUMERS_CURRENT_COUNT)).toString());
 		        			metrics.put(CONSUMERS_HIGH_COUNT, new Integer((int)conn.getNumberAttr(destination, CONSUMERS_HIGH_COUNT)).toString());
 		        			metrics.put(CONSUMERS_TOTAL_COUNT, new Integer((int)conn.getNumberAttr(destination, CONSUMERS_TOTAL_COUNT)).toString());
-		        			
+
+                            metrics.put(PRODUCTION_PAUSED, conn.getBooleanAttr(destination, PRODUCTION_PAUSED)+"");
+                            metrics.put(INSERTION_PAUSED, conn.getBooleanAttr(destination, INSERTION_PAUSED)+"");
+                            metrics.put(CONSUMPTION_PAUSED, conn.getBooleanAttr(destination, CONSUMPTION_PAUSED)+"");
+
+
+
 		        			result.put(destinationName, metrics);
 		        		}
 		        	}			    
