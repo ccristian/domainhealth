@@ -355,7 +355,7 @@ desired effect
                         <ul class="dropdown-menu" role="menu">
                             <li id="pauseprd"><a href="#"><span class="fa fa-pause"></span>Pause</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><span class="fa fa-play"></span>Resume</a></li>
+                            <li id="resumeprd"><a href="#"><span class="fa fa-play"></span>Resume</a></li>
                         </ul>
                     </div>
                     <div class="btn-group">
@@ -457,28 +457,46 @@ desired effect
 
       $("#pauseprd").click(function() {
 
-      alert($.AdminLTE.currentResource);
 
 
-      var checkboxes1 = $("#dashboardtable input[type='checkbox']:checked");
+      var checkboxesChecked = $("#dashboardtable input[type='checkbox']:checked");
 
-      checkboxes1.each(function( index ) {
+      checkboxesChecked.each(function( index ) {
         //alert( index + ": " + $( this ).attr("id"));
         $.ajax({
              url: '/domainhealth/rest/jmsaction/jmsdestination/'+$.AdminLTE.currentResource+'/'+$( this ).attr("id")+'/pauseProduction',
              cache: false,
-
              success: function (response) {
-
-
-                 },
+              },
              error: function (xhr) {
               alert("error");
-              }
+             }
       });
 
 
       });
+
+      $("#resumeprd").click(function() {
+
+
+
+      var checkboxesChecked = $("#dashboardtable input[type='checkbox']:checked");
+
+      checkboxesChecked.each(function( index ) {
+      //alert( index + ": " + $( this ).attr("id"));
+      $.ajax({
+      url: '/domainhealth/rest/jmsaction/jmsdestination/'+$.AdminLTE.currentResource+'/'+$( this ).attr("id")+'/resumeProduction',
+      cache: false,
+      success: function (response) {
+      },
+      error: function (xhr) {
+      alert("error");
+      }
+      });
+
+
+      });
+
 
       //get all selectd check boxes....
 

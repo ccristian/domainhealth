@@ -653,10 +653,17 @@ public class StorageService {
 		        	String currentJmsServerName = conn.getTextAttr(jmsServer, NAME);
 		        	if(currentJmsServerName.equals(jmsServerName)){
 		        		
-		        		Map<String, String> metrics = new LinkedHashMap<String, String>();
+
 		        		for (ObjectName destination : conn.getChildren(jmsServer, DESTINATIONS)) {
-					    	
+
+                            //this map should be inside the loop otherwise will contain only the latest values
+                            Map<String, String> metrics = new LinkedHashMap<String, String>();
+
+                            System.out.println(destination);
+
 		        			String destinationName = ResourceNameNormaliser.normalise(JMSSVR_RESOURCE_TYPE, conn.getTextAttr(destination, NAME));
+                            System.out.println(destinationName);
+                            System.out.println("-----"+conn.getBooleanAttr(destination, PRODUCTION_PAUSED)+"");
 
                             metrics.put(PRODUCTION_PAUSED, conn.getBooleanAttr(destination, PRODUCTION_PAUSED)+"");
                             metrics.put(INSERTION_PAUSED, conn.getBooleanAttr(destination, INSERTION_PAUSED)+"");
