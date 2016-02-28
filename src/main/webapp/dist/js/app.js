@@ -369,7 +369,6 @@ $(function () {
   }
 
   function getAndDisplayDashboard(resname,respath,value) {
-    alert(respath);
     $.ajax({
       url: '/domainhealth/rest/dashboard/' + respath + '/' + value ,
       cache: false,
@@ -389,7 +388,7 @@ $(function () {
         	$(".content-wrapper").html(templateDashboardAction($.AdminLTE));
         }
         // ------------------------------------------------
-        
+
       },
       error: function (xhr) {
         alert("error");
@@ -428,8 +427,6 @@ $(function () {
     $.each( res, function( key, value ) {
       $("#dashboard"+value).click(function () {
        getAndDisplayDashboard(resname,respath,value);
-
-
       });
     });
   }
