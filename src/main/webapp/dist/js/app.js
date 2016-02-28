@@ -369,13 +369,16 @@ $(function () {
   }
 
   function getAndDisplayDashboard(resname,respath,value) {
+    alert(respath);
     $.ajax({
       url: '/domainhealth/rest/dashboard/' + respath + '/' + value ,
       cache: false,
       success: function (response) {
         $.AdminLTE.selectedPath = resname + " > " + value;
         $.AdminLTE.renderedData = response;
-        
+        $.AdminLTE.currentPath = respath;
+        $.AdminLTE.currentResource = value;
+        $.AdminLTE.currentResname = resname;
         // ------------------------------------------------
         // Updated by gregoan
         // ------------------
@@ -430,35 +433,6 @@ $(function () {
       });
     });
   }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  // Added by gregoan
-  $("#inout_stop").click(function () {
-    alert("Click on In/Out Stop ...")
-    
-    // REST API should be called here ...
-  });
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
 
   $("#core").click(function () {
     getAndDisplayCharts("Core","core","params");
@@ -473,7 +447,10 @@ $(function () {
   $("#hostmachine").click(function () {
     getAndDisplayCharts("HostMachine","hostmachine","params");
   });
-  
+
+
+
+
   $.ajax({
     url: '/domainhealth/rest/resources',
     dataType:'JSON',

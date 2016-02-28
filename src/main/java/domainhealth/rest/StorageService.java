@@ -657,8 +657,13 @@ public class StorageService {
 		        		for (ObjectName destination : conn.getChildren(jmsServer, DESTINATIONS)) {
 					    	
 		        			String destinationName = ResourceNameNormaliser.normalise(JMSSVR_RESOURCE_TYPE, conn.getTextAttr(destination, NAME));
-		        						        			
-		        			metrics.put(MESSAGES_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_CURRENT_COUNT)).toString());
+
+                            metrics.put(PRODUCTION_PAUSED, conn.getBooleanAttr(destination, PRODUCTION_PAUSED)+"");
+                            metrics.put(INSERTION_PAUSED, conn.getBooleanAttr(destination, INSERTION_PAUSED)+"");
+                            metrics.put(CONSUMPTION_PAUSED, conn.getBooleanAttr(destination, CONSUMPTION_PAUSED)+"");
+
+
+                            metrics.put(MESSAGES_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_CURRENT_COUNT)).toString());
 		        			metrics.put(MESSAGES_PENDING_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_PENDING_COUNT)).toString());
 		        			metrics.put(MESSAGES_RECEIVED_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_RECEIVED_COUNT)).toString());
 		        			metrics.put(MESSAGES_HIGH_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_HIGH_COUNT)).toString());
@@ -667,9 +672,6 @@ public class StorageService {
 		        			metrics.put(CONSUMERS_HIGH_COUNT, new Integer((int)conn.getNumberAttr(destination, CONSUMERS_HIGH_COUNT)).toString());
 		        			metrics.put(CONSUMERS_TOTAL_COUNT, new Integer((int)conn.getNumberAttr(destination, CONSUMERS_TOTAL_COUNT)).toString());
 
-                            metrics.put(PRODUCTION_PAUSED, conn.getBooleanAttr(destination, PRODUCTION_PAUSED)+"");
-                            metrics.put(INSERTION_PAUSED, conn.getBooleanAttr(destination, INSERTION_PAUSED)+"");
-                            metrics.put(CONSUMPTION_PAUSED, conn.getBooleanAttr(destination, CONSUMPTION_PAUSED)+"");
 
 
 

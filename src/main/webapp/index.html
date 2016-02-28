@@ -353,7 +353,7 @@ desired effect
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="#"><span class="fa fa-pause"></span>Pause</a></li>
+                            <li id="pauseprd"><a href="#"><span class="fa fa-pause"></span>Pause</a></li>
                             <li class="divider"></li>
                             <li><a href="#"><span class="fa fa-play"></span>Resume</a></li>
                         </ul>
@@ -384,7 +384,7 @@ desired effect
                     </div>
                 </div>
             </div>
-          <table class="table table-hover">
+          <table class="table table-hover" id="dashboardtable">
 
             <tr>
 			
@@ -442,7 +442,8 @@ desired effect
       });*/
 
 
-      var checkboxes = $("input[type='checkbox']");
+
+      var checkboxes = $("#dashboardtable input[type='checkbox']");
 
       console.log(checkboxes);
 
@@ -453,6 +454,38 @@ desired effect
           $("#constgl").attr("disabled", !checkboxes.is(":checked"));
           $("#instgl").attr("disabled", !checkboxes.is(":checked"));
       });
+
+      $("#pauseprd").click(function() {
+
+      alert($.AdminLTE.currentResource);
+
+
+      var checkboxes1 = $("#dashboardtable input[type='checkbox']:checked");
+
+      checkboxes1.each(function( index ) {
+        //alert( index + ": " + $( this ).attr("id"));
+        $.ajax({
+             url: '/domainhealth/rest/jmsaction/jmsdestination/'+$.AdminLTE.currentResource+'/'+$( this ).attr("id")+'/pauseProduction',
+             cache: false,
+
+             success: function (response) {
+
+
+                 },
+             error: function (xhr) {
+              alert("error");
+              }
+      });
+
+
+      });
+
+      //get all selectd check boxes....
+
+
+      });
+
+
 
 
 
