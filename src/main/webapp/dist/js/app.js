@@ -40,9 +40,8 @@ if (dhLocalObj == null){
   dhLocalObj = {
     currentPath:"core",
     currentResource:"params",
-    currentResname:"Core",
-    endTimeVal:null,
-    startTimeVal:null,
+    currentResname:"Core"
+
  };
   localStorage.setItem("dh2storage",JSON.stringify(dhLocalObj));
 }
@@ -165,8 +164,8 @@ $.AdminLTE.options = {
     lg: 1200
   },
   currentDate:null,
-  endTimeVal:dhLocalObj.endTimeVal,
-  startTimeVal:dhLocalObj.startTimeVal,
+  endTimeVal:null,
+  startTimeVal:null,
   currentPath:dhLocalObj.currentPath,
   currentResource:dhLocalObj.currentResource,
   currentResname:dhLocalObj.currentResname
@@ -414,6 +413,10 @@ $(function () {
         } else {
         	$(".content-wrapper").html(templateDashboardAction($.AdminLTE));
         }
+        //dhLocalObj.currentPath = $.AdminLTE.currentPath;
+        //dhLocalObj.currentResource = $.AdminLTE.currentResource;
+        //dhLocalObj.currentResname = $.AdminLTE.currentResname;
+        //localStorage.setItem("dh2storage",JSON.stringify(dhLocalObj));
         // ------------------------------------------------
 
       },
@@ -442,7 +445,7 @@ $(function () {
         //dhLocalObj.startTimeVal = $.AdminLTE.options.startTimeVal;
         //dhLocalObj.endTimeVal = $.AdminLTE.options.endTimeVal;
         localStorage.setItem("dh2storage",JSON.stringify(dhLocalObj));
-        console.log('retrievedObject: ',dhLocalObj);
+        //console.log('retrievedObject: ',dhLocalObj);
       },
       error: function (xhr) {
         alert("error");
