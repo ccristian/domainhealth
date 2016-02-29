@@ -257,16 +257,11 @@ desired effect
 <script src="plugins/iCheck/icheck.min.js"></script>
 
 <script id="menu-template" type="text/x-handlebars-template">
-  {{#each this}}
-  <li><a  id="{{this}}" data-toggle="tooltip" title="{{this}}" href="#">{{shortName this}}</a></li>
+  {{#each list}}
+  <li><a  id="{{../uniquename}}{{this}}" data-toggle="tooltip" title="{{this}}" href="#">{{shortName this}}</a></li>
   {{/each}}
 </script>
 
-<script id="menu-dashboard" type="text/x-handlebars-template">
-  {{#each this}}
-  <li><a  id="dashboard{{this}}" data-toggle="tooltip" title="{{this}}" href="#">{{shortName this}}</a></li>
-  {{/each}}
-</script>
 
 <script id="dashboard-template" type="text/x-handlebars-template">
 

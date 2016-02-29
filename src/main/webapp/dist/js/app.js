@@ -302,8 +302,6 @@ $(function () {
   var source = $("#menu-template").html();
   var template = Handlebars.compile(source);
 
-  var sourceMenuDashboard = $("#menu-dashboard").html();
-  var templateMenuDashboard = Handlebars.compile(sourceMenuDashboard);
 
   var sourceGraph = $("#graph-template").html();
   var templateHighstock = Handlebars.compile(sourceGraph);
@@ -416,8 +414,8 @@ $(function () {
   }
   
   function addListener(res,resname,respath){
-    $.each( res, function( key, value ) {
-      $("#"+value).click(function () {
+    $.each( res.list, function( key, value ) {
+      $("#"+res.uniquename+value).click(function () {
         getAndDisplayCharts(resname,respath,value);
       });
     });
@@ -425,7 +423,7 @@ $(function () {
 
   function addDashboardListener(res,resname,respath){
     $.each( res, function( key, value ) {
-      $("#dashboard"+value).click(function () {
+      $("#"+res.uniquename+value).click(function () {
        getAndDisplayDashboard(resname,respath,value);
       });
     });
@@ -454,37 +452,52 @@ $(function () {
     data:{startTime:startTime,endTime: endTime},
     success: function(response) {
       var resources = response;
-      var res = resources["datasource"];
+      var res = new Object();
 
+
+      res.uniquename ="datasource"
+      res.list = response[res.uniquename];
       $("#datasource").html(template(res));
       addListener(res,"Datasource","datasource");
 
-      res = resources["destination"];
+      res.uniquename ="destination"
+      res.list = response[res.uniquename];
       $("#destination").html(template(res));
       addListener(res,"JMS","destination");
 
-      res = resources["saf"];
+
+      res.uniquename ="saf"
+      res.list = response[res.uniquename];
       $("#saf").html(template(res));
       addListener(res,"Store and Forward","saf");
 
-      res = resources["webapp"];
+
+      res.uniquename ="webapp"
+      res.list = response[res.uniquename];
       $("#webapp").html(template(res));
       addListener(res,"Web Applications","webapp");
 
-      res = resources["ejb"];
+
+      res.uniquename ="ejb"
+      res.list = response[res.uniquename];
       $("#ejb").html(template(res));
       addListener(res,"EJBs","ejb");
 
-      res = resources["svrchnl"];
+
+      res.uniquename ="svrchnl"
+      res.list = response[res.uniquename];
       $("#svrchnl").html(template(res));
       addListener(res,"Channels","svrchnl");
 
-      res = resources["jmsdashboard"];
-      $("#jmsdashboard").html(templateMenuDashboard(res));
+      res.uniquename ="jmsdashboard"
+      res.list = response[res.uniquename];
+      $("#jmsdashboard").html(template(res));
       addDashboardListener(res,"JMS Dashboard","jmsdashboard");
       
-      res = resources["safdashboard"];
-      $("#safdashboard").html(templateMenuDashboard(res));
+
+      res.uniquename ="safdashboard"
+      res.list = response[res.uniquename];
+      $("#safdashboard").html(template(res));
       addDashboardListener(res,"SAF Dashboard","safdashboard");
 
     },
