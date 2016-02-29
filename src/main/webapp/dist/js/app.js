@@ -18,6 +18,10 @@ if (typeof jQuery === "undefined") {
   throw new Error("AdminLTE requires jQuery");
 }
 
+//localStorage.name = 'dh2storage';
+//console.log(localStorage.name);
+
+
 /* AdminLTE
  *
  * @type Object
@@ -28,9 +32,32 @@ if (typeof jQuery === "undefined") {
  *              way to organize our code.
  */
 
+var dhLocalObj  = JSON.parse(localStorage.getItem("dh2storage"));
+
+console.log("dhLocalObj:"+dhLocalObj);
+if (dhLocalObj == null){
+
+  dhLocalObj = {
+    currentPath:"core",
+    currentResource:"params",
+    currentResname:"Core",
+    endTimeVal:null,
+    startTimeVal:null,
+ };
+  localStorage.setItem("dh2storage",JSON.stringify(dhLocalObj));
+}
+else {
+  console.log('retrievedObject: ',dhLocalObj.currentPath );
+}
 $.AdminLTE = {
 
 };
+
+
+
+
+
+
 
 /* --------------------
  * - AdminLTE Options -
@@ -138,11 +165,11 @@ $.AdminLTE.options = {
     lg: 1200
   },
   currentDate:null,
-  endTimeVal:null,
-  startTimeVal:null,
-  currentPath:"core",
-  currentResource:"params",
-  currentResname:"Core"
+  endTimeVal:dhLocalObj.endTimeVal,
+  startTimeVal:dhLocalObj.startTimeVal,
+  currentPath:dhLocalObj.currentPath,
+  currentResource:dhLocalObj.currentResource,
+  currentResname:dhLocalObj.currentResname
 
 };
 
@@ -260,7 +287,7 @@ $(function () {
 
 
   //initial view loading the first page
-  getAndDisplayCharts("Core","core","params");
+  getAndDisplayCharts($.AdminLTE.options.currentResname,$.AdminLTE.options.currentPath,$.AdminLTE.options.currentResource);
 
   //initialize the date range and add a listener when new interval is selected
   $('#daterange-btn').daterangepicker(
@@ -409,6 +436,13 @@ $(function () {
         $.AdminLTE.currentResource = value;
         $.AdminLTE.currentResname = resname;
         $(".content-wrapper").html(templateHighstock($.AdminLTE));
+        dhLocalObj.currentPath = $.AdminLTE.currentPath;
+        dhLocalObj.currentResource = $.AdminLTE.currentResource;
+        dhLocalObj.currentResname = $.AdminLTE.currentResname;
+        //dhLocalObj.startTimeVal = $.AdminLTE.options.startTimeVal;
+        //dhLocalObj.endTimeVal = $.AdminLTE.options.endTimeVal;
+        localStorage.setItem("dh2storage",JSON.stringify(dhLocalObj));
+        console.log('retrievedObject: ',dhLocalObj);
       },
       error: function (xhr) {
         alert("error");
