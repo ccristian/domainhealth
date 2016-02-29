@@ -20,7 +20,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <!-- gridstack -->
   <link rel="stylesheet" href="plugins/gridstack/gridstack.css"/>
   <link rel="stylesheet" href="plugins/gridstack/gridstack-extra.css"/>
-
+    <!-- Pace style -->
+    <link rel="stylesheet" href="plugins/pace/pace.min.css">
     <!-- iCheck for checkboxes and radio inputs -->
     <link rel="stylesheet" href="plugins/iCheck/all.css">
 
@@ -86,8 +87,8 @@ desired effect
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
 
-          <li>
-            <a href="#"><i class="fa fa-angle-left" id="move-left"></i></a>
+          <li id="move-left">
+            <a href="#"><i class="fa fa-angle-left" ></i></a>
           </li>
 
           <!-- User Account Menu -->
@@ -99,8 +100,8 @@ desired effect
             </a>
           </li>
 
-          <li>
-            <a href="#"><i class="fa fa-angle-right" id="move-right"></i></a>
+          <li id="move-right">
+            <a href="#"><i class="fa fa-angle-right" ></i></a>
           </li>
 
           <!-- Control Sidebar Toggle Button -->
@@ -176,7 +177,7 @@ desired effect
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-        <div class="box box-info">
+        <div class="box box-info" id = "loadingdata">
             <div class="box-header">
                 <h3 class="box-title">Please wait</h3>
             </div>
@@ -184,7 +185,7 @@ desired effect
                 Loading data ...
             </div><!-- /.box-body -->
             <!-- Loading (remove the following to stop the loading)-->
-            <div class="overlay">
+            <!--div class="overlay">
                 <i class="fa fa-refresh fa-spin"></i>
             </div>
             <!-- end loading -->
@@ -255,6 +256,8 @@ desired effect
 <script src="plugins/gridstack/gridstack.min.js"></script>
 <script src="plugins/daterangepicker/daterangepicker.js" type="text/javascript"></script>
 <script src="plugins/iCheck/icheck.min.js"></script>
+<!-- PACE -->
+<script src="plugins/pace/pace.min.js"></script>
 
 <script id="menu-template" type="text/x-handlebars-template">
   {{#each list}}

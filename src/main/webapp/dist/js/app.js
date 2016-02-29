@@ -155,6 +155,8 @@ $.AdminLTE.options = {
  */
 $(function () {
 
+  $(document).ajaxStart(function() { Pace.restart(); });
+
   Handlebars.registerHelper('if_even', function(conditional, options) {
     if((conditional % 2) == 0) {
       return options.fn(this);
@@ -399,7 +401,8 @@ $(function () {
       url: '/domainhealth/rest/stats/' + respath + '/' + value + '?',
       cache: false,
       data: {startTime: startTime, endTime: endTime},
-      success: function (response) {
+      success: function (response){
+
         $.AdminLTE.renderedData = response;
         $.AdminLTE.selectedPath = resname + " > " + value;
         $.AdminLTE.currentPath = respath;
