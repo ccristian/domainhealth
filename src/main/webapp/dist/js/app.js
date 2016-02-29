@@ -422,7 +422,7 @@ $(function () {
   }
 
   function addDashboardListener(res,resname,respath){
-    $.each( res, function( key, value ) {
+    $.each( res.list, function( key, value ) {
       $("#"+res.uniquename+value).click(function () {
        getAndDisplayDashboard(resname,respath,value);
       });
