@@ -4,17 +4,13 @@
 
 
 function jmsaction(actionName) {
-
     var checkboxesChecked = $("#dashboardtable input[type='checkbox']:checked");
-    alert($.AdminLTE.currentResource);
     checkboxesChecked.each(function (index) {
         $.ajax({
             url: '/domainhealth/rest/jmsaction/jmsdestination/' + $.AdminLTE.currentResource + '/' + $(this).attr("id") + '/'+actionName,
             cache: false,
             success: function (response) {
-                alert("Display dashboard");
-                //$("#dashboardMedRecJMSServer").trigger("click");
-                //getAndDisplayDashboard("XXX","jmsdashboard","");
+               $("#jmsdashboard"+ $.AdminLTE.currentResource).trigger("click");
             },
             error: function (xhr) {
                 alert("error");
