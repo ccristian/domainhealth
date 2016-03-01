@@ -24,10 +24,6 @@ import javax.ws.rs.core.MediaType;
 
 import domainhealth.core.jmx.WebLogicMBeanPropConstants;
 
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.*;
-import static domainhealth.core.statistics.MonitorProperties.JMSSVR_RESOURCE_TYPE;
-import static domainhealth.core.statistics.MonitorProperties.SAFAGENT_RESOURCE_TYPE;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
@@ -468,11 +464,11 @@ public class StorageService {
             for (int index = 0; index < serverRuntimes.length; index++){
                 
                 ObjectName serverRuntime = serverRuntimes[index];
-                ObjectName jmsRuntime = conn.getChild(serverRuntime, JMS_RUNTIME);
-                ObjectName[] jmsServers = conn.getChildren(jmsRuntime, JMS_SERVERS);
+                ObjectName jmsRuntime = conn.getChild(serverRuntime, WebLogicMBeanPropConstants.JMS_RUNTIME);
+                ObjectName[] jmsServers = conn.getChildren(jmsRuntime, WebLogicMBeanPropConstants.JMS_SERVERS);
                 for (ObjectName jmsServer : jmsServers)
                 {
-                    String currentElement = conn.getTextAttr(jmsServer, NAME);
+                    String currentElement = conn.getTextAttr(jmsServer, WebLogicMBeanPropConstants.NAME);
                     
                     // Check if not blacklisted
                     //String blackListString = (String)application.getAttribute(AppProperties.PropKey.COMPONENT_BLACKLIST_PROP.toString());
@@ -517,11 +513,11 @@ public class StorageService {
             for (int index = 0; index < serverRuntimes.length; index++){
             	
                 ObjectName serverRuntime = serverRuntimes[index];
-                ObjectName safRuntime = conn.getChild(serverRuntime, SAF_RUNTIME);
-                ObjectName[] safAgents = conn.getChildren(safRuntime, AGENTS);
+                ObjectName safRuntime = conn.getChild(serverRuntime, WebLogicMBeanPropConstants.SAF_RUNTIME);
+                ObjectName[] safAgents = conn.getChildren(safRuntime, WebLogicMBeanPropConstants.AGENTS);
                 for (ObjectName safAgent : safAgents)
                 {
-                    String currentElement = conn.getTextAttr(safAgent, NAME);
+                    String currentElement = conn.getTextAttr(safAgent, WebLogicMBeanPropConstants.NAME);
                                             
                     // Check if not blacklisted
                     //String blackListString = (String)application.getAttribute(AppProperties.PropKey.COMPONENT_BLACKLIST_PROP.toString());
@@ -645,43 +641,35 @@ public class StorageService {
 			for (int index = 0; index < serverRuntimes.length; index++){
 			
 				ObjectName serverRuntime = serverRuntimes[index]; 
-		    	ObjectName jmsRuntime = conn.getChild(serverRuntime, JMS_RUNTIME);			    	
-		        ObjectName[] jmsServers = conn.getChildren(jmsRuntime, JMS_SERVERS);
+		    	ObjectName jmsRuntime = conn.getChild(serverRuntime, WebLogicMBeanPropConstants.JMS_RUNTIME);			    	
+		        ObjectName[] jmsServers = conn.getChildren(jmsRuntime, WebLogicMBeanPropConstants.JMS_SERVERS);
 		        
 		        for (ObjectName jmsServer : jmsServers)
 		        {
-		        	String currentJmsServerName = conn.getTextAttr(jmsServer, NAME);
+		        	String currentJmsServerName = conn.getTextAttr(jmsServer, WebLogicMBeanPropConstants.NAME);
 		        	if(currentJmsServerName.equals(jmsServerName)){
 		        		
 
-		        		for (ObjectName destination : conn.getChildren(jmsServer, DESTINATIONS)) {
+		        		for (ObjectName destination : conn.getChildren(jmsServer, WebLogicMBeanPropConstants.DESTINATIONS)) {
 
-                            //this map should be inside the loop otherwise will contain only the latest values
+                            // This map should be inside the loop otherwise will contain only the latest values
                             Map<String, String> metrics = new LinkedHashMap<String, String>();
 
-                            System.out.println(destination);
+		        			String destinationName = ResourceNameNormaliser.normalise(MonitorProperties.JMSSVR_RESOURCE_TYPE, conn.getTextAttr(destination, WebLogicMBeanPropConstants.NAME));
+		        			
+                            metrics.put(WebLogicMBeanPropConstants.PRODUCTION_PAUSED, conn.getBooleanAttr(destination, WebLogicMBeanPropConstants.PRODUCTION_PAUSED) + "");
+                            metrics.put(WebLogicMBeanPropConstants.CONSUMPTION_PAUSED, conn.getBooleanAttr(destination, WebLogicMBeanPropConstants.CONSUMPTION_PAUSED) + "");
+                            metrics.put(WebLogicMBeanPropConstants.INSERTION_PAUSED, conn.getBooleanAttr(destination, WebLogicMBeanPropConstants.INSERTION_PAUSED) + "");
 
-		        			String destinationName = ResourceNameNormaliser.normalise(JMSSVR_RESOURCE_TYPE, conn.getTextAttr(destination, NAME));
-                            System.out.println(destinationName);
-                            System.out.println("-----"+conn.getBooleanAttr(destination, PRODUCTION_PAUSED)+"");
-
-                            metrics.put(PRODUCTION_PAUSED, conn.getBooleanAttr(destination, PRODUCTION_PAUSED)+"");
-                            metrics.put(CONSUMPTION_PAUSED, conn.getBooleanAttr(destination, CONSUMPTION_PAUSED)+"");
-                            metrics.put(INSERTION_PAUSED, conn.getBooleanAttr(destination, INSERTION_PAUSED)+"");
-
-
-                            metrics.put(MESSAGES_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_CURRENT_COUNT)).toString());
-		        			metrics.put(MESSAGES_PENDING_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_PENDING_COUNT)).toString());
-		        			metrics.put(MESSAGES_RECEIVED_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_RECEIVED_COUNT)).toString());
-		        			metrics.put(MESSAGES_HIGH_COUNT, new Integer((int)conn.getNumberAttr(destination, MESSAGES_HIGH_COUNT)).toString());
+                            metrics.put(WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(destination, WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT)).toString());
+		        			metrics.put(WebLogicMBeanPropConstants.MESSAGES_PENDING_COUNT, new Integer((int)conn.getNumberAttr(destination, WebLogicMBeanPropConstants.MESSAGES_PENDING_COUNT)).toString());
+		        			metrics.put(WebLogicMBeanPropConstants.MESSAGES_RECEIVED_COUNT, new Integer((int)conn.getNumberAttr(destination, WebLogicMBeanPropConstants.MESSAGES_RECEIVED_COUNT)).toString());
+		        			metrics.put(WebLogicMBeanPropConstants.MESSAGES_HIGH_COUNT, new Integer((int)conn.getNumberAttr(destination, WebLogicMBeanPropConstants.MESSAGES_HIGH_COUNT)).toString());
 							
-		        			metrics.put(CONSUMERS_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(destination, CONSUMERS_CURRENT_COUNT)).toString());
-		        			metrics.put(CONSUMERS_HIGH_COUNT, new Integer((int)conn.getNumberAttr(destination, CONSUMERS_HIGH_COUNT)).toString());
-		        			metrics.put(CONSUMERS_TOTAL_COUNT, new Integer((int)conn.getNumberAttr(destination, CONSUMERS_TOTAL_COUNT)).toString());
-
-
-
-
+		        			metrics.put(WebLogicMBeanPropConstants.CONSUMERS_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(destination, WebLogicMBeanPropConstants.CONSUMERS_CURRENT_COUNT)).toString());
+		        			metrics.put(WebLogicMBeanPropConstants.CONSUMERS_HIGH_COUNT, new Integer((int)conn.getNumberAttr(destination, WebLogicMBeanPropConstants.CONSUMERS_HIGH_COUNT)).toString());
+		        			metrics.put(WebLogicMBeanPropConstants.CONSUMERS_TOTAL_COUNT, new Integer((int)conn.getNumberAttr(destination, WebLogicMBeanPropConstants.CONSUMERS_TOTAL_COUNT)).toString());
+		        			
 		        			result.put(destinationName, metrics);
 		        		}
 		        	}			    
@@ -702,9 +690,7 @@ public class StorageService {
     public Map<String, Map<String, String>> getSAFAgentDashboard(DomainRuntimeServiceMBeanConnection conn, String safAgentName){
 		
 		Map<String, Map<String, String>> result = new LinkedHashMap<>();
-		
-System.out.println("StorageService::getSAFAgentDashboard() - Get the information for the agent [" + safAgentName + "]");
-		
+				
 		try {
 			
 			ObjectName[] serverRuntimes = conn.getAllServerRuntimes();
@@ -712,34 +698,40 @@ System.out.println("StorageService::getSAFAgentDashboard() - Get the information
 			for (int index = 0; index < serverRuntimes.length; index++){
 			
 				ObjectName serverRuntime = serverRuntimes[index]; 
-			    ObjectName safRuntime = conn.getChild(serverRuntime, SAF_RUNTIME);			    	
-			    ObjectName[] safAgents = conn.getChildren(safRuntime, AGENTS);
+			    ObjectName safRuntime = conn.getChild(serverRuntime, WebLogicMBeanPropConstants.SAF_RUNTIME);			    	
+			    ObjectName[] safAgents = conn.getChildren(safRuntime, WebLogicMBeanPropConstants.AGENTS);
 			        
 		        for (ObjectName safAgent : safAgents)
 		        {	
-		        	String currentSafAgentName = conn.getTextAttr(safAgent, NAME);
-			        	
-System.out.println("StorageService::getSAFAgentDashboard() - currentSafAgentName is [" + currentSafAgentName + "]");
-		        	
+		        	String currentSafAgentName = conn.getTextAttr(safAgent, WebLogicMBeanPropConstants.NAME);
+			        		        	
 		        	if(currentSafAgentName.equals(safAgentName)){
 
-		        		Map<String, String> metrics = new LinkedHashMap<String, String>();
-		        		for (ObjectName remoteEndPoint : conn.getChildren(safAgent, REMOTE_END_POINTS)) {
+		        		for (ObjectName remoteEndPoint : conn.getChildren(safAgent, WebLogicMBeanPropConstants.REMOTE_END_POINTS)) {
+		        			
+		        			// This map should be inside the loop otherwise will contain only the latest values
+                            Map<String, String> metrics = new LinkedHashMap<String, String>();
 			        			
-		        			String safName = ResourceNameNormaliser.normalise(SAFAGENT_RESOURCE_TYPE, conn.getTextAttr(remoteEndPoint, NAME));
-						    	
-System.out.println("StorageService::getSAFAgentDashboard() - safName is [" + safName + "]");
-					    							    	
-							metrics.put(MESSAGES_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(remoteEndPoint, MESSAGES_CURRENT_COUNT)).toString());
-		        			metrics.put(MESSAGES_PENDING_COUNT, new Integer((int)conn.getNumberAttr(remoteEndPoint, MESSAGES_PENDING_COUNT)).toString());
-		        			metrics.put(MESSAGES_RECEIVED_COUNT, new Integer((int)conn.getNumberAttr(remoteEndPoint, MESSAGES_RECEIVED_COUNT)).toString());
-		        			metrics.put(MESSAGES_HIGH_COUNT, new Integer((int)conn.getNumberAttr(remoteEndPoint, MESSAGES_HIGH_COUNT)).toString());
+		        			String safName = ResourceNameNormaliser.normalise(MonitorProperties.SAFAGENT_RESOURCE_TYPE, conn.getTextAttr(remoteEndPoint, WebLogicMBeanPropConstants.NAME));
+		        			
+							metrics.put(WebLogicMBeanPropConstants.PAUSED_FOR_INCOMING, conn.getBooleanAttr(remoteEndPoint, WebLogicMBeanPropConstants.PAUSED_FOR_INCOMING) + "");
+							metrics.put(WebLogicMBeanPropConstants.PAUSED_FOR_FORWARDING, conn.getBooleanAttr(remoteEndPoint, WebLogicMBeanPropConstants.PAUSED_FOR_FORWARDING) + "");
 							
-		        			metrics.put(DOWNTIME_HIGH, new Integer((int)conn.getNumberAttr(remoteEndPoint, DOWNTIME_HIGH)).toString());
-							metrics.put(DOWNTIME_TOTAL, new Integer((int)conn.getNumberAttr(remoteEndPoint, DOWNTIME_TOTAL)).toString());
-							metrics.put(UPTIME_HIGH, new Integer((int)conn.getNumberAttr(remoteEndPoint, UPTIME_HIGH)).toString());
-							metrics.put(UPTIME_TOTAL, new Integer((int)conn.getNumberAttr(remoteEndPoint, UPTIME_TOTAL)).toString());
-							metrics.put(FAILED_MESSAGES_TOTAL, new Integer((int)conn.getNumberAttr(remoteEndPoint, FAILED_MESSAGES_TOTAL)).toString());
+							/*
+							// PAUSE_FOR_RECEIVING is available only for the SAF_AGENT not for the REMOTE_ENDPOINT
+							//metrics.put(WebLogicMBeanPropConstants.PAUSED_FOR_RECEIVING, conn.getBooleanAttr(remoteEndPoint, WebLogicMBeanPropConstants.PAUSED_FOR_RECEIVING) + "");
+							*/
+							
+							metrics.put(WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT)).toString());
+		        			metrics.put(WebLogicMBeanPropConstants.MESSAGES_PENDING_COUNT, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.MESSAGES_PENDING_COUNT)).toString());
+		        			metrics.put(WebLogicMBeanPropConstants.MESSAGES_RECEIVED_COUNT, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.MESSAGES_RECEIVED_COUNT)).toString());
+		        			metrics.put(WebLogicMBeanPropConstants.MESSAGES_HIGH_COUNT, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.MESSAGES_HIGH_COUNT)).toString());
+							
+		        			metrics.put(WebLogicMBeanPropConstants.DOWNTIME_HIGH, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.DOWNTIME_HIGH)).toString());
+							metrics.put(WebLogicMBeanPropConstants.DOWNTIME_TOTAL, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.DOWNTIME_TOTAL)).toString());
+							metrics.put(WebLogicMBeanPropConstants.UPTIME_HIGH, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.UPTIME_HIGH)).toString());
+							metrics.put(WebLogicMBeanPropConstants.UPTIME_TOTAL, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.UPTIME_TOTAL)).toString());
+							metrics.put(WebLogicMBeanPropConstants.FAILED_MESSAGES_TOTAL, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.FAILED_MESSAGES_TOTAL)).toString());
 							
 		        			result.put(safName, metrics);
 		        		}
@@ -749,8 +741,6 @@ System.out.println("StorageService::getSAFAgentDashboard() - safName is [" + saf
 		} catch(Exception ex){
 			AppLog.getLogger().error("Error during generation of SAF dashboard");
 		}
-System.out.println("StorageService::getSAFAgentDashboard() - Returning [" + result.size() + "] elements");
-
 		return result;
 	}
 }

@@ -21,7 +21,6 @@ if (typeof jQuery === "undefined") {
 //localStorage.name = 'dh2storage';
 //console.log(localStorage.name);
 
-
 /* AdminLTE
  *
  * @type Object
@@ -51,12 +50,6 @@ else {
 $.AdminLTE = {
 
 };
-
-
-
-
-
-
 
 /* --------------------
  * - AdminLTE Options -

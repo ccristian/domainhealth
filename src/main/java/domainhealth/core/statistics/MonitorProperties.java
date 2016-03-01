@@ -377,24 +377,6 @@ public class MonitorProperties {
 	 */
 	public final static String NAME_UNITS = "Name";
 	
-	
-	
-	
-	
-	/**
-	 * The 'showhosts' pamameter to indicate whether to show the 'Hosts' link 
-	 * in the top menu.
-	 */
-	//public final static String SHOW_HOSTS_PARAM = "showhosts";
-	
-	/**
-	 * The 'showdashboards' pamameter to indicate whether to show the 'JMS Dashboard' link 
-	 * in the top menu.
-	 */
-	//public final static String SHOW_DASHBOARDS_PARAM = "showdashboards";
-	
-	
-	
 	// Constants
 	private final static Map<String, WLProperty> propList = new HashMap<String, WLProperty>();
 	

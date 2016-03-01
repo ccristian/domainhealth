@@ -863,16 +863,6 @@ public interface WebLogicMBeanPropConstants {
 	public final static String TOTAL_PHYSICAL_MEMORY_SIZE_MEGABYTES = "TotalPhysicalMemorySizeMegabytes";
 	public final static String TOTAL_SWAP_SPACE_SIZE_MEGABYTES = "TotalSwapSpaceSizeMegabytes";
 	
-	/*
-	// JMS actions on queues
-	public final static String PAUSE_PRODUCTON = "pauseProduction";
-	public final static String RESUME_PRODUCTON = "resumeProduction";
-	public final static String PAUSE_CONSUMPTION = "pauseConsumption";
-	public final static String RESUME_CONSUMPTION = "resumeConsumption";
-	public final static String PAUSE_INSERTION = "pauseInsertion";
-	public final static String RESUME_INSERTION = "resumeInsertion";
-	*/
-	
 	// -----------------------------------------------------------
 	// Added by gregoan
 	/**
@@ -905,11 +895,13 @@ public interface WebLogicMBeanPropConstants {
 	 */
 	public final static String FAILED_MESSAGES_TOTAL = "FailedMessagesTotal";
 
-	//added for Dashboard
+	// Actions of JMS Dashboard
 	final static String CONSUMPTION_PAUSED = "ConsumptionPaused";
 	final static String INSERTION_PAUSED = "InsertionPaused";
 	final static String PRODUCTION_PAUSED = "ProductionPaused";
-
-
-
+	
+	// Actions of SAF Dashboard
+	final static String PAUSED_FOR_INCOMING = "PausedForIncoming";
+	final static String PAUSED_FOR_FORWARDING = "PausedForForwarding";
+	final static String PAUSED_FOR_RECEIVING = "PausedForReceiving";
 }

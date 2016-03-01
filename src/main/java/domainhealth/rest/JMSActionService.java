@@ -151,7 +151,7 @@ else{
     			return false;
     		}
     	} else {
-    		AppLog.getLogger().notice("The username is not logged/authenticated");
+    		AppLog.getLogger().error("The username is not logged/authenticated");
     		return false;
     	}
     }
@@ -203,6 +203,8 @@ else{
      * @param action
      * @return
      */
+/*
+// Not used so commented to avoid usage
     @GET
     @Path("jmsserver/{jmsServer}/{action}")
     @Produces({MediaType.APPLICATION_JSON})
@@ -231,6 +233,7 @@ else{
         }
         return false;
     }
+*/
     
     /**
      * 
@@ -255,7 +258,7 @@ else{
         		
         		//AppLog.getLogger().notice("The username is allowed - Executing the action");
         		
-	        	if(isValidActionForSaf(action)) {
+	        	if(isValidActionForSafRemoteDestination(action)) {
 	        		DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();
 	        		return executeSafOperation(conn, safAgent, saf, action);
 	        	} else {
@@ -279,6 +282,8 @@ else{
      * @param action
      * @return
      */
+/*
+// Not used so commented to avoid usage
     @GET
     @Path("safagent/{safAgent}/{action}")
     @Produces({MediaType.APPLICATION_JSON})
@@ -292,7 +297,7 @@ else{
 				
         		//AppLog.getLogger().notice("The username is allowed - Executing the action");
         		
-	        	if(isValidActionForSaf(action)) {
+	        	if(isValidActionForSafAgent(action)) {
 	        		DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();
 	        		return executeSafOperation(conn, safAgent, action);
 	        	} else {
@@ -307,6 +312,7 @@ else{
         }
         return false;
     }
+*/
     
     /**
      * 
@@ -344,7 +350,9 @@ else{
      * @param action
      * @return
      */
-    private boolean isValidActionForSaf(String action) {
+/*
+// Not used so commented to avoid usage
+    private boolean isValidActionForSafAgent(String action) {
     	switch (action) {
         
 	    	case MonitorProperties.PAUSE_INCOMING:
@@ -369,6 +377,32 @@ else{
 				return false;
 	    }
     }
+*/
+    
+    /**
+     * 
+     * @param action
+     * @return
+     */
+    private boolean isValidActionForSafRemoteDestination(String action) {
+    	switch (action) {
+        
+	    	case MonitorProperties.PAUSE_INCOMING:
+	    		return true;
+	    		
+	    	case MonitorProperties.RESUME_INCOMING:
+	    		return true;
+	    		
+	    	case MonitorProperties.PAUSE_FORWARDING:
+				return true;
+	    		
+	    	case MonitorProperties.RESUME_FORWARDING:
+				return true;
+	    		
+			default:
+				return false;
+	    }
+    }
     
     /**
      * 
@@ -382,8 +416,8 @@ else{
 		if(restrictedAction) {
 			
 			String username = securityContext.getUserPrincipal().getName();
-			AppLog.getLogger().notice("The restriction mode is set");
-			AppLog.getLogger().notice("Principal is [" + username + "]");
+			//AppLog.getLogger().notice("The restriction mode is set");
+			//AppLog.getLogger().notice("Principal is [" + username + "]");
 
 			String restrictedRoles = appProps.getProperty(PropKey.RESTRICTED_ROLES);
 			List<String> rolesList = tokenizeRestrictedRolesText(restrictedRoles);
@@ -395,7 +429,7 @@ else{
 	            String role = iteratorRolesList.next();
 	
 	            if(securityContext.isUserInRole(role)) {
-	            	AppLog.getLogger().notice("The username [" + username + "] is part of the role [" + role + "]");
+	            	//AppLog.getLogger().notice("The username [" + username + "] is part of the role [" + role + "]");
 	            	allowed = true;
 	                break;
 	    		}
@@ -407,7 +441,7 @@ else{
 	        	return false;
 	        }
 		} else{
-	    	AppLog.getLogger().notice("The restriction mode is not set - This action cannot be executed without to be authenticated");
+	    	AppLog.getLogger().error("The restriction mode is not set - This action cannot be executed without to be authenticated");
 	    	return false;
 	    }
     }
@@ -442,7 +476,6 @@ else{
 		        		for (ObjectName destination : conn.getChildren(jmsServer, DESTINATIONS)) {
 					    	
 		        			String destinationName = ResourceNameNormaliser.normalise(JMSSVR_RESOURCE_TYPE, conn.getTextAttr(destination, NAME));
-		        			//String destinationName = conn.getTextAttr(destination, NAME);
 		        			if(destinationName.equals(queueName)) {
 		        				
 		        				conn.invoke(destination, action, null, null);
@@ -470,6 +503,8 @@ else{
      * @param action
      * @return
      */
+/*
+// Not used so commented to avoid usage
     private boolean executeDestinationOperation(DomainRuntimeServiceMBeanConnection conn, String jmsServerName, String action){
 		    	
 		try {
@@ -503,6 +538,7 @@ else{
 		AppLog.getLogger().error("   -> Possible reason is wrong JMS server");
 		return false;
 	}
+*/
     
     /**
      * 
@@ -534,7 +570,6 @@ else{
 		        		for (ObjectName remoteEndPoint : conn.getChildren(safAgent, REMOTE_END_POINTS)) {
 					    	
 		        			String currentSafName = ResourceNameNormaliser.normalise(SAFAGENT_RESOURCE_TYPE, conn.getTextAttr(remoteEndPoint, NAME));
-		        			//String currentSafName = conn.getTextAttr(destination, NAME);
 		        			if(currentSafName.equals(safName)) {
 		        				
 		        				conn.invoke(remoteEndPoint, action, null, null);
@@ -562,6 +597,8 @@ else{
      * @param action
      * @return
      */
+/*
+// Not used so commented to avoid usage
     private boolean executeSafOperation(DomainRuntimeServiceMBeanConnection conn, String safAgentName, String action){
     	
 		try {
@@ -595,4 +632,5 @@ else{
 		AppLog.getLogger().error("   -> Possible reason is wrong SAF agent");
 		return false;
 	}
+*/
 }
