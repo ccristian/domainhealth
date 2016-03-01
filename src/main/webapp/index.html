@@ -306,9 +306,13 @@ desired effect
               <td>{{@key}}</td>
               {{#each this}}
               	<td style="text-align: center;">
+
+
               	  <span class = "badge bg-blue text-left">
                     {{this}}
+
                   </span>
+
               	</td>
               {{/each}}
             </tr>
@@ -416,9 +420,15 @@ desired effect
               {{#each this}}
 
               	<td style="text-align: center;">
-              	  <span class = "badge bg-blue text-left">
+                    {{#ifCond this 'true'}}
+              	  <span class = "badge bg-red text-left">
                     {{this}}
                   </span>
+                    {{else}}
+                   <span class = "badge bg-blue text-left">
+                    {{this}}
+                  </span>
+                    {{/ifCond}}
               	</td>
               {{/each}}
             </tr>
