@@ -480,7 +480,7 @@ else{
 		        				
 		        				conn.invoke(destination, action, null, null);
 		        				String username = securityContext.getUserPrincipal().getName();
-		        				AppLog.getLogger().notice("The username [" + username + "] executed the action [" + action + "] for the queue [" + queueName + "] deployed on JMS server [" + jmsServerName + "]");
+		        				AppLog.getLogger().notice("The username [" + username + "] executed the action [" + action + "] for the destination [" + queueName + "] deployed on JMS server [" + jmsServerName + "]");
 		        				return true;
 		        			}
 		        		}	
@@ -488,11 +488,11 @@ else{
 		        }
 			}
 		} catch(Exception ex){
-			AppLog.getLogger().error("Error during execution of action [" + action + "] for the queue [" + queueName + "] deployed on JMS server [" + jmsServerName + "]", ex);
+			AppLog.getLogger().error("Error during execution of action [" + action + "] for the destination [" + queueName + "] deployed on JMS server [" + jmsServerName + "]", ex);
 		}
 		
-		AppLog.getLogger().error("Action [" + action + "] to be executed for the queue [" + queueName + "] deployed on JMS server [" + jmsServerName + "] was not executed");
-		AppLog.getLogger().error("   -> Possible reason is wrong JMS server or JMS queue name");
+		AppLog.getLogger().error("Action [" + action + "] to be executed for the destination [" + queueName + "] deployed on JMS server [" + jmsServerName + "] was not executed");
+		AppLog.getLogger().error("   -> Possible reason is wrong JMS server or JMS destination");
 		return false;
 	}
     
