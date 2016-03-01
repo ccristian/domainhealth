@@ -342,16 +342,15 @@ $(function () {
   var sourceGraph = $("#graph-template").html();
   var templateHighstock = Handlebars.compile(sourceGraph);
 
-  // Simple dashboard without any action
-  var sourceDashboard = $("#dashboard-template").html();
-  var templateDashboard = Handlebars.compile(sourceDashboard);
-  
   // ----------------------------------------------------------------
   // Added by gregoan
   // JMS contains an ACTION column
   // -----------------------------
-  var sourceDashboardAction = $("#dashboard-action-template").html();
-  var templateDashboardAction = Handlebars.compile(sourceDashboardAction);
+  var sourceDashboardActionJms = $("#dashboard-action-template-jms").html();
+  var templateDashboardActionJms = Handlebars.compile(sourceDashboardActionJms);
+
+  var sourceDashboardActionSaaf = $("#dashboard-action-template-saf").html();
+  var templateDashboardActionSaf = Handlebars.compile(sourceDashboardActionSaf);
   //----------------------------------------------------------------
 
   $("#move-left").click(function () {
@@ -417,9 +416,9 @@ $(function () {
         // ------------------
         //$(".content-wrapper").html(templateDashboard($.AdminLTE));
         if(respath == "safdashboard") {
-        	$(".content-wrapper").html(templateDashboard($.AdminLTE));
+        	$(".content-wrapper").html(templateDashboardActionSaf($.AdminLTE));
         } else {
-        	$(".content-wrapper").html(templateDashboardAction($.AdminLTE));
+        	$(".content-wrapper").html(templateDashboardActionJms($.AdminLTE));
         }
         //dhLocalObj.currentPath = $.AdminLTE.currentPath;
         //dhLocalObj.currentResource = $.AdminLTE.currentResource;
