@@ -349,7 +349,7 @@ $(function () {
   var sourceDashboardActionJms = $("#dashboard-action-template-jms").html();
   var templateDashboardActionJms = Handlebars.compile(sourceDashboardActionJms);
 
-  var sourceDashboardActionSaaf = $("#dashboard-action-template-saf").html();
+  var sourceDashboardActionSaf = $("#dashboard-action-template-saf").html();
   var templateDashboardActionSaf = Handlebars.compile(sourceDashboardActionSaf);
   //----------------------------------------------------------------
 
