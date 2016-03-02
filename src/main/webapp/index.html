@@ -294,7 +294,7 @@ desired effect
       <!--margin: 0 auto !important;float: none !important;-->
       <div class="box">
         <div class="box-header">
-          <h3 class="box-title">{{this.selectedPath}}</h3>
+          <h3 class="box-title">{{this.options.selectedPath}}</h3>
         </div><!-- /.box-header -->
         <div class="box-body table-responsive no-padding">
             <div class="box-tools">
@@ -352,7 +352,7 @@ Action not possible for SAF RemoteEndPoints
 
               <th class="col-xs-2">Name</th>
 
-              {{#each this.renderedData}}
+              {{#each this.options.renderedData}}
               	{{#if @first}}
               	  {{#each this}}
               		<th class="col-xs-2" style="text-align: center;">
@@ -363,7 +363,7 @@ Action not possible for SAF RemoteEndPoints
               {{/each}}
             </tr>
 
-            {{#each this.renderedData}}
+            {{#each this.options.renderedData}}
             <tr>
                 <td style="text-align: center;">
                     <label>
@@ -410,7 +410,7 @@ Action not possible for SAF RemoteEndPoints
       <!--margin: 0 auto !important;float: none !important;-->
       <div class="box">
         <div class="box-header">
-          <h3 class="box-title">{{this.selectedPath}}</h3>
+          <h3 class="box-title">{{this.options.selectedPath}}</h3>
         </div><!-- /.box-header -->
         <div class="box-body table-responsive no-padding">
             <div class="box-tools">
@@ -465,7 +465,7 @@ Action not possible for SAF RemoteEndPoints
 
               <th class="col-xs-2">Name</th>
 
-              {{#each this.renderedData}}
+              {{#each this.options.renderedData}}
               	{{#if @first}}
               	  {{#each this}}
               		<th class="col-xs-2" style="text-align: center;">
@@ -476,7 +476,7 @@ Action not possible for SAF RemoteEndPoints
               {{/each}}
             </tr>
 
-            {{#each this.renderedData}}
+            {{#each this.options.renderedData}}
             <tr>
                 <td style="text-align: center;">
                     <label>
@@ -516,12 +516,12 @@ Action not possible for SAF RemoteEndPoints
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        <small>{{this.selectedPath}}</small>
+        <small>{{this.options.selectedPath}}</small>
       </h1>
     </section>
-    <section class="content">
+    <section class="content" id="highchartsGraphs">
       <div class="grid-stack"  data-gs-animate="true">
-        {{#each this.renderedData}}
+        {{#each this.options.renderedData}}
         {{#if_even @index}}
         <div class="grid-stack-item" data-gs-x="0" data-gs-y="0" data-gs-no-resize ="true" data-gs-width="6" data-gs-height="6">
         {{else}}
@@ -534,7 +534,7 @@ Action not possible for SAF RemoteEndPoints
                 <h3 class="box-title">{{@key}}</h3>
               </div>
               <div class="box-body">
-                <div id="{{@key}}" style="height: 420px;"></div>
+                <div id="{{@key}}" style="height: 420px;" class="easytoselect"></div>
               </div><!-- /.box-body-->
             </div>
           </div>
@@ -555,7 +555,7 @@ Action not possible for SAF RemoteEndPoints
       $('.grid-stack').gridstack(options);
     });
 
-    {{#each this.renderedData}}
+    {{#each this.options.renderedData}}
     $('#{{@key}}').highcharts('StockChart', {
       rangeSelector: {
         selected: 4
@@ -604,7 +604,7 @@ Action not possible for SAF RemoteEndPoints
       navigator: {
         enabled: $("#dhnavigatorCb").is(':checked')
       },
-      series :$.AdminLTE.renderedData["{{@key}}"]
+      series :$.AdminLTE.options.renderedData["{{@key}}"]
     });
     {{/each}}
 

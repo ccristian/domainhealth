@@ -6,10 +6,10 @@ function jmsaction(actionName) {
     var checkboxesChecked = $("#dashboardtable input[type='checkbox']:checked");
     checkboxesChecked.each(function (index) {
         $.ajax({
-            url: '/domainhealth/rest/jmsaction/jmsdestination/' + $.AdminLTE.currentResource + '/' + $(this).attr("id") + '/' + actionName,
+            url: '/domainhealth/rest/jmsaction/jmsdestination/' + $.AdminLTE.options.currentResource + '/' + $(this).attr("id") + '/' + actionName,
             cache: false,
             success: function (response) {
-               $("#jmsdashboard"+ $.AdminLTE.currentResource).trigger("click");
+               $("#jmsdashboard"+ $.AdminLTE.options.currentResource).trigger("click");
             },
             error: function (xhr) {
                 alert("error");

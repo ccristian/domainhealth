@@ -6,10 +6,10 @@ function safaction(actionName) {
     var checkboxesChecked = $("#dashboardtable input[type='checkbox']:checked");
     checkboxesChecked.each(function (index) {
         $.ajax({
-            url: '/domainhealth/rest/jmsaction/safdestination/' + $.AdminLTE.currentResource + '/' + $(this).attr("id") + '/' + actionName,
+            url: '/domainhealth/rest/jmsaction/safdestination/' + $.AdminLTE.options.currentResource + '/' + $(this).attr("id") + '/' + actionName,
             cache: false,
             success: function (response) {
-               $("#safdashboard"+ $.AdminLTE.currentResource).trigger("click");
+               $("#safdashboard"+ $.AdminLTE.options.currentResource).trigger("click");
             },
             error: function (xhr) {
                 alert("error");

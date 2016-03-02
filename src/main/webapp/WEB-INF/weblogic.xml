@@ -63,7 +63,7 @@
 	</work-manager>
 
 	<session-descriptor>
-		<timeout-secs>600</timeout-secs>
+		<timeout-secs>3600</timeout-secs>
 	</session-descriptor>
 </weblogic-web-app>
 
