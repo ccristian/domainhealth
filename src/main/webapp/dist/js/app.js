@@ -426,6 +426,17 @@ $(function () {
     });
   }
 
+  function xxx(){
+    console.log("xxxxxxxxx");
+    var chart=$("#OpenSocketsCurrentCount").highcharts();
+    setInterval(function () {
+      var x = (new Date()).getTime(), // current time
+          y = Math.round(Math.random() * 100);
+      chart.series[0].addPoint([x, y], true, true);
+    }, 30000);
+    console.log(chart);
+  }
+
   function getAndDisplayCharts(resname,respath,value) {
     $.ajax({
       url: '/domainhealth/rest/stats/' + respath + '/' + value + '?',
@@ -445,7 +456,7 @@ $(function () {
         //dhLocalObj.startTimeVal = $.AdminLTE.options.startTimeVal;
         //dhLocalObj.endTimeVal = $.AdminLTE.options.endTimeVal;
         localStorage.setItem("dh2storage",JSON.stringify(dhLocalObj));
-        //console.log('retrievedObject: ',dhLocalObj);
+
       },
       error: function (xhr) {
         alert("error");
@@ -460,6 +471,8 @@ $(function () {
       });
     });
   }
+
+
 
   function addDashboardListener(res,resname,respath){
     $.each( res.list, function( key, value ) {
@@ -482,6 +495,11 @@ $(function () {
   $("#hostmachine").click(function () {
     getAndDisplayCharts("HostMachine","hostmachine","params");
   });
+
+  $("#dhnavigatorCb").click(function () {
+    getAndDisplayCharts($.AdminLTE.options.currentResname,$.AdminLTE.options.currentPath,$.AdminLTE.options.currentResource);
+  });
+
 
 
 
@@ -545,6 +563,8 @@ $(function () {
       alert("error");
     }
   });
+
+
 
   //var previousDate = moment(currentDate, 'DD-MM-YYYY-HH-mm').be;
   //$("#datasources").append('<li><a href="/user/messages"><span class="tab">'+endDate+'</span></a></li>');
