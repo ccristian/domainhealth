@@ -161,7 +161,8 @@ $.AdminLTE.options = {
   startTimeVal:null,
   currentPath:dhLocalObj.currentPath,
   currentResource:dhLocalObj.currentResource,
-  currentResname:dhLocalObj.currentResname
+  currentResname:dhLocalObj.currentResname,
+  interval:null
 
 };
 
@@ -439,7 +440,7 @@ $(function () {
         $.AdminLTE.options.currentPath = respath;
         $.AdminLTE.options.currentResource = value;
         $.AdminLTE.options.currentResname = resname;
-        console.log($.AdminLTE.options.renderedData);
+        //console.log($.AdminLTE.options.renderedData);
         $(".content-wrapper").html(templateHighstock($.AdminLTE));
         dhLocalObj.currentPath = $.AdminLTE.options.currentPath;
         dhLocalObj.currentResource = $.AdminLTE.options.currentResource;
@@ -493,27 +494,26 @@ $(function () {
 
   $("#livedataCb").click(function () {
 
-    console.log("livedataCb");
 
-    console.log($.AdminLTE.options.currentResname);
-    console.log($.AdminLTE.options.currentPath);
-    console.log($.AdminLTE.options.currentResource);
+    //if livedata is selected start interval
+    if ($('#livedataCb').is(':checked')) {
+      var charts=$(".currentcharts");
+      $.each( charts, function( key, value ) {
+        var x = $("#"+value.id).highcharts();
+      });
 
 
-    var charts=$(".easytoselect");
-
-    $.each( charts, function( key, value ) {
-
-      var x = $("#"+value.id).highcharts();
-      console.log(x);
-    });
-
-    /*setInterval(function () {
-      var x = (new Date()).getTime(), // current time
-          y = Math.round(Math.random() * 100);
-      chart.series[0].addPoint([x, y], true, true);
-    }, 30000);*/
-
+      console.log("start live data ...");
+      $.AdminLTE.options.interval =   setInterval(function () {
+        //var x = (new Date()).getTime(), // current time
+        //    y = Math.round(Math.random() * 100);
+        //chart.series[0].addPoint([x, y], true, true);
+        console.log("tick ...");
+      }, 3000);
+    }else{
+      console.log("stop live data ...");
+      clearInterval($.AdminLTE.options.interval);
+    }
 
 
   });
