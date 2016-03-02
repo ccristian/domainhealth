@@ -494,17 +494,56 @@ $(function () {
 
   $("#livedataCb").click(function () {
 
+    //put the value bigger to get latest data for sure
+    //to be review
+
 
     //if livedata is selected start interval
     if ($('#livedataCb').is(':checked')) {
       var charts=$(".currentcharts");
+      var chartMap = new Object();
       $.each( charts, function( key, value ) {
-        var x = $("#"+value.id).highcharts();
+        var chart = $("#"+value.id).highcharts();
+        chartMap[value.id] = chart;
       });
 
 
       console.log("start live data ...");
       $.AdminLTE.options.interval =   setInterval(function () {
+
+        var intrevalTime = 120;
+        var now = new Date();
+        var end = moment(now);
+        var start = moment(currentDate).subtract(intrevalTime,'seconds');
+        var endTimeInterval = end.format('DD-MM-YYYY-HH-mm');
+        var startTimeInterval =start.format('DD-MM-YYYY-HH-mm');
+
+        $.ajax({
+          url: '/domainhealth/rest/stats/' +  $.AdminLTE.options.currentPath + '/' + $.AdminLTE.options.currentResource + '?',
+          cache: false,
+          data: {startTime: startTimeInterval, endTime: endTimeInterval},
+          success: function (response){
+
+
+            $.each( response, function( key, value ) {
+
+              var currentChart = chartMap[key];
+              //console.log(JSON.stringify(value, null, 2));
+              var currentSerie = currentChart.get(value[0].id);
+              for (var i = 0; i < value[0].data.length; i++) {
+                var point = value[0].data[i];
+                currentSerie.addPoint([point[0], point[1]], true, true);
+              }
+            });
+            //console.log(response);
+            start= end;
+
+          },
+          error: function (xhr) {
+            alert("error");
+          }
+        });
+
         //var x = (new Date()).getTime(), // current time
         //    y = Math.round(Math.random() * 100);
         //chart.series[0].addPoint([x, y], true, true);

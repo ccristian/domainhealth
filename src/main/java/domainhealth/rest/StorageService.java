@@ -387,6 +387,7 @@ public class StorageService {
 
                     Map map = new LinkedHashMap();
                     map.put("name",server);
+                    map.put("id",server);
                     map.put("data",dataList);
                     
                     List<Map> listMap  = result.get(res);
