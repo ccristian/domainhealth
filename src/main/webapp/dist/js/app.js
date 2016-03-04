@@ -521,8 +521,11 @@ $(function () {
                     success: function (response) {
                         $.each(response, function (key, value) {
                             var currentChart = chartMap[key];
+                            //each chart
                             for (var seriesIndex = 0; seriesIndex < value.length; seriesIndex++) {
+                                // each series in the chart
                                 var currentSeries = currentChart.get(value[seriesIndex].id);
+                                
                                 for (var i = 0; i < value[seriesIndex].data.length; i++) {
                                     var point = value[seriesIndex].data[i];
                                     var index = currentSeries.xData.indexOf(point[0]);

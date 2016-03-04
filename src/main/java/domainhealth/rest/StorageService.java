@@ -376,6 +376,7 @@ public class StorageService {
                 for (String res:dataMap.keySet()) {
 
                     DateAmountDataSet dataSet  = dataMap.get(res);
+                    //dataMap.put(res,null);
                     
                     // Not used so commented
                     //String property = dataSet.getResourceProperty();
