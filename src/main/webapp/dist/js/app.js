@@ -519,14 +519,18 @@ $(function () {
                     cache: false,
                     data: {startTime: startTimeInterval, endTime: endTimeInterval},
                     success: function (response) {
+                        //each chart
                         $.each(response, function (key, value) {
+                            //example key :HeapUsedCurrent
                             var currentChart = chartMap[key];
-                            //each chart
+                            //iterate each serie in the response for key
                             for (var seriesIndex = 0; seriesIndex < value.length; seriesIndex++) {
-                                // each series in the chart
+
+                                //ex :  serie for admin server (value[seriesIndex].id = 'AdminServer')
                                 var currentSeries = currentChart.get(value[seriesIndex].id);
                                 
                                 for (var i = 0; i < value[seriesIndex].data.length; i++) {
+                                    //if (value[seriesIndex].name  = )
                                     var point = value[seriesIndex].data[i];
                                     var index = currentSeries.xData.indexOf(point[0]);
                                     if (index == -1) {
