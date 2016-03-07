@@ -186,17 +186,18 @@ public class StorageService {
                 		
                         coreProps.add(WebLogicMBeanPropConstants.OPEN_SOCKETS_CURRENT_COUNT);
                         coreProps.add(WebLogicMBeanPropConstants.HEAP_USED_CURRENT);
-                        coreProps.add(WebLogicMBeanPropConstants.HEAP_SIZE_CURRENT);
-                        coreProps.add(WebLogicMBeanPropConstants.HEAP_FREE_CURRENT);
-                        coreProps.add(WebLogicMBeanPropConstants.HEAP_FREE_PERCENT);
-                        coreProps.add(WebLogicMBeanPropConstants.EXECUTE_THREAD_TOTAL_COUNT);
+                        coreProps.add(WebLogicMBeanPropConstants.TRANSACTIONS_ACTIVE_TOTAL_COUNT);
+                        //coreProps.add(WebLogicMBeanPropConstants.HEAP_SIZE_CURRENT);
+                        //coreProps.add(WebLogicMBeanPropConstants.HEAP_FREE_CURRENT);
+                        //coreProps.add(WebLogicMBeanPropConstants.HEAP_FREE_PERCENT);
+                        //coreProps.add(WebLogicMBeanPropConstants.EXECUTE_THREAD_TOTAL_COUNT);
                         coreProps.add(WebLogicMBeanPropConstants.HOGGING_THREAD_COUNT);
                         coreProps.add(WebLogicMBeanPropConstants.PENDING_USER_REQUEST_COUNT);
                         coreProps.add(WebLogicMBeanPropConstants.THREAD_POOL_QUEUE_LENGTH);
                         coreProps.add(WebLogicMBeanPropConstants.COMPLETED_REQUEST_COUNT);
                         coreProps.add(WebLogicMBeanPropConstants.EXECUTE_THREAD_IDLE_COUNT);
-                        coreProps.add(WebLogicMBeanPropConstants.MIN_THREADS_CONSTRAINT_COMPLETED);
-                        coreProps.add(WebLogicMBeanPropConstants.MIN_THREADS_CONSTRAINT_PENDING);
+                        //coreProps.add(WebLogicMBeanPropConstants.MIN_THREADS_CONSTRAINT_COMPLETED);
+                        //coreProps.add(WebLogicMBeanPropConstants.MIN_THREADS_CONSTRAINT_PENDING);
                         coreProps.add(WebLogicMBeanPropConstants.STANDBY_THREAD_COUNT);
                         coreProps.add(WebLogicMBeanPropConstants.THROUGHPUT);
                         coreProps.add(WebLogicMBeanPropConstants.TRANSACTION_TOTAL_COUNT);
@@ -204,7 +205,7 @@ public class StorageService {
                         coreProps.add(WebLogicMBeanPropConstants.TRANSACTION_ROLLEDBACK_COUNT);
                         coreProps.add(WebLogicMBeanPropConstants.TRANSACTION_HEURISTICS_TOTAL_COUNT);
                         coreProps.add(WebLogicMBeanPropConstants.TRANSACTION_ABANDONED_TOTAL_COUNT);
-                        coreProps.add(WebLogicMBeanPropConstants.TRANSACTIONS_ACTIVE_TOTAL_COUNT);
+
                 		
                         resource = null;
                         break;

@@ -289,17 +289,50 @@ $(function () {
     //initial view loading the first page
     getAndDisplayCharts($.AdminLTE.options.currentResname, $.AdminLTE.options.currentPath, $.AdminLTE.options.currentResource);
 
-    //initialize the date range and add a listener when new interval is selected
-    $('#daterange-btn').daterangepicker(
-        {
-            timePicker: true,
-            timePickerIncrement: 1,
-            locale: {
-                format: 'DD/MM/YYYY h:mm A'
-            },
 
-            ranges: {
-                '5 minutes': [moment().subtract(5, 'minutes'), moment()],
+
+        //initialize the date range and add a listener when new interval is selected
+        $('#daterange-btn').daterangepicker(
+            {
+                timePicker: true,
+                timePickerIncrement: 1,
+                locale: {
+                    format: 'DD/MM/YYYY h:mm A'
+                },
+
+                ranges: {
+                    '5 minutes': [moment().subtract(5, 'minutes'), moment()],
+                    '15 minutes': [moment().subtract(15, 'minutes'), moment()],
+                    '30 minutes': [moment().subtract(30, 'minutes'), moment()],
+                    '1 hour': [moment().subtract(1, 'hours'), moment()],
+                    '3 hours': [moment().subtract(3, 'hours'), moment()],
+                    '6 hours': [moment().subtract(6, 'hours'), moment()],
+                    '12 hours': [moment().subtract(12, 'hours'), moment()],
+                    '24 hours': [moment().subtract(24, 'hours'), moment()],
+                    'Today': [moment().startOf('day'), moment()],
+                    'Last 2 Days': [moment().subtract(2, 'days'), moment()],
+                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')]
+                },
+                startDate: moment().subtract(1, 'day'),
+                endDate: moment()
+            },
+            function (start, end) {
+                endTime = end.format('DD-MM-YYYY-HH-mm');
+                startTime = start.format('DD-MM-YYYY-HH-mm');
+                $.AdminLTE.options.endTimeVal = end;
+                $.AdminLTE.options.startTimeVal = start;
+                console.log("----------------------------------------");
+                console.log(start.format('DD-MM-YYYY-HH-mm'));
+                console.log(end.format('DD-MM-YYYY-HH-mm'));
+                displayDateInterval($.AdminLTE.options.startTimeVal, $.AdminLTE.options.endTimeVal);
+                getAndDisplayCharts($.AdminLTE.options.currentResname, $.AdminLTE.options.currentPath, $.AdminLTE.options.currentResource);
+            }
+        );
+    $('#daterange-btn').on('show.daterangepicker', function(ev, picker) {
+        picker.ranges =  {
+            '5 minutes': [moment().subtract(5, 'minutes'), moment()],
                 '15 minutes': [moment().subtract(15, 'minutes'), moment()],
                 '30 minutes': [moment().subtract(30, 'minutes'), moment()],
                 '1 hour': [moment().subtract(1, 'hours'), moment()],
@@ -312,19 +345,12 @@ $(function () {
                 'Last 7 Days': [moment().subtract(6, 'days'), moment()],
                 'Last 30 Days': [moment().subtract(29, 'days'), moment()],
                 'This Month': [moment().startOf('month'), moment().endOf('month')]
-            },
-            startDate: moment().subtract(1, 'day'),
-            endDate: moment()
-        },
-        function (start, end) {
-            endTime = end.format('DD-MM-YYYY-HH-mm');
-            startTime = start.format('DD-MM-YYYY-HH-mm');
-            $.AdminLTE.options.endTimeVal = end;
-            $.AdminLTE.options.startTimeVal = start;
-            displayDateInterval($.AdminLTE.options.startTimeVal, $.AdminLTE.options.endTimeVal);
-            getAndDisplayCharts($.AdminLTE.options.currentResname, $.AdminLTE.options.currentPath, $.AdminLTE.options.currentResource);
         }
-    );
+
+       // console.log(picker.ranges);
+    });
+
+
 
     //http://localhost:7001/domainhealth/rest/resources/workmgr?startTime=01-09-2014-00-00&endTime=17-09-2015-0-00
 
