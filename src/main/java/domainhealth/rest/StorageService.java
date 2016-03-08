@@ -110,6 +110,11 @@ public class StorageService {
         try {
             conn = new DomainRuntimeServiceMBeanConnection();
             Set<String> servers = statisticsStorage.getAllPossibleServerNames(conn);
+            //EFP7-OSB_TESTosb11,EFP7-OSB_TESTosb12,EFP7-OSB_TESTserver
+            //servers = new TreeSet<>();
+            //servers.add("EFP7-OSB_TESTosb11");
+            //servers.add("EFP7-OSB_TESTosb12");
+            //servers.add("EFP7-OSB_TESTserver");
             return servers;
         } catch (Exception e) {
             AppLog.getLogger().error("StorageService - unable to retrieve domain structure for domain's servers");
@@ -174,6 +179,13 @@ public class StorageService {
             if (scope == null || scope.size() == 0) {
                 scope = statisticsStorage.getAllPossibleServerNames(conn);
             }
+            //temp
+            /*scope = new TreeSet<>();
+            scope.add("EFP7-OSB_TESTosb11");
+            scope.add("EFP7-OSB_TESTosb12");
+            scope.add("EFP7-OSB_TESTserver");
+               */
+
             // --------------------------------------------------------------------------
             
             Map<String, DateAmountDataSet> dataMap = null;
@@ -377,14 +389,15 @@ public class StorageService {
                 for (String res:dataMap.keySet()) {
 
                     DateAmountDataSet dataSet  = dataMap.get(res);
-                    //dataMap.put(res,null);
+                    dataMap.put(res,null);
                     
                     // Not used so commented
                     //String property = dataSet.getResourceProperty();
                     
                     List dataList = new LinkedList();
                     for (DateAmountDataItem dateAmountDataItem:dataSet.getData()) {
-                        dataList.add(new BigDecimal[]{BigDecimal.valueOf(dateAmountDataItem.getDateTime().getTime()), BigDecimal.valueOf(dateAmountDataItem.getAmount())});
+                        //System.out.println("!");
+                        dataList.add(new Object[]{dateAmountDataItem.getDateTime().getTime(), dateAmountDataItem.getAmount()});
                     }
 
                     Map map = new LinkedHashMap();
