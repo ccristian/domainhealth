@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 /**
  * Test-case class for: domainhealth.data.DateAmountDataItem
  * 
- * @see domainhealth.frontend.data.data.DateAmountDataItem
+ * @see domainhealth.frontend.data.data.DateAmountDataItem ß
  */
 public class DateAmountDataItemTest extends TestCase {
 	/**
