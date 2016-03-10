@@ -27,7 +27,6 @@ import javax.management.ObjectName;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import com.sun.management.OperatingSystemMXBean;
 import commonj.work.WorkItem;
 import commonj.work.WorkManager;
 import domainhealth.backend.jmxpoll.StatisticCapturerJMXPoll;
