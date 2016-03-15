@@ -458,12 +458,13 @@ $(function () {
 
         //get the date diff
         var diff = $.AdminLTE.options.endTimeVal.diff($.AdminLTE.options.startTimeVal,'days');
-        //data from one day is not splitted in multiple intervals
+        //data from one day is not split in multiple intervals
         if (diff==0){
             $.ajax({
                 url: '/domainhealth/rest/stats/' + respath + '/' + value + '?',
                 cache: false,
                 data: {startTime: startTime, endTime: endTime,nodata:'false'},
+
                 success: function (response) {
                     $.AdminLTE.options.renderedData = response;
                     $.AdminLTE.options.selectedPath = resname + " > " + value;
@@ -483,11 +484,19 @@ $(function () {
         }else if (diff>=1){
 
 
+            console.log(diff);
+            console.log($.AdminLTE.options.startTimeVal.format('DD-MM-YYYY-HH-mm'));
+            var st = moment($.AdminLTE.options.startTimeVal);
+            var ed = moment($.AdminLTE.options.startTimeVal).endOf('day');
+            console.log("Interval :"+st.format('DD-MM-YYYY-HH-mm')+"    "+ed.format('DD-MM-YYYY-HH-mm'));
 
             $.ajax({
                 url: '/domainhealth/rest/stats/' + respath + '/' + value + '?',
                 cache: false,
-                data: {startTime: startTime, endTime: endTime,nodata:'true'},
+                complete:function (){
+                    console.log("Done !!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                },
+                data: {startTime: st.format('DD-MM-YYYY-HH-mm'), endTime: ed.format('DD-MM-YYYY-HH-mm'),nodata:'true'},
                 success: function (response) {
                     $.AdminLTE.options.renderedData = response;
                     $.AdminLTE.options.selectedPath = resname + " > " + value;
@@ -502,29 +511,29 @@ $(function () {
 
 
                     // more than 1 day ==> we split and we get data / days to avoid huge memory usage on server side
-                    console.log(diff);
-                    console.log($.AdminLTE.options.startTimeVal.format('DD-MM-YYYY-HH-mm'));
-                    var st = moment($.AdminLTE.options.startTimeVal);
-                    var ed = moment($.AdminLTE.options.startTimeVal).endOf('day');
-                    console.log("Interval :"+st.format('DD-MM-YYYY-HH-mm')+"    "+ed.format('DD-MM-YYYY-HH-mm'));
+
 
 
                     //console.log($.AdminLTE.options.startTimeVal.format('DD-MM-YYYY-HH-mm'));
                     var currentDay  = moment(st);
                     // var currentDay  =  var currentDay  = $.AdminLTE.options.startTimeVal.add(1, 'day');
 
+                    st  = moment(st).add(1, 'day').startOf('day');
+                    ed = moment(st).endOf('day');
 
 
                     var charts = $(".currentcharts");
                     var chartMap = new Object();
                     $.each(charts, function (key, value) {
                         var chart = $("#" + value.id).highcharts();
+                        //chart.xAxis[0].setExtremes(Date.UTC(2016, 2, 3), Date.UTC(2016, 2, 17));
                         chartMap[value.id] = chart;
+                        //chart.redraw();
                     });
 
 
 
-                    $.ajax({
+                     $.ajax({
                         url: '/domainhealth/rest/stats/' + $.AdminLTE.options.currentPath + '/' + $.AdminLTE.options.currentResource + '?',
                         cache: false,
                         async:false,
@@ -533,22 +542,31 @@ $(function () {
                             //each chart
                             $.each(response, function (key, value) {
                                 //example key :HeapUsedCurrent
+
+                                if (key == 'HeapUsedCurrent') {
+
                                 var currentChart = chartMap[key];
                                 //iterate each serie in the response for key
                                 for (var seriesIndex = 0; seriesIndex < value.length; seriesIndex++) {
 
                                     //ex :  serie for admin server (value[seriesIndex].id = 'AdminServer')
                                     var currentSeries = currentChart.get(value[seriesIndex].id);
+                                    console.log(currentSeries);
 
                                     for (var i = 0; i < value[seriesIndex].data.length; i++) {
                                         //if (value[seriesIndex].name  = )
                                         var point = value[seriesIndex].data[i];
                                         var index = currentSeries.xData.indexOf(point[0]);
                                         if (index == -1) {
-                                           // console.log(point[0]);
-                                            currentSeries.addPoint([point[0], point[1]], true, true);
+                                            // console.log(point[0]);
+                                            currentSeries.addPoint([point[0], point[1]], true, true)
+                                            //console.log(moment(point[0]).format('DD-MM-YYYY-HH-mm'));
                                         }
                                     }
+                                }
+
+                                currentChart.redraw();
+                                    console.log(currentChart);
                                 }
                             });
                         },
@@ -556,7 +574,6 @@ $(function () {
                             alert("error");
                         }
                     });
-
 
 
 
