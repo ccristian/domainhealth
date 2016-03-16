@@ -371,7 +371,10 @@ public class StorageService {
                 if (nodata) {
                     dataMap = new LinkedHashMap<>();
                     for (String prop : prp) {
-                        dataMap.put(prop, new DateAmountDataSet());
+                        DateAmountDataSet dateAmountDataSet = new DateAmountDataSet();
+                        //DateAmountDataItem dataItem = new DateAmountDataItem(new Date(),0);
+                        //dateAmountDataSet.getData().add(dataItem);
+                        dataMap.put(prop,dateAmountDataSet);
                     }
                 } else {
                     dataMap = statisticsStorage.getPropertyData(resourceType, resource, prp, interval, server);

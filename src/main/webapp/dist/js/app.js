@@ -496,7 +496,9 @@ $(function () {
                 complete:function (){
                     console.log("Done !!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                 },
-                data: {startTime: st.format('DD-MM-YYYY-HH-mm'), endTime: ed.format('DD-MM-YYYY-HH-mm'),nodata:'true'},
+                async:'false',
+                data: {startTime: st.format('DD-MM-YYYY-HH-mm'), endTime: ed.format('DD-MM-YYYY-HH-mm'),nodata:'false'},
+
                 success: function (response) {
                     $.AdminLTE.options.renderedData = response;
                     $.AdminLTE.options.selectedPath = resname + " > " + value;
@@ -536,7 +538,7 @@ $(function () {
                      $.ajax({
                         url: '/domainhealth/rest/stats/' + $.AdminLTE.options.currentPath + '/' + $.AdminLTE.options.currentResource + '?',
                         cache: false,
-                        async:false,
+                        async:true,
                         data: {startTime: st.format('DD-MM-YYYY-HH-mm'), endTime: ed.format('DD-MM-YYYY-HH-mm')},
                         success: function (response) {
                             //each chart
@@ -559,14 +561,16 @@ $(function () {
                                         var index = currentSeries.xData.indexOf(point[0]);
                                         if (index == -1) {
                                             // console.log(point[0]);
-                                            currentSeries.addPoint([point[0], point[1]], true, true)
+                                            //console.log("CUCU");
+                                            currentSeries.addPoint([point[0], point[1]], true, true);
                                             //console.log(moment(point[0]).format('DD-MM-YYYY-HH-mm'));
                                         }
                                     }
                                 }
 
-                                currentChart.redraw();
-                                    console.log(currentChart);
+                                //currentChart.redraw();
+                                //    currentChart.reflow();
+                                    console.log("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS"+currentChart);
                                 }
                             });
                         },
