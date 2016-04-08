@@ -453,6 +453,33 @@ $(function () {
         });
     }
 
+    //$.getAndDisplayCharts =
+/*
+    function successFunc(resname, respath, value,response) {
+        $.AdminLTE.options.renderedData = response;
+        $.AdminLTE.options.selectedPath = resname + " > " + value;
+        $.AdminLTE.options.currentPath = respath;
+        $.AdminLTE.options.currentResource = value;
+        $.AdminLTE.options.currentResname = resname;
+        $(".content-wrapper").html(templateHighstock($.AdminLTE));
+        dhLocalObj.currentPath = $.AdminLTE.options.currentPath;
+        dhLocalObj.currentResource = $.AdminLTE.options.currentResource;
+        dhLocalObj.currentResname = $.AdminLTE.options.currentResname;
+        localStorage.setItem("dh2storage", JSON.stringify(dhLocalObj));
+    }
+
+    function failureFunc() {
+        alert("error");
+        console.log( "error!" );
+    }
+
+    $.when(
+        $.ajax( "/main.php" ),
+        $.ajax( "/modules.php" ),
+        $.ajax( "/lists.php" )
+    ).then( successFunc(), failureFunc );
+
+*/
 
     function getAndDisplayCharts(resname, respath, value) {
 
@@ -487,7 +514,8 @@ $(function () {
             console.log(diff);
             console.log($.AdminLTE.options.startTimeVal.format('DD-MM-YYYY-HH-mm'));
             var st = moment($.AdminLTE.options.startTimeVal);
-            var ed = moment($.AdminLTE.options.startTimeVal).endOf('day');
+            //var ed = moment($.AdminLTE.options.startTimeVal).endOf('day');
+            var ed = moment($.AdminLTE.options.endTimeVal);
             console.log("Interval :"+st.format('DD-MM-YYYY-HH-mm')+"    "+ed.format('DD-MM-YYYY-HH-mm'));
 
             $.ajax({
@@ -497,7 +525,7 @@ $(function () {
                     console.log("Done !!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                 },
                 async:'false',
-                data: {startTime: st.format('DD-MM-YYYY-HH-mm'), endTime: ed.format('DD-MM-YYYY-HH-mm'),nodata:'false'},
+                data: {startTime: st.format('DD-MM-YYYY-HH-mm'), endTime: ed.format('DD-MM-YYYY-HH-mm'),nodata:'true'},
 
                 success: function (response) {
                     $.AdminLTE.options.renderedData = response;
@@ -505,7 +533,8 @@ $(function () {
                     $.AdminLTE.options.currentPath = respath;
                     $.AdminLTE.options.currentResource = value;
                     $.AdminLTE.options.currentResname = resname;
-                    $(".content-wrapper").html(templateHighstock($.AdminLTE));
+                   //$(".content-wrapper").html(templateHighstock($.AdminLTE));
+                    console.log("Initial Stucture:"+response)
                     dhLocalObj.currentPath = $.AdminLTE.options.currentPath;
                     dhLocalObj.currentResource = $.AdminLTE.options.currentResource;
                     dhLocalObj.currentResname = $.AdminLTE.options.currentResname;
@@ -513,6 +542,15 @@ $(function () {
 
 
                     // more than 1 day ==> we split and we get data / days to avoid huge memory usage on server side
+
+                    var promises = [];
+
+                    $.when.apply($, promises).then(function () {
+                        for (var i = 0; i < arguments.length; i++) {
+                            var singleresult = arguments[i][0];
+                            console.log(singleresult);
+                        }
+                    });
 
 
 
@@ -562,7 +600,7 @@ $(function () {
                                         if (index == -1) {
                                             // console.log(point[0]);
                                             //console.log("CUCU");
-                                            currentSeries.addPoint([point[0], point[1]], true, true);
+                                            //currentSeries.addPoint([point[0], point[1]], true, true);
                                             //console.log(moment(point[0]).format('DD-MM-YYYY-HH-mm'));
                                         }
                                     }
