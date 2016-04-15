@@ -36,7 +36,7 @@ public class ResourceNameNormaliser {
 				
 		// Updated by gregoan
 		//if (resourceType == DESTINATION_RESOURCE_TYPE) {
-		if (resourceType == DESTINATION_RESOURCE_TYPE || resourceType == JMSSVR_RESOURCE_TYPE) {
+		if (resourceType == DESTINATION_RESOURCE_TYPE || resourceType == JMSSVR_RESOURCE_TYPE || resourceType == EJB_RESOURCE_TYPE) {
 			
 			int startPos = resourceName.indexOf(DEST_MODULE_PHYSICAL_SEPERATOR);
 			

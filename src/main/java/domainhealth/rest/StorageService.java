@@ -1,8 +1,40 @@
 package domainhealth.rest;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.PostConstruct;
+import javax.management.ObjectName;
+import javax.servlet.ServletContext;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import domainhealth.core.env.AppLog;
 import domainhealth.core.env.AppProperties;
 import domainhealth.core.jmx.DomainRuntimeServiceMBeanConnection;
+import domainhealth.core.jmx.WebLogicMBeanPropConstants;
 import domainhealth.core.statistics.MonitorProperties;
 import domainhealth.core.statistics.ResourceNameNormaliser;
 import domainhealth.core.statistics.StatisticsStorage;
@@ -10,23 +42,6 @@ import domainhealth.core.util.BlacklistUtil;
 import domainhealth.frontend.data.DateAmountDataItem;
 import domainhealth.frontend.data.DateAmountDataSet;
 import domainhealth.frontend.data.Statistics;
-import org.joda.time.DateTime;
-import org.joda.time.Interval;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
-import javax.annotation.PostConstruct;
-import javax.management.ObjectName;
-import javax.servlet.ServletContext;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-
-import domainhealth.core.jmx.WebLogicMBeanPropConstants;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.*;
 
 /**
  * Created by chiovcr on 02/12/2014.
@@ -73,8 +88,14 @@ public class StorageService {
             DateTime end = fmt.parseDateTime(endTime);
             Interval interval = new Interval(start, end);
 
-            //no resources for core...just properties
+            // -----------------------------------------------------
+            // No resources (children) for core and dashboard ...
+            // Just properties so it means there is no need to add these lines
             //resourcesMap.put(MonitorProperties.CORE_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.CORE_RESOURCE_TYPE));
+            //resourcesMap.put(MonitorProperties.HOSTMACHINE_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.HOSTMACHINE_RESOURCE_TYPE));
+			//resourcesMap.put(MonitorProperties.JVM_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.JVM_RESOURCE_TYPE));
+            // -----------------------------------------------------
+            
             resourcesMap.put(MonitorProperties.DATASOURCE_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.DATASOURCE_RESOURCE_TYPE));
             resourcesMap.put(MonitorProperties.DESTINATION_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.DESTINATION_RESOURCE_TYPE));
             resourcesMap.put(MonitorProperties.SAF_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.SAF_RESOURCE_TYPE));
@@ -82,10 +103,6 @@ public class StorageService {
             resourcesMap.put(MonitorProperties.WORKMGR_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.WORKMGR_RESOURCE_TYPE));
             resourcesMap.put(MonitorProperties.WEBAPP_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.WEBAPP_RESOURCE_TYPE));
             resourcesMap.put(MonitorProperties.SVRCHNL_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.SVRCHNL_RESOURCE_TYPE));
-            
-            // Add the extensions of DH
-			//resourcesMap.put(MonitorProperties.HOSTMACHINE_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.HOSTMACHINE_RESOURCE_TYPE));
-			//resourcesMap.put(MonitorProperties.JVM_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.JVM_RESOURCE_TYPE));
             
 			// Add the dashboard
 			resourcesMap.put(MonitorProperties.JMS_DASHBOARD_RESOURCE_TYPE, getResourceNamesForJmsDashboard());
@@ -184,10 +201,9 @@ public class StorageService {
             scope.add("EFP7-OSB_TESTosb11");
             scope.add("EFP7-OSB_TESTosb12");
             scope.add("EFP7-OSB_TESTserver");
-               */
+            */
 
             // --------------------------------------------------------------------------
-            
             Map<String, DateAmountDataSet> dataMap = null;
 
             for (String server : scope) {
@@ -217,7 +233,6 @@ public class StorageService {
                         coreProps.add(WebLogicMBeanPropConstants.TRANSACTION_ROLLEDBACK_COUNT);
                         coreProps.add(WebLogicMBeanPropConstants.TRANSACTION_HEURISTICS_TOTAL_COUNT);
                         coreProps.add(WebLogicMBeanPropConstants.TRANSACTION_ABANDONED_TOTAL_COUNT);
-
                 		
                         resource = null;
                         break;
@@ -443,10 +458,11 @@ public class StorageService {
 			    													@PathParam("resourceType") String resourceType,
 			    													@PathParam("resource") String resource) {
         try {
+        	
         	DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();;
             // --------------------------------------------------------------------------
-            // for now we should get all jmsservers/safagent and skip the scope cause it just does a loop now and not used as param
-                        
+            // For now we should get all jmsservers/safagent and skip the scope cause it just does a loop now and not used as param
+                    
             //for (String server : scope) {        	
                 switch (resourceType) {
                 
@@ -485,7 +501,7 @@ public class StorageService {
                 for (ObjectName jmsServer : jmsServers)
                 {
                     String currentElement = conn.getTextAttr(jmsServer, WebLogicMBeanPropConstants.NAME);
-                    
+                                        
                     // Check if not blacklisted
                     //String blackListString = (String)application.getAttribute(AppProperties.PropKey.COMPONENT_BLACKLIST_PROP.toString());
                     //List<String> componentBlacklist = new BlacklistUtil(blackListString).getComponentBlacklist();
@@ -497,6 +513,7 @@ public class StorageService {
 
                     while (iteratorBlacklist.hasNext()) {
                         String element = iteratorBlacklist.next();
+                                                
                         if (currentElement.contains(element)) {
                             blacklist = true;
                             break;
@@ -519,7 +536,7 @@ public class StorageService {
      * @return
      */
     private Set<String> getResourceNamesForSafDashboard()  {
-    	
+    	    	
         Set<String> result = new LinkedHashSet<>();
         try {
             // Is not expensive to instantiate cause there is a local cache.
@@ -534,7 +551,7 @@ public class StorageService {
                 for (ObjectName safAgent : safAgents)
                 {
                     String currentElement = conn.getTextAttr(safAgent, WebLogicMBeanPropConstants.NAME);
-                                            
+                                                                
                     // Check if not blacklisted
                     //String blackListString = (String)application.getAttribute(AppProperties.PropKey.COMPONENT_BLACKLIST_PROP.toString());
                     //List<String> componentBlacklist = new BlacklistUtil(blackListString).getComponentBlacklist();
@@ -546,15 +563,16 @@ public class StorageService {
 
                     while (iteratorBlacklist.hasNext()) {
                         String element = iteratorBlacklist.next();
+                                                
                         if (currentElement.contains(element)) {
                             blacklist = true;
                             break;
                         }
                     }
-                        
+                    
                     if (!blacklist) {
                     	result.add(currentElement);
-                    }                     
+                    }
                 }
             }
         } catch(Exception ex){
@@ -665,7 +683,6 @@ public class StorageService {
 		        	String currentJmsServerName = conn.getTextAttr(jmsServer, WebLogicMBeanPropConstants.NAME);
 		        	if(currentJmsServerName.equals(jmsServerName)){
 		        		
-
 		        		for (ObjectName destination : conn.getChildren(jmsServer, WebLogicMBeanPropConstants.DESTINATIONS)) {
 
                             // This map should be inside the loop otherwise will contain only the latest values
@@ -720,7 +737,6 @@ public class StorageService {
 		        for (ObjectName safAgent : safAgents)
 		        {	
 		        	String currentSafAgentName = conn.getTextAttr(safAgent, WebLogicMBeanPropConstants.NAME);
-			        		        	
 		        	if(currentSafAgentName.equals(safAgentName)){
 
 		        		for (ObjectName remoteEndPoint : conn.getChildren(safAgent, WebLogicMBeanPropConstants.REMOTE_END_POINTS)) {

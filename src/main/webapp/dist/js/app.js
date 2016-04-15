@@ -482,7 +482,8 @@ $(function () {
     }
 
     function addListener(res, resname, respath) {
-        $.each(res.list, function (key, value) {
+    	
+    	$.each(res.list, function (key, value) {
             $("#" + res.uniquename + value).click(function () {
                 getAndDisplayCharts(resname, respath, value);
             });
@@ -491,6 +492,7 @@ $(function () {
 
 
     function addDashboardListener(res, resname, respath) {
+
         $.each(res.list, function (key, value) {
             $("#" + res.uniquename + value).click(function () {
                 getAndDisplayDashboard(resname, respath, value);
@@ -590,7 +592,6 @@ $(function () {
             var resources = response;
             var res = new Object();
 
-
             res.uniquename = "datasource"
             res.list = response[res.uniquename];
             $("#datasource").html(template(res));
@@ -613,12 +614,12 @@ $(function () {
             $("#webapp").html(template(res));
             addListener(res, "Web Applications", "webapp");
 
-
+            
             res.uniquename = "ejb"
             res.list = response[res.uniquename];
             $("#ejb").html(template(res));
             addListener(res, "EJBs", "ejb");
-
+            
 
             res.uniquename = "svrchnl"
             res.list = response[res.uniquename];

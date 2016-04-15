@@ -32,7 +32,6 @@ import javax.naming.NamingException;
 import static domainhealth.core.jmx.WebLogicMBeanPropConstants.*;
 import domainhealth.core.env.AppLog;
 
-
 /**
  * Encapsulates a WebLogic remote JMX connector and its associated JMX MBean 
  * Server connection to a WebLogic Administration Server's domain runtime 
@@ -477,8 +476,11 @@ public class WebLogicMBeanConnection {
 	}
 	
 	// Members
-	private final JMXConnector jmxConnector;
-	private final MBeanServerConnection conn;
+	//private final JMXConnector jmxConnector;
+	//private final MBeanServerConnection conn;
+	protected final JMXConnector jmxConnector;
+	protected final MBeanServerConnection conn;
+	
 	private final String connectionDescription;
 		
 	// Constants

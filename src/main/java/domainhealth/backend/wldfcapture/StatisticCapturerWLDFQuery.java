@@ -14,6 +14,65 @@
 //POSSIBILITY OF SUCH DAMAGE.
 package domainhealth.backend.wldfcapture;
 
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.EJB_POOL_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.EJB_TRANSACTION_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.HEAP_FREE_CURRENT;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.HEAP_FREE_PERCENT;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.HEAP_SIZE_CURRENT;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.HOST_MACHINE_MBEAN;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.JAVA_JVM_MBEAN;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.JDBC_DATASOURCE_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.JMS_DESTINATION_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.JROCKIT_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.JTA_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.JVM_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.SAF_AGENT_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.SERVER_CHANNEL_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.SERVER_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.THREAD_POOL_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.WEBAPP_COMPONENT_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.WORK_MANAGER_RUNTIME;
+import static domainhealth.core.statistics.MonitorProperties.CORE_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.CORE_RSC_DEFAULT_NAME;
+import static domainhealth.core.statistics.MonitorProperties.DATASOURCE_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.DESTINATION_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.EJB_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.EJB_POOL_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.EJB_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.EJB_TRANSACTION_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.HOSTMACHINE_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.HOST_MACHINE_STATS_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.JAVA_JVM_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.JDBC_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.JMS_DESTINATION_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.JTA_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.JVM_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.JVM_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.RUNTIME_MBEAN_TYPE_TEMPLATE;
+import static domainhealth.core.statistics.MonitorProperties.SAF_AGENT_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.SAF_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.SERVER_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.SVRCHNL_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.SVR_CHANNEL_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.THREADPOOL_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.WEBAPP_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.WEBAPP_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.WKMGR_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.WORKMGR_RESOURCE_TYPE;
+import static domainhealth.core.statistics.StatisticsStorage.SEPARATOR;
+import static domainhealth.core.util.DateUtil.DATETIME_PARAM_FORMAT;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.management.ObjectName;
+
 import domainhealth.backend.retriever.DataRetrievalException;
 import domainhealth.backend.retriever.StatisticCapturer;
 import domainhealth.backend.wldfcapture.data.DataRecordsCollection;
@@ -25,18 +84,6 @@ import domainhealth.core.jmx.WebLogicMBeanPropConstants;
 import domainhealth.core.statistics.ResourceNameNormaliser;
 import domainhealth.core.statistics.StatisticsStorage;
 import domainhealth.frontend.data.ServerState;
-
-import javax.management.ObjectName;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.*;
-import static domainhealth.core.statistics.MonitorProperties.*;
-import static domainhealth.core.statistics.StatisticsStorage.SEPARATOR;
-import static domainhealth.core.util.DateUtil.DATETIME_PARAM_FORMAT;
 
 /**
  * Enables a specific WebLogic server's Core, JDBC and JMS related statistics
@@ -301,7 +348,7 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
             while (objectNames.hasNext()) {
                 String objectName = objectNames.next();
                 String normalisedName = ResourceNameNormaliser.normalise(resourceType, objectName);
-
+                
                 if (!uniquelyNamedRecords.containsKey(normalisedName)) {
                     uniquelyNamedRecords.put(normalisedName, mbeanTypeRecord.getInstanceDataRecord(objectName));
                 }

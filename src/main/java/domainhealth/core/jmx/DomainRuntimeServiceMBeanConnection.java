@@ -14,10 +14,18 @@
 //POSSIBILITY OF SUCH DAMAGE.
 package domainhealth.core.jmx;
 
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.*;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.DOMAIN_CONFIGURATION;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.DOMAIN_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.SERVER_RUNTIMES;
 
+import java.util.Set;
+
+import javax.management.MBeanInfo;
+import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
+import javax.management.ObjectInstance;
 import javax.management.ObjectName;
+import javax.management.remote.JMXConnector;
 
 /**
  * Creates an WebLogic JMX Connection to WebLogic's Domain Runtime Service 
@@ -108,6 +116,97 @@ public class DomainRuntimeServiceMBeanConnection extends WebLogicMBeanConnection
 			throw new WebLogicMBeanException(e.toString(), e);
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// ------------------------------------------------------------------------------------
+	/**
+	 * 
+	 * @param objectName
+	 * @return
+	 */
+	public Set<ObjectInstance> getElementByQueryMBeans(String objectName) throws WebLogicMBeanException {
+		try {
+			Set<ObjectInstance> elements = getConn().queryMBeans(new ObjectName(objectName), null);
+			return elements;
+		} catch (Exception e) {
+			throw new WebLogicMBeanException(e.toString(), e);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param objectName
+	 * @return
+	 */
+	public Set<ObjectName> getElementByQueryNames(String objectName) throws WebLogicMBeanException {
+		try {
+			Set<ObjectName> elements = getConn().queryNames(new ObjectName(objectName), null);
+			return elements;
+		} catch (Exception e) {
+			throw new WebLogicMBeanException(e.toString(), e);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param objectName
+	 * @return
+	 */
+	public MBeanInfo getMBeanInfo(String objectName) throws WebLogicMBeanException {
+		try {
+			return getConn().getMBeanInfo(new ObjectName(objectName));
+		} catch (Exception e) {
+			throw new WebLogicMBeanException(e.toString(), e);
+		}
+	}
+	
+	/**
+	 * 
+	 * @return
+	 * @throws WebLogicMBeanException
+	 */
+	public JMXConnector getJMXConnector() {
+		return jmxConnector;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 * @throws WebLogicMBeanException
+	 */
+	public MBeanServerConnection getMBeanServerConnection() {
+		return getConn();
+	}
+	// ------------------------------------------------------------------------------------
+	
+	
+	
+	
+	
+	
+	
+	
 
 	// Constants
 	private static final String DOMAIN_RUNTIME_SERVICE_NAME = "weblogic.management.mbeanservers.domainruntime";

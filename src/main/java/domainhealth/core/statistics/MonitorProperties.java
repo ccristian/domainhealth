@@ -312,6 +312,20 @@ public class MonitorProperties {
 	public final static String RESUME_RECEIVING = "resumeReceiving";
 	// -----------------------------------------------------------------
 	
+	// -----------------------------------------------------------------
+	// OSB resources
+	// -------------
+	public final static String PROXY_SERVICE = "ProxyService";
+	public final static String BUSINESS_SERVICE = "BusinessService";
+	// -----------------------------------------------------------------
+	
+	// -----------------------------------------------------------------
+	// SOA resources
+	// -------------
+	
+	// -----------------------------------------------------------------
+	
+	
 	/**
 	 * 'weblogic.kernel.Default' Default Work Manager name
 	 */
