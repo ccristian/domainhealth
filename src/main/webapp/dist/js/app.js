@@ -285,11 +285,8 @@ $(function () {
         }
     });
 
-
     //initial view loading the first page
     getAndDisplayCharts($.AdminLTE.options.currentResname, $.AdminLTE.options.currentPath, $.AdminLTE.options.currentResource);
-
-
 
         //initialize the date range and add a listener when new interval is selected
         $('#daterange-btn').daterangepicker(
@@ -350,13 +347,10 @@ $(function () {
        // console.log(picker.ranges);
     });
 
-
-
     //http://localhost:7001/domainhealth/rest/resources/workmgr?startTime=01-09-2014-00-00&endTime=17-09-2015-0-00
 
     var source = $("#menu-template").html();
     var template = Handlebars.compile(source);
-
 
     var sourceGraph = $("#graph-template").html();
     var templateHighstock = Handlebars.compile(sourceGraph);
@@ -520,10 +514,8 @@ $(function () {
 
     $("#livedataCb").click(function () {
 
-
         //if livedata is selected start interval
         if ($('#livedataCb').is(':checked')) {
-
 
             console.log("start live data ...");
             $.AdminLTE.options.interval = setInterval(function () {
@@ -602,25 +594,21 @@ $(function () {
             $("#destination").html(template(res));
             addListener(res, "JMS", "destination");
 
-
             res.uniquename = "saf"
             res.list = response[res.uniquename];
             $("#saf").html(template(res));
             addListener(res, "Store and Forward", "saf");
 
-
             res.uniquename = "webapp"
             res.list = response[res.uniquename];
             $("#webapp").html(template(res));
             addListener(res, "Web Applications", "webapp");
-
             
             res.uniquename = "ejb"
             res.list = response[res.uniquename];
             $("#ejb").html(template(res));
             addListener(res, "EJBs", "ejb");
             
-
             res.uniquename = "svrchnl"
             res.list = response[res.uniquename];
             $("#svrchnl").html(template(res));
@@ -630,7 +618,6 @@ $(function () {
             res.list = response[res.uniquename];
             $("#jmsdashboard").html(template(res));
             addDashboardListener(res, "JMS Dashboard", "jmsdashboard");
-
 
             res.uniquename = "safdashboard"
             res.list = response[res.uniquename];
