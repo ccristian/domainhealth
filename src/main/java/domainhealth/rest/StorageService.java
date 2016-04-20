@@ -96,6 +96,7 @@ public class StorageService {
 			//resourcesMap.put(MonitorProperties.JVM_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.JVM_RESOURCE_TYPE));
             // -----------------------------------------------------
             
+            // -----------------------------------------------------
             resourcesMap.put(MonitorProperties.DATASOURCE_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.DATASOURCE_RESOURCE_TYPE));
             resourcesMap.put(MonitorProperties.DESTINATION_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.DESTINATION_RESOURCE_TYPE));
             resourcesMap.put(MonitorProperties.SAF_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.SAF_RESOURCE_TYPE));
@@ -103,10 +104,28 @@ public class StorageService {
             resourcesMap.put(MonitorProperties.WORKMGR_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.WORKMGR_RESOURCE_TYPE));
             resourcesMap.put(MonitorProperties.WEBAPP_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.WEBAPP_RESOURCE_TYPE));
             resourcesMap.put(MonitorProperties.SVRCHNL_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.SVRCHNL_RESOURCE_TYPE));
+            // -----------------------------------------------------
             
-			// Add the dashboard
+            // -----------------------------------------------------
+            // Add the OSB elements
+            //@TODO
+            //resourcesMap.put(MonitorProperties.PROXY_SERVICE_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.PROXY_SERVICE_RESOURCE_TYPE));
+            //resourcesMap.put(MonitorProperties.BUSINESS_SERVICE_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.BUSINESS_SERVICE_RESOURCE_TYPE));
+            
+            //resourcesMap.put(MonitorProperties.OSB_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.OSB_RESOURCE_TYPE));
+            // -----------------------------------------------------
+            
+            // -----------------------------------------------------
+            // Add the SOA-BPM elements
+            //@TODO
+            //resourcesMap.put(MonitorProperties.SOA_BPM_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.SOA_BPM_RESOURCE_TYPE));
+            // -----------------------------------------------------
+            
+            // -----------------------------------------------------
+			// Add the dashboards
 			resourcesMap.put(MonitorProperties.JMS_DASHBOARD_RESOURCE_TYPE, getResourceNamesForJmsDashboard());
 			resourcesMap.put(MonitorProperties.SAF_DASHBOARD_RESOURCE_TYPE, getResourceNamesForSafDashboard());
+			// -----------------------------------------------------
 			
         } catch (IOException ex) {
             AppLog.getLogger().error("Error while getting resources", ex);

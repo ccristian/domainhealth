@@ -70,7 +70,9 @@ public abstract class StatisticCapturer {
 	 * @throws DataRetrievalException Indicates problem occurred in trying to obtain and persist the server's statistics
 	 */
 	public final void captureAndLogServerStats() throws DataRetrievalException, IOException {
+		
 		AppLog.getLogger().debug(getClass() + " initiated to collect stats for server:" + serverName);
+		
 		logCoreStats();
 		logDataSourcesStats();
 		logDestinationsStats();
@@ -82,6 +84,12 @@ public abstract class StatisticCapturer {
 		// Added by gregoan
 		logJvmStats();
 		logExtendedStats();
+		
+		// Added for OSB collecting
+		logOsbStats();
+		
+		// Added for SOA-BPM collecting
+		logSoaBpmStats();
 	}
 
 	/**
@@ -143,6 +151,20 @@ public abstract class StatisticCapturer {
 	 * @throws DataRetrievalException Indicates problem occurred in trying to obtain and persist the server's statistics
 	 */
 	protected abstract void logJvmStats() throws DataRetrievalException;
+	
+	/**
+	 * Abstract method for capturing and persisting WLOsb optional mbean statistics.
+	 * 
+	 * @throws DataRetrievalException Indicates problem occurred in trying to obtain and persist the server's statistics
+	 */
+	protected abstract void logOsbStats() throws DataRetrievalException;
+	
+	/**
+	 * Abstract method for capturing and persisting WLSoaBpm optional mbean statistics.
+	 * 
+	 * @throws DataRetrievalException Indicates problem occurred in trying to obtain and persist the server's statistics
+	 */
+	protected abstract void logSoaBpmStats() throws DataRetrievalException;
 
 	/**
 	 * Abstract method for capturing and persisting other types of server 
@@ -159,6 +181,7 @@ public abstract class StatisticCapturer {
 	 * @return The CVS field name header
 	 */
 	protected String getCoreStatsHeaderLine() {
+		
 		StringBuilder headerLine = new StringBuilder(DEFAULT_HEADER_LINE_LEN);
 		headerLine.append(DATE_TIME + SEPARATOR);	
 

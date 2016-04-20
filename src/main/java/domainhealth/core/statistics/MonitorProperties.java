@@ -186,13 +186,27 @@ public class MonitorProperties {
 	 */
 	// Added by gregoan
 	public final static String SAF_DASHBOARD_RESOURCE_TYPE = "safdashboard";
-
+	
+	// -----------------------------------------------------------------
+	// OSB resources
+	// -------------
+	public final static String PROXY_SERVICE_RESOURCE_TYPE = "proxyservice";
+	public final static String BUSINESS_SERVICE_RESOURCE_TYPE = "businessservice";
+	//public final static String OSB_RESOURCE_TYPE = "osbsservice";
+	// -----------------------------------------------------------------
+	
+	// -----------------------------------------------------------------
+	// SOA resources
+	// -------------
+	
+	// -----------------------------------------------------------------
+	
 	/**
 	 * List of names or allowable resource types (eg. core, datasource)
 	 */
 	// Updated by gregoan
 	//public final static List<String> LEGAL_RESOURCE_TYPES = Arrays.asList(CORE_RESOURCE_TYPE, DATASOURCE_RESOURCE_TYPE, DESTINATION_RESOURCE_TYPE, SAF_RESOURCE_TYPE, WEBAPP_RESOURCE_TYPE, EJB_RESOURCE_TYPE, WORKMGR_RESOURCE_TYPE, SVRCHNL_RESOURCE_TYPE, HOSTMACHINE_RESOURCE_TYPE);
-	public final static List<String> LEGAL_RESOURCE_TYPES = Arrays.asList(CORE_RESOURCE_TYPE, DATASOURCE_RESOURCE_TYPE, DESTINATION_RESOURCE_TYPE, SAF_RESOURCE_TYPE, WEBAPP_RESOURCE_TYPE, EJB_RESOURCE_TYPE, WORKMGR_RESOURCE_TYPE, SVRCHNL_RESOURCE_TYPE, HOSTMACHINE_RESOURCE_TYPE, JMSSVR_RESOURCE_TYPE, SAFAGENT_RESOURCE_TYPE, JVM_RESOURCE_TYPE, JMS_DASHBOARD_RESOURCE_TYPE, SAF_DASHBOARD_RESOURCE_TYPE);
+	public final static List<String> LEGAL_RESOURCE_TYPES = Arrays.asList(CORE_RESOURCE_TYPE, DATASOURCE_RESOURCE_TYPE, DESTINATION_RESOURCE_TYPE, SAF_RESOURCE_TYPE, WEBAPP_RESOURCE_TYPE, EJB_RESOURCE_TYPE, WORKMGR_RESOURCE_TYPE, SVRCHNL_RESOURCE_TYPE, HOSTMACHINE_RESOURCE_TYPE, JMSSVR_RESOURCE_TYPE, SAFAGENT_RESOURCE_TYPE, JVM_RESOURCE_TYPE, JMS_DASHBOARD_RESOURCE_TYPE, SAF_DASHBOARD_RESOURCE_TYPE, PROXY_SERVICE_RESOURCE_TYPE, BUSINESS_SERVICE_RESOURCE_TYPE);
 
 	/**
 	 * List of Server MBean Attributes to be monitored
@@ -310,19 +324,6 @@ public class MonitorProperties {
 	public final static String RESUME_FORWARDING = "resumeForwarding";
 	public final static String PAUSE_RECEIVING = "pauseReceiving";
 	public final static String RESUME_RECEIVING = "resumeReceiving";
-	// -----------------------------------------------------------------
-	
-	// -----------------------------------------------------------------
-	// OSB resources
-	// -------------
-	public final static String PROXY_SERVICE = "ProxyService";
-	public final static String BUSINESS_SERVICE = "BusinessService";
-	// -----------------------------------------------------------------
-	
-	// -----------------------------------------------------------------
-	// SOA resources
-	// -------------
-	
 	// -----------------------------------------------------------------
 	
 	

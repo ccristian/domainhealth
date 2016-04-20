@@ -259,6 +259,26 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
     protected void logJvmStats() throws DataRetrievalException {
         logResourceStats(JVM_RESOURCE_TYPE, JAVA_JVM_MBEAN, JAVA_JVM_MBEAN_MONITOR_ATTR_LIST, javaJvmStatsQuery);
     }
+    
+    /**
+     * Implements the abstract method to log WLOsbStats optional mbean stats to a CSV file.
+     *
+     * @throws DataRetrievalException Indicates problem occurred in trying to obtain and persist the server's statistics
+     */
+    protected void logOsbStats() throws DataRetrievalException {
+        //logResourceStats(JVM_RESOURCE_TYPE, JAVA_JVM_MBEAN, JAVA_JVM_MBEAN_MONITOR_ATTR_LIST, javaJvmStatsQuery);
+//@TODO
+    }
+    
+    /**
+     * Implements the abstract method to log WLSoaBpmStats optional mbean stats to a CSV file.
+     *
+     * @throws DataRetrievalException Indicates problem occurred in trying to obtain and persist the server's statistics
+     */
+    protected void logSoaBpmStats() throws DataRetrievalException {
+        //logResourceStats(JVM_RESOURCE_TYPE, JAVA_JVM_MBEAN, JAVA_JVM_MBEAN_MONITOR_ATTR_LIST, javaJvmStatsQuery);
+//@TODO
+    }
 
     /**
      * Implements the abstract method to log extended stats to a CSV file.

@@ -1,1 +1,3 @@
-Empty because not relevant anymore but used by JUnit tests
+<project name="fake" basedir=".">
+  <description>Empty because not relevant anymore but used by JUnit tests</description>
+</project>

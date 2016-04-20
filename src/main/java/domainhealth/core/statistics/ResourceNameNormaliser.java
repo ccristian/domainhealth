@@ -36,8 +36,7 @@ public class ResourceNameNormaliser {
 				
 		// Updated by gregoan
 		//if (resourceType == DESTINATION_RESOURCE_TYPE) {
-		if (resourceType == DESTINATION_RESOURCE_TYPE || resourceType == JMSSVR_RESOURCE_TYPE || resourceType == EJB_RESOURCE_TYPE) {
-			
+		if (resourceType == DESTINATION_RESOURCE_TYPE || resourceType == JMSSVR_RESOURCE_TYPE || resourceType == EJB_RESOURCE_TYPE) {	
 			int startPos = resourceName.indexOf(DEST_MODULE_PHYSICAL_SEPERATOR);
 			
 			if (startPos < 0) {
@@ -71,6 +70,13 @@ public class ResourceNameNormaliser {
 			if (startPos > 0) {
 				normalisedName = resourceName.substring(startPos + WEBAPP_SERVER_NAME_SEPARATOR.length());
 			}
+		// Added by gregoan
+		} else if (resourceType == PROXY_SERVICE_RESOURCE_TYPE || resourceType == BUSINESS_SERVICE_RESOURCE_TYPE) {
+			int startPos = resourceName.lastIndexOf(OSB_MODULE_PHYSICAL_SEPERATOR);
+
+			if (startPos > 0) {
+				normalisedName = resourceName.substring(startPos + 1);
+			}
 		}
 
 		normalisedName = normalisedName.replace(BAD_CHAR_1, GOOD_CHAR);		
@@ -85,6 +91,7 @@ public class ResourceNameNormaliser {
 	}
 
 	// Constants
+	private final static char OSB_MODULE_PHYSICAL_SEPERATOR = '$';
 	private final static char DEST_MODULE_PHYSICAL_SEPERATOR = '@';
 	private final static char DEST_SERVER_MODULE_SEPARATOR = '!';
 	private final static String WEBAPP_SERVER_NAME_SEPARATOR = "_/";

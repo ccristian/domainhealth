@@ -28,6 +28,5 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/OSB_10.3.6"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
