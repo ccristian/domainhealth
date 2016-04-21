@@ -271,8 +271,8 @@ $(function () {
 
     var currentDate = new Date();
     $.AdminLTE.options.endTimeVal = moment(currentDate);
-    //$.AdminLTE.options.startTimeVal = moment(currentDate).subtract(30, 'minutes');
-    $.AdminLTE.options.startTimeVal = moment(currentDate).subtract(6, 'days');
+    $.AdminLTE.options.startTimeVal = moment(currentDate).subtract(30, 'minutes');
+    //$.AdminLTE.options.startTimeVal = moment(currentDate).subtract(6, 'days');
 
     var endTime = $.AdminLTE.options.endTimeVal.format('DD-MM-YYYY-HH-mm');
     var startTime = $.AdminLTE.options.startTimeVal.format('DD-MM-YYYY-HH-mm');
@@ -453,33 +453,42 @@ $(function () {
         });
     }
 
-    //$.getAndDisplayCharts =
-/*
-    function successFunc(resname, respath, value,response) {
-        $.AdminLTE.options.renderedData = response;
-        $.AdminLTE.options.selectedPath = resname + " > " + value;
-        $.AdminLTE.options.currentPath = respath;
-        $.AdminLTE.options.currentResource = value;
-        $.AdminLTE.options.currentResname = resname;
-        $(".content-wrapper").html(templateHighstock($.AdminLTE));
-        dhLocalObj.currentPath = $.AdminLTE.options.currentPath;
-        dhLocalObj.currentResource = $.AdminLTE.options.currentResource;
-        dhLocalObj.currentResname = $.AdminLTE.options.currentResname;
-        localStorage.setItem("dh2storage", JSON.stringify(dhLocalObj));
+
+
+
+
+
+
+    function getAjaxDeferred(resname, respath, value,urll){
+        return function(){
+            // wrap with a deferred
+            var defer = $.Deferred();
+
+            var url = '/domainhealth/rest/stats/' + respath + '/' + value + '?';
+
+            $.ajax({ url: url, method: 'GET',cache: false,
+                data: {startTime: startTime, endTime: endTime,nodata:'false'}}).complete(function(){
+                //$.AdminLTE.options.renderedData = response;
+                $.AdminLTE.options.selectedPath = resname + " > " + value;
+                $.AdminLTE.options.currentPath = respath;
+                $.AdminLTE.options.currentResource = value;
+                $.AdminLTE.options.currentResname = resname;
+                $(".content-wrapper").html(templateHighstock($.AdminLTE));
+                dhLocalObj.currentPath = $.AdminLTE.options.currentPath;
+                dhLocalObj.currentResource = $.AdminLTE.options.currentResource;
+                dhLocalObj.currentResname = $.AdminLTE.options.currentResname;
+                localStorage.setItem("dh2storage", JSON.stringify(dhLocalObj));
+                // resolve when complete always.  Even on failure we
+                // want to keep going with other requests
+                defer.resolve();
+                console.log(urll);
+            });
+            // return a promise so that we can chain properly in the each
+            //console.log("bb");
+            return defer.promise();
+        };
     }
 
-    function failureFunc() {
-        alert("error");
-        console.log( "error!" );
-    }
-
-    $.when(
-        $.ajax( "/main.php" ),
-        $.ajax( "/modules.php" ),
-        $.ajax( "/lists.php" )
-    ).then( successFunc(), failureFunc );
-
-*/
 
     function getAndDisplayCharts(resname, respath, value) {
 
@@ -487,6 +496,23 @@ $(function () {
         var diff = $.AdminLTE.options.endTimeVal.diff($.AdminLTE.options.startTimeVal,'days');
         //data from one day is not split in multiple intervals
         if (diff==0){
+
+
+
+
+
+            var urls = ["/echo/json1/","/echo/json2/","/echo/json3/","/echo/json4/","/echo/json4/",];
+
+// this will trigger the first callback.
+            var base = $.when({});
+            $.each(urls, function(index, url){
+                console.log(index+":"+url);
+                base = base.then(getAjaxDeferred(resname, respath, value,url));
+            });
+
+
+            console.log("END !!!!!");
+            /*
             $.ajax({
                 url: '/domainhealth/rest/stats/' + respath + '/' + value + '?',
                 cache: false,
@@ -508,7 +534,7 @@ $(function () {
                     alert("error");
                 }
             });
-        }else if (diff>=1){
+*/        }else if (diff>=1){
 
 
             console.log(diff);
