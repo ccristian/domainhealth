@@ -127,13 +127,13 @@ return results;
 		list.add("oracle.dms:soainfra_composite_revision=*,name=*,type=soainfra_composite_label,soainfra_domain=*,soainfra_composite=*");
 		
 		// -----------------------------------------------------
-// Not able to get anything for the moment
+		// Reference should exists for those
 		// businessFaults_count, systemFaults_count
 		//list.add("oracle.dms:soainfra_composite_label=*,type=soainfra_component,soainfra_component_type=bpel,soainfra_composite=*,soainfra_composite_revision=*,soainfra_domain=default,name=*");
 		list.add("oracle.dms:soainfra_composite_label=*,type=soainfra_component,soainfra_component_type=bpel,soainfra_composite=*,soainfra_composite_revision=*,soainfra_domain=*,name=*");
 		
 		// -----------------------------------------------------
-		// Instances should be created/running for these
+		// Instances should be created/running for those
 		// successfulInstanceProcessingTime_avg
 		//list.add("oracle.dms:soainfra_composite_label=*,type=soainfra_component,soainfra_component_type=bpmn,soainfra_composite=*,soainfra_composite_revision=*,soainfra_domain=default,name=*");
 		list.add("oracle.dms:soainfra_composite_label=*,type=soainfra_component,soainfra_component_type=bpmn,soainfra_composite=*,soainfra_composite_revision=*,soainfra_domain=*,name=*");
