@@ -6,6 +6,9 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.annotation.PostConstruct;
+import javax.management.MBeanAttributeInfo;
+import javax.management.MBeanInfo;
+import javax.management.MBeanServerConnection;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import javax.servlet.ServletContext;
@@ -20,7 +23,6 @@ import javax.ws.rs.core.SecurityContext;
 
 import domainhealth.core.env.AppLog;
 import domainhealth.core.jmx.DomainRuntimeServiceMBeanConnection;
-import domainhealth.core.jmx.WebLogicMBeanPropConstants;
 
 /**
  */
@@ -83,165 +85,129 @@ return results;
 // -----------------------------------------
 		ArrayList<String> list = new ArrayList<String>();
 		
+/*
+		// Global query
 		list.add("oracle.dms:type=soainfra_bpmn_requests,name=/soainfra/engines/bpmn/requests/system");
 		list.add("oracle.dms:type=soainfra_bpel_requests,name=/soainfra/engines/bpel/requests/system");
 		
-		list.add("oracle.dms:type=*,soainfra_composite_revision=*,soainfra_composite=*,soainfra_domain=default,name=*");
+		// Local query
+		//ObjectName[] serverRuntimes = conn.getAllServerRuntimes();
+		//for (int index = 0; index < serverRuntimes.length; index++){
+	    //    
+	    //    ObjectName serverRuntime = serverRuntimes[index];
+	    //    String wlServerName = conn.getTextAttr(serverRuntime, WebLogicMBeanPropConstants.NAME);
+	    //    
+	    //    list.add("oracle.dms:Location=" + wlServerName + ",type=soainfra_bpmn_requests,name=/soainfra/engines/bpmn/requests/system");
+	    //    list.add("oracle.dms:Location=" + wlServerName + ",type=soainfra_bpel_requests,name=/soainfra/engines/bpel/requests/system");	        
+		//}
 		
-// Nothing is visible - Check if it makes sense or not ...
-//list.add("oracle.dms:type=soainfra_component,soainfra_component_type=bpel,soainfra_composite_label=*,soainfra_composite_revision=*,soainfra_composite=*,soainfra_domain=default,name=*");
+		//list.add("oracle.dms:type=*,soainfra_composite_revision=*,soainfra_composite=*,soainfra_domain=default,name=*");
+		//list.add("oracle.dms:type=*,soainfra_composite_revision=*,soainfra_composite=*,soainfra_domain=*,name=*");
 		
-		ObjectName[] serverRuntimes = conn.getAllServerRuntimes();
-		for (int index = 0; index < serverRuntimes.length; index++){
-	        
-	        ObjectName serverRuntime = serverRuntimes[index];
-	        String wlServerName = conn.getTextAttr(serverRuntime, WebLogicMBeanPropConstants.NAME);
-	        
-	        list.add("oracle.dms:Location=" + wlServerName + ",type=soainfra_bpmn_requests,name=/soainfra/engines/bpmn/requests/system");
-	        list.add("oracle.dms:Location=" + wlServerName + ",type=soainfra_bpel_requests,name=/soainfra/engines/bpel/requests/system");
-		}
-				
-		for(int i = 0; i < list.size(); i++) {
+		list.add("oracle.dms:type=soainfra_message_processing,name=/soainfra/engines/message_processing/bpel");
+		list.add("oracle.dms:type=soainfra_message_processing,name=/soainfra/engines/message_processing/bpmn");
+		list.add("oracle.dms:type=soainfra_message_processing,name=/soainfra/engines/message_processing/decision");
+		
+		// -----------------------------------------------------
+		// Paulo
+		// -----
+		//list.add("oracle.dms:soainfra_composite_revision=*,name=*,type=soainfra_composite_label,soainfra_domain=default,soainfra_composite=*");
+		list.add("oracle.dms:soainfra_composite_revision=*,name=*,type=soainfra_composite_label,soainfra_domain=*,soainfra_composite=*");
+		//list.add("oracle.dms:type=*,soainfra_composite_revision=*,soainfra_composite=*,soainfra_domain=default,name=*");
+		list.add("oracle.dms:type=*,soainfra_composite_revision=*,soainfra_composite=*,soainfra_domain=*,name=*");
+		
+		// isReady
+		list.add("oracle.soa.config:name=soa-infra,j2eeType=CompositeLifecycleConfig,Application=soa-infra");
+		
+		// Mode, State
+		list.add("oracle.soa.config:partition=default,j2eeType=SCAComposite,revision=*,label=*,Application=soa-infra,wsconfigtype=WebServicesConfig,name=*");
+		
+		// Name, Parent, soainfra_composite, soainfra_composite_revision, CompositeState_value
+		//list.add("oracle.dms:soainfra_composite_revision=*,name=*,type=soainfra_composite_label,soainfra_domain=default,soainfra_composite=*");
+		list.add("oracle.dms:soainfra_composite_revision=*,name=*,type=soainfra_composite_label,soainfra_domain=*,soainfra_composite=*");
+		
+		// -----------------------------------------------------
+// Not able to get anything for the moment
+		// businessFaults_count, systemFaults_count
+		//list.add("oracle.dms:soainfra_composite_label=*,type=soainfra_component,soainfra_component_type=bpel,soainfra_composite=*,soainfra_composite_revision=*,soainfra_domain=default,name=*");
+		list.add("oracle.dms:soainfra_composite_label=*,type=soainfra_component,soainfra_component_type=bpel,soainfra_composite=*,soainfra_composite_revision=*,soainfra_domain=*,name=*");
+		
+		// -----------------------------------------------------
+		// Instances should be created/running for these
+		// successfulInstanceProcessingTime_avg
+		//list.add("oracle.dms:soainfra_composite_label=*,type=soainfra_component,soainfra_component_type=bpmn,soainfra_composite=*,soainfra_composite_revision=*,soainfra_domain=default,name=*");
+		list.add("oracle.dms:soainfra_composite_label=*,type=soainfra_component,soainfra_component_type=bpmn,soainfra_composite=*,soainfra_composite_revision=*,soainfra_domain=*,name=*");
+		// -----------------------------------------------------
+		
+		// businessFaults_count, systemFaults_count
+		//list.add("oracle.dms:soainfra_composite_label=*,type=soainfra_component,soainfra_component_type=bpel,soainfra_composite=*,soainfra_composite_revision=*,soainfra_domain=default,name=*");
+		list.add("oracle.dms:soainfra_composite_label=*,type=soainfra_component,soainfra_component_type=bpel,soainfra_composite=*,soainfra_composite_revision=*,soainfra_domain=*,name=*");
+		
+		// processIncomingMessages_avg
+		//list.add("oracle.dms:soainfra_composite_assembly_member_type=SERVICEs,soainfra_composite_label=*,name=*,soainfra_composite_assembly_member=*,soainfra_Ports=PORTs,soainfra_composite_revision=*,soainfra_composite=*,soainfra_domain=default,type=soainfra_Binding");
+		list.add("oracle.dms:soainfra_composite_assembly_member_type=SERVICEs,soainfra_composite_label=*,name=*,soainfra_composite_assembly_member=*,soainfra_Ports=PORTs,soainfra_composite_revision=*,soainfra_composite=*,soainfra_domain=*,type=soainfra_Binding");
+
+		// processOutboundMessages_avg
+		//list.add("oracle.dms:soainfra_composite_assembly_member_type=REFERENCEs,soainfra_composite_label=*,name=*,soainfra_composite_assembly_member=BEPLWebService,soainfra_Ports=PORTs,soainfra_composite_revision=*,soainfra_composite=*,soainfra_domain=default,type=soainfra_Binding");
+		list.add("oracle.dms:soainfra_composite_assembly_member_type=REFERENCEs,soainfra_composite_label=*,name=*,soainfra_composite_assembly_member=BEPLWebService,soainfra_Ports=PORTs,soainfra_composite_revision=*,soainfra_composite=*,soainfra_domain=*,type=soainfra_Binding");
+		
+		// -----------------------------------------------------
+		// Mesh
+		// Async Messages
+		// PostErrors_count, PostEvents_count, Posts_active, Posts_avg, Posts_completed, Posts_maxActive, Posts_maxTime, Posts_minTime, Posts_time
+
+		// Sync Messages
+		// RequestErrors_count, RequestEvents_count, Requests_active, Requests_avg, Requests_completed, Requests_maxActive, Requests_maxTime, Requests_minTime, Requests_time
+		list.add("oracle.dms:type=soainfra_Mesh,name=/soainfra/mesh");
+		// -----------------------------------------------------
+*/
+		// -----------------------------------------------------
+		list.add("...");
+
+		// -----------------------------------------------------
+		// Only to analyze the relevance attribute to monitor/collect
+		// Get a mbeanServer instance
+		MBeanServerConnection mBeanServer = conn.getMBeanServerConnection();
+		for(int indexMBean = 0; indexMBean < list.size(); indexMBean++) {
 			try {
-				String mBeanName = list.get(i).toString();
 				
-//MBeanServerConnection mBeanServer = conn.getMBeanServerConnection();
-//displayAll(mBeanServer,new ObjectName(mBeanName));
-//displayAll(conn, mBeanName); 
+				String mBeanName = list.get(indexMBean).toString();
 				
 				Set<ObjectInstance> mbeans = conn.getElementByQueryMBeans(mBeanName);
-				mbeans = conn.getElementByQueryMBeans(mBeanName);
+				
+				AppLog.getLogger().notice("");
 				AppLog.getLogger().notice("NB of MBeans for [" + mBeanName + "] : " + mbeans.size());
 				
 				Iterator<ObjectInstance> iterator = mbeans.iterator();
 				while (iterator.hasNext()) {
 					
 					ObjectInstance mbean = (ObjectInstance)iterator.next();
+					ObjectName mBeanObjectName = mbean.getObjectName(); 
 					
 					AppLog.getLogger().notice("------------------------------");
-					AppLog.getLogger().notice("MBean: [" + mbean.getObjectName() + "]");
+					AppLog.getLogger().notice("MBean: [" + mBeanObjectName + "]");
 					
-					String element = conn.getTextAttr(mbean.getObjectName(), "Name");
-					AppLog.getLogger().notice("\tName : " + element);
+					MBeanInfo info = mBeanServer.getMBeanInfo(mBeanObjectName);
+					MBeanAttributeInfo[] attrInfos = info.getAttributes();
 					
-					element = conn.getTextAttr(mbean.getObjectName(), "soainfra_composite");
-					AppLog.getLogger().notice("\tCompositeName : " + element);
-					
-					element = conn.getTextAttr(mbean.getObjectName(), "soainfra_composite_revision");
-					AppLog.getLogger().notice("\tCompositeRevision : " + element);
-					
+					for (int indexAttribute = 0; indexAttribute < attrInfos.length; indexAttribute++) {
+						
+						String attrName = attrInfos[indexAttribute].getName();
+						Object attrValue = mBeanServer.getAttribute(mBeanObjectName, attrName);
+						
+						//String attrDescription = attrInfos[indexAttribute].getDescription();
+						//String attrType = attrInfos[indexAttribute].getType();
+						
+						AppLog.getLogger().notice(" Name: [" + attrName + "]");
+						AppLog.getLogger().notice(" Value: [" + attrValue + "]");
+						AppLog.getLogger().notice("");
+					}
 				}
 				
 			} catch(Exception ex) {
 				AppLog.getLogger().notice("Error : " + ex.getMessage());
 			}
 		}
-// -----------------------------------------
-		
-/*
-		//String query = "oracle.dms:type=*,soainfra_composite_revision=*,soainfra_composite=*,soainfra_domain=default,name=*";
-		
-		// BPEL components
-		//String query = "oracle.dms:type=soainfra_component,soainfra_component_type=bpel,soainfra_composite_label=*,soainfra_composite_revision=*,soainfra_composite=*,soainfra_domain=default,name=*";
-		String query = "oracle.dms:type=soainfra_bpel_requests,name=/soainfra/engines/bpel/requests/system";
-		
-		//MBeanServerConnection mBeanServer = conn.getMBeanServerConnection();
-		//ObjectName objectName = new ObjectName(query);
-		//Set<ObjectInstance> mbeans = mBeanServer.queryMBeans(objectName, null);
-		//AppLog.getLogger().notice("NB of MBeans for [" + query + "] : " + mbeans.size());
-		
-		Set<ObjectInstance> mbeans = conn.getElementByQueryMBeans(query);
-		mbeans = conn.getElementByQueryMBeans(query);
-		AppLog.getLogger().notice("NB of MBeans for [" + query + "] : " + mbeans.size());
-		
-		Iterator<ObjectInstance> iterator = mbeans.iterator();
-		while (iterator.hasNext()) {
-			
-			ObjectInstance mbean = (ObjectInstance)iterator.next();
-			
-			AppLog.getLogger().notice("------------------------------");
-			AppLog.getLogger().notice("MBean: [" + mbean.getObjectName() + "]");
-			
-			//MBeanInfo info = mBeanServer.getMBeanInfo(mbean.getObjectName());
-			//MBeanAttributeInfo[] attrInfos = info.getAttributes();
-			//
-			//for (int i = 0; i < attrInfos.length; i++) {
-			//	String attrName = attrInfos[i].getName();
-			//	
-			//	String attrDescription = attrInfos[i].getDescription();
-			//	String attrType = attrInfos[i].getType();
-			//	Object attrValue = mBeanServer.getAttribute(mbean.getObjectName(), attrName);
-			//	AppLog.getLogger().notice("Name: [" + attrName + "] Value: [" + attrValue + "] Description: [" + attrDescription + "] Type: [" + attrType + "]");
-			//}
-*/
-			
-			/*
-			// Is working for BPEL ("oracle.dms:type=soainfra_component,soainfra_component_type=bpel,soainfra_composite_label=*,soainfra_composite_revision=*,soainfra_composite=*,soainfra_domain=default,name=*")
-			String element = (String)mBeanServer.getAttribute(mbean.getObjectName(), "Name");
-			System.out.print(element + "\t");
-			Integer completed = (Integer)mBeanServer.getAttribute(mbean.getObjectName(), "successfulInstanceProcessingTime_completed");
-			System.out.print(completed + "\t");
-			Long minTime = (Long)mBeanServer.getAttribute(mbean.getObjectName(), "successfulInstanceProcessingTime_minTime");
-			System.out.print(minTime + "\t");
-			Double avg = (Double)mBeanServer.getAttribute(mbean.getObjectName(), "successfulInstanceProcessingTime_avg");
-			System.out.print(avg + "\t");
-			Long maxTime = (Long)mBeanServer.getAttribute(mbean.getObjectName(), "successfulInstanceProcessingTime_maxTime");
-			AppLog.getLogger().notice(maxTime);
-			*/
-			
-			/*
-			// Is working for BPEL ("oracle.dms:type=soainfra_component,soainfra_component_type=bpel,soainfra_composite_label=*,soainfra_composite_revision=*,soainfra_composite=*,soainfra_domain=default,name=*")
-			String element = conn.getTextAttr(mbean.getObjectName(), "Name");
-			AppLog.getLogger().notice("\tName : " + element);
-			
-			double completed = conn.getNumberAttr(mbean.getObjectName(), "successfulInstanceProcessingTime_completed");
-			AppLog.getLogger().notice("\tCompleted : " + completed);
-			
-			double minTime = conn.getNumberAttr(mbean.getObjectName(), "successfulInstanceProcessingTime_minTime");
-			AppLog.getLogger().notice("\tMinTime : " + minTime);
-			
-			double avg = conn.getNumberAttr(mbean.getObjectName(), "successfulInstanceProcessingTime_avg");
-			AppLog.getLogger().notice("\tAVG : " + avg);
-			
-			double maxTime = conn.getNumberAttr(mbean.getObjectName(), "successfulInstanceProcessingTime_maxTime");
-			AppLog.getLogger().notice("\tMaxTime : " + maxTime);
-			*/
-			
-/*
-			// Is working for BPEL ("oracle.dms:type=soainfra_bpel_requests,name=/soainfra/engines/bpel/requests/system")
-			String element = conn.getTextAttr(mbean.getObjectName(), "Name");
-			AppLog.getLogger().notice("\tName : " + element);
-			
-			double activeCount = conn.getNumberAttr(mbean.getObjectName(), "active_count");
-			AppLog.getLogger().notice("\tActivecount : " + activeCount);
-			
-			double avgMsgExecTimeVount = conn.getNumberAttr(mbean.getObjectName(), "avgMsgExecTime_count");
-			AppLog.getLogger().notice("\tAvgMsgExecTimeCount : " + avgMsgExecTimeVount);
-		}
-*/
+		// -----------------------------------------------------
     }
-    
-    /**
-     * 
-     * @param conn
-     * @param pattern
-     * @throws IOException
-     * @throws JMException
-     * @throws WebLogicMBeanException 
-     */
-    /*
-    //private static void displayAll(MBeanServerConnection conn, ObjectName pattern) throws IOException, JMException {
-    private static void displayAll(DomainRuntimeServiceMBeanConnection conn, String pattern) throws IOException, JMException, WebLogicMBeanException {
-        
-    	//final JVMMBeanDataDisplay display = new JVMMBeanDataDisplay(conn);
-    	final JVMMBeanDataDisplay display = new JVMMBeanDataDisplay(conn.getMBeanServerConnection());
-        AppLog.getLogger().notice(SEPARATOR);
-        
-        //for (ObjectName mbean : conn.queryNames(pattern, null)) {
-        for (ObjectName mbean : conn.getElementByQueryNames(pattern)) {
-            AppLog.getLogger().notice(display.toString(mbean));
-            AppLog.getLogger().notice(SEPARATOR);
-        }
-    }
-    */
 }

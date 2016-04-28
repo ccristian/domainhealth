@@ -203,16 +203,6 @@ public class RetrieverBackgroundService {
 			long lagMillis = Math.max(System.currentTimeMillis() - startWorkTime - sleepPeriodMillis, 0);
 			sleepPeriodMillis = Math.max(minPollIntervalMillis, newSleepIntervalMillis - lagMillis);
 		}
-
-
-
-		/*
-		TODO adding later some cpu stats (wlhostmachine or ...)
-		OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
-		// What % CPU load this current JVM is taking, from 0.0-1.0
-		System.out.println(osBean.getProcessCpuLoad());
-		// What % load the overall system is at, from 0.0-1.0
-		System.out.println(osBean.getSystemCpuLoad());*/
 	}
 
 	/**
@@ -239,8 +229,8 @@ public class RetrieverBackgroundService {
 			useWLDFHarvester = false;				
 		} else {
 
-AppLog.getLogger().info("RetrieverBackgroundService - wlsVersionNumber is [" + wlsVersionNumber + "]");
-AppLog.getLogger().info("RetrieverBackgroundService - WLS_MIN_VERSION_FOR_USING_WLDF_RELIABLY is [" + WLS_MIN_VERSION_FOR_USING_WLDF_RELIABLY + "]");			
+//AppLog.getLogger().info("RetrieverBackgroundService - wlsVersionNumber is [" + wlsVersionNumber + "]");
+//AppLog.getLogger().info("RetrieverBackgroundService - WLS_MIN_VERSION_FOR_USING_WLDF_RELIABLY is [" + WLS_MIN_VERSION_FOR_USING_WLDF_RELIABLY + "]");			
 				
 			useWLDFHarvester = ProductVersionUtil.isVersion_X_GreaterThanOrEqualTo_Y(wlsVersionNumber, WLS_MIN_VERSION_FOR_USING_WLDF_RELIABLY);
 		}

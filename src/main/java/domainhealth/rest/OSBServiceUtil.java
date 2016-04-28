@@ -1,7 +1,5 @@
 package domainhealth.rest;
 
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.NAME;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
@@ -26,10 +24,11 @@ import com.bea.wli.monitoring.StatisticValue;
 
 import domainhealth.core.env.AppLog;
 import domainhealth.core.jmx.DomainRuntimeServiceMBeanConnection;
+import domainhealth.core.jmx.WebLogicMBeanPropConstants;
 import domainhealth.core.statistics.MonitorProperties;
 import domainhealth.core.statistics.ResourceNameNormaliser;
 
-public class OSBServiceTool {
+public class OSBServiceUtil {
 	
 	private ServiceDomainMBean serviceDomainMBean = null;
 
@@ -104,7 +103,7 @@ if(serviceRefs != null && serviceRefs.length > 0) {
          resourcesMap = serviceDomainMBean.getProxyServiceStatistics(serviceRefs, typeFlag, null);
          
          // Print Statistic
-         saveStatisticsToFile(resourcesMap);
+         printStatistics(resourcesMap);
     }
     catch (IllegalArgumentException iae) {
          AppLog.getLogger().notice("===============================");
@@ -196,7 +195,7 @@ AppLog.getLogger().notice("");
 */
 
 			//-------------------------------------------
-        	String element = config.getKeyProperty(NAME);
+        	String element = config.getKeyProperty(WebLogicMBeanPropConstants.NAME);
         	AppLog.getLogger().notice("Checking if the element [" + element + "] is a ProxyService");
         	
 			// Check if ProxyService
@@ -243,7 +242,7 @@ if(serviceRefs != null && serviceRefs.length > 0) {
          resourcesMap = serviceDomainMBean.getBusinessServiceStatistics(serviceRefs, typeFlag, null);
          
          // Print Statistic
-         saveStatisticsToFile(resourcesMap);
+         printStatistics(resourcesMap);
     }
     catch (IllegalArgumentException iae) {
          AppLog.getLogger().notice("===============================");
@@ -281,7 +280,7 @@ AppLog.getLogger().notice("");
     	    	
         for (ObjectName config : osbConfigs) {
         	
-        	String element = config.getKeyProperty(NAME);
+        	String element = config.getKeyProperty(WebLogicMBeanPropConstants.NAME);
         	AppLog.getLogger().notice("Checking if the the element [" + element + "] is a BusinessService");
         	
 			// Check if BusinessService
@@ -301,7 +300,7 @@ AppLog.getLogger().notice("");
      * @param statsMap
      * @throws Exception
      */
-    private void saveStatisticsToFile(HashMap<Ref, ServiceResourceStatistic> statsMap) throws Exception {
+    private void printStatistics(HashMap<Ref, ServiceResourceStatistic> statsMap) throws Exception {
          
     	if (statsMap == null) {
     		AppLog.getLogger().notice("******************************************************");
