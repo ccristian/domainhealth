@@ -120,7 +120,8 @@ return results;
 		list.add("oracle.soa.config:name=soa-infra,j2eeType=CompositeLifecycleConfig,Application=soa-infra");
 		
 		// Mode, State
-		list.add("oracle.soa.config:partition=default,j2eeType=SCAComposite,revision=*,label=*,Application=soa-infra,wsconfigtype=WebServicesConfig,name=*");
+		//list.add("oracle.soa.config:partition=default,j2eeType=SCAComposite,revision=*,label=*,Application=soa-infra,wsconfigtype=WebServicesConfig,name=*");
+		list.add("oracle.soa.config:partition=*,j2eeType=SCAComposite,revision=*,label=*,Application=soa-infra,wsconfigtype=WebServicesConfig,name=*");
 		
 		// Name, Parent, soainfra_composite, soainfra_composite_revision, CompositeState_value
 		//list.add("oracle.dms:soainfra_composite_revision=*,name=*,type=soainfra_composite_label,soainfra_domain=default,soainfra_composite=*");
