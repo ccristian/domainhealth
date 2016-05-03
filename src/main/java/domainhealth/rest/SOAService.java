@@ -1,7 +1,9 @@
 package domainhealth.rest;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -11,6 +13,7 @@ import javax.management.MBeanInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
+import javax.management.openmbean.CompositeData;
 import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -22,7 +25,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 
 import domainhealth.core.env.AppLog;
+import domainhealth.core.env.AppProperties;
 import domainhealth.core.jmx.DomainRuntimeServiceMBeanConnection;
+import domainhealth.core.jmx.WebLogicMBeanException;
+import domainhealth.core.jmx.WebLogicMBeanPropConstants;
+import domainhealth.core.util.BlacklistUtil;
 
 /**
  */
@@ -116,7 +123,9 @@ return results;
 		//list.add("oracle.dms:type=*,soainfra_composite_revision=*,soainfra_composite=*,soainfra_domain=default,name=*");
 		list.add("oracle.dms:type=*,soainfra_composite_revision=*,soainfra_composite=*,soainfra_domain=*,name=*");
 		
-		// isReady
+		// SOAPlatformStatus -> isReady (key)
+		// Name: [SOAPlatformStatus]>
+		// Value: [javax.management.openmbean.CompositeDataSupport(compositeType=javax.management.openmbean.CompositeType(name=oracle.fabric.management.deployedcomposites.mbean.Status,items=((itemName=info,itemType=javax.management.openmbean.SimpleType(name=java.lang.String)),(itemName=isReady,itemType=javax.management.openmbean.SimpleType(name=java.lang.Boolean)))),contents={info=null, isReady=true})]>
 		list.add("oracle.soa.config:name=soa-infra,j2eeType=CompositeLifecycleConfig,Application=soa-infra");
 		
 		// Mode, State
@@ -163,8 +172,122 @@ return results;
 		// -----------------------------------------------------
 */
 		// -----------------------------------------------------
-		list.add("...");
-
+		//list.add("...");
+		
+		String mBeanName = "oracle.soa.config:name=soa-infra,j2eeType=CompositeLifecycleConfig,Application=soa-infra";
+					
+		// -----------------------------------------------------
+		// Get a mbeanServer instance
+		MBeanServerConnection mBeanServer = conn.getMBeanServerConnection();
+		try {
+//			Set<ObjectInstance> mbeans = conn.getElementByQueryMBeans(mBeanName);
+			Set<ObjectName> mbeansName = conn.getElementByQueryNames(mBeanName);
+			
+			AppLog.getLogger().notice("");
+			AppLog.getLogger().notice("NB of MBeans for [" + mBeanName + "] : " + mbeansName.size());
+			
+			Iterator<ObjectName> iteratorNames = mbeansName.iterator();
+			while (iteratorNames.hasNext()) {
+				
+				ObjectName mbean = (ObjectName)iteratorNames.next();
+				CompositeData compositeData = (CompositeData)mBeanServer.getAttribute(mbean, "SOAPlatformStatus");
+				
+				if(compositeData != null) {
+					
+					/*
+					// Print all the elements
+					Set<String> keys = compositeData.getCompositeType().keySet();
+					Iterator<String> iteratorKeys = keys.iterator();
+					while (iteratorKeys.hasNext()) {
+						String key = iteratorKeys.next();
+						AppLog.getLogger().notice("    Key: [" + key + "]");
+						AppLog.getLogger().notice("    Value: [" + compositeData.get(key) + "]");
+					}
+					*/
+					
+					AppLog.getLogger().notice("(1) isReady [" + compositeData.get("isReady") + "]");
+					AppLog.getLogger().notice("");
+				}
+				
+				// Object representation
+				//Object objectSoaPlatformStatus = conn.getObjectAttr(mbean, "SOAPlatformStatus");
+				//AppLog.getLogger().notice("    SOAPlatformStatus: [" + objectSoaPlatformStatus + "]");
+				
+				// Cast the Object into CompositeData
+				CompositeData cdSoaPlatformStatus = (CompositeData)conn.getObjectAttr(mbean, "SOAPlatformStatus");
+				AppLog.getLogger().notice("    [isReady] is " + cdSoaPlatformStatus.get("isReady"));
+				
+				// ----------------------------------------------
+				// Casting issue
+				// -> javax.management.openmbean.CompositeDataSupport cannot be cast to javax.management.ObjectName
+//				objectSoaPlatformStatus = conn.getChild(mbean, "SOAPlatformStatus");
+//				AppLog.getLogger().notice("(4) SOAPlatformStatus: [" + objectSoaPlatformStatus + "]");
+				
+//				cdSoaPlatformStatus = (CompositeData)conn.getChild(mbean, "SOAPlatformStatus");
+//				AppLog.getLogger().notice("(5) SOAPlatformStatus: [" + cdSoaPlatformStatus + "]");
+				// ----------------------------------------------
+			}
+			// -------------------------------------------------------
+			
+			
+			
+			
+			
+			
+			
+/*
+			Iterator<ObjectInstance> iterator = mbeans.iterator();
+			while (iterator.hasNext()) {
+				
+				ObjectInstance mbean = (ObjectInstance)iterator.next();
+				ObjectName mBeanObjectName = mbean.getObjectName();
+				
+				AppLog.getLogger().notice("------------------------------");
+				AppLog.getLogger().notice("MBean: [" + mBeanObjectName + "]");
+				
+				MBeanInfo info = mBeanServer.getMBeanInfo(mBeanObjectName);
+				MBeanAttributeInfo[] attrInfos = info.getAttributes();
+				
+				AppLog.getLogger().notice("NB of Attributes for [" + mBeanName + "] : " + attrInfos.length);
+				
+				for (int indexAttribute = 0; indexAttribute < attrInfos.length; indexAttribute++) {
+					
+					String attrName = attrInfos[indexAttribute].getName();
+					if(attrName.equals("SOAPlatformStatus")) {
+						
+						CompositeData compositeData = (CompositeData)mBeanServer.getAttribute(mBeanObjectName, attrName);
+						if(compositeData != null) {
+							
+							Set<String> keys = compositeData.getCompositeType().keySet();
+							Iterator<String> iteratorKeys = keys.iterator();
+							while (iteratorKeys.hasNext()) {
+								String key = iteratorKeys.next();
+								AppLog.getLogger().notice("    Key: [" + key + "]");
+								AppLog.getLogger().notice("    Value: [" + compositeData.get(key) + "]");
+							}
+							
+							AppLog.getLogger().notice("");
+						}
+						
+//						Object attrValue = mBeanServer.getAttribute(mBeanObjectName, attrName);
+//						String attrType = attrInfos[indexAttribute].getType();
+//												
+//						AppLog.getLogger().notice("  Name: [" + attrName + "]");
+//						AppLog.getLogger().notice("  Value: [" + attrValue + "]");
+//						AppLog.getLogger().notice("  Type: [" + attrType + "]");
+						AppLog.getLogger().notice("");
+					} else {
+						AppLog.getLogger().notice("-> Skipped the attribute [" + attrName + "] ...");
+					}
+				}
+			}
+*/		
+		} catch(Exception ex) {
+			AppLog.getLogger().notice("Error : " + ex.getMessage());
+		}
+		// -----------------------------------------------------
+		
+/*
 		// -----------------------------------------------------
 		// Only to analyze the relevance attribute to monitor/collect
 		// Get a mbeanServer instance
@@ -210,5 +333,6 @@ return results;
 			}
 		}
 		// -----------------------------------------------------
+*/
     }
 }

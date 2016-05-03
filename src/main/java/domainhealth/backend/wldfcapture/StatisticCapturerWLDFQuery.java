@@ -266,7 +266,7 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
      * @throws DataRetrievalException Indicates problem occurred in trying to obtain and persist the server's statistics
      */
     protected void logOsbStats() throws DataRetrievalException {
-        //logResourceStats(JVM_RESOURCE_TYPE, JAVA_JVM_MBEAN, JAVA_JVM_MBEAN_MONITOR_ATTR_LIST, javaJvmStatsQuery);
+        //logResourceStats(OSB_RESOURCE_TYPE, OSB_MBEAN, OSB_MBEAN_MONITOR_ATTR_LIST, osbStatsQuery);
 //@TODO
     }
     
@@ -276,7 +276,7 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
      * @throws DataRetrievalException Indicates problem occurred in trying to obtain and persist the server's statistics
      */
     protected void logSoaBpmStats() throws DataRetrievalException {
-        //logResourceStats(JVM_RESOURCE_TYPE, JAVA_JVM_MBEAN, JAVA_JVM_MBEAN_MONITOR_ATTR_LIST, javaJvmStatsQuery);
+        //logResourceStats(SOA-BPM_RESOURCE_TYPE, SOA-BPM_MBEAN, SOA-BPM_MBEAN_MONITOR_ATTR_LIST, soaBpmStatsQuery);
 //@TODO
     }
 

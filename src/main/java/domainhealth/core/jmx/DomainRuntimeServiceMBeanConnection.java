@@ -36,6 +36,7 @@ import javax.management.remote.JMXConnector;
  * @see WebLogicMBeanConnection
  */
 public class DomainRuntimeServiceMBeanConnection extends WebLogicMBeanConnection {
+	
 	/**
 	 * Create a new connection to a REMOTE WebLogic server's Domain Runtime
 	 * Service MBean Tree.
@@ -98,9 +99,6 @@ public class DomainRuntimeServiceMBeanConnection extends WebLogicMBeanConnection
 		} catch (Exception e) {
 			throw new WebLogicMBeanException(e.toString(), e);
 		}
-
-
-
 	}
 
 	/**

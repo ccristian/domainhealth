@@ -507,20 +507,20 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 			Date nowDate = new Date();
 			String now = (new SimpleDateFormat(DATETIME_PARAM_FORMAT)).format(nowDate);
 			Properties artifactList = new Properties();
-			String headerLine = constructHeaderLine(JAVA_JVM_MBEAN_MONITOR_ATTR_LIST);			
-			String jvmMBeanName = String.format(JVM_MBEAN_FULLNAME_TEMPLATE, getServerName());
-			ObjectName remoteWLJvmStatsMBean = getConn().getCustomMBean(jvmMBeanName);
+			String headerLine = constructHeaderLine(OSB_MBEAN_MONITOR_ATTR_LIST);			
+			String osbMBeanName = String.format(OSB_MBEAN_FULLNAME_TEMPLATE, getServerName());
+			ObjectName remoteWLOsbStatsMBean = getConn().getCustomMBean(osbMBeanName);
 			
-			if (remoteWLJvmStatsMBean != null) {
-				String name = ResourceNameNormaliser.normalise(JVM_RESOURCE_TYPE, JVM_MBEAN_NAME);
-				String contentLine = constructStatsLine(remoteWLJvmStatsMBean, JAVA_JVM_MBEAN_MONITOR_ATTR_LIST);
-				getCSVStats().appendToResourceStatisticsCSV(new Date(), getServerName(), JVM_RESOURCE_TYPE, name, headerLine, contentLine);
+			if (remoteWLOsbStatsMBean != null) {
+				String name = ResourceNameNormaliser.normalise(OSB_RESOURCE_TYPE, OSB_MBEAN_NAME);
+				String contentLine = constructStatsLine(remoteWLOsbStatsMBean, OSB_MBEAN_MONITOR_ATTR_LIST);
+				getCSVStats().appendToResourceStatisticsCSV(new Date(), getServerName(), OSB_RESOURCE_TYPE, name, headerLine, contentLine);
 				artifactList.put(name, now);
 			} 
 
-			getCSVStats().appendSavedOneDayResourceNameList(nowDate, JVM_RESOURCE_TYPE, artifactList);			
+			getCSVStats().appendSavedOneDayResourceNameList(nowDate, OSB_RESOURCE_TYPE, artifactList);			
 		} catch (Exception e) {
-			throw new DataRetrievalException("Problem logging " + JVM_RESOURCE_TYPE + " resources for server " + getServerName(), e);
+			throw new DataRetrievalException("Problem logging " + OSB_RESOURCE_TYPE + " resources for server " + getServerName(), e);
 		}	
 		*/	
 	}
@@ -539,20 +539,20 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 			Date nowDate = new Date();
 			String now = (new SimpleDateFormat(DATETIME_PARAM_FORMAT)).format(nowDate);
 			Properties artifactList = new Properties();
-			String headerLine = constructHeaderLine(JAVA_JVM_MBEAN_MONITOR_ATTR_LIST);			
-			String jvmMBeanName = String.format(JVM_MBEAN_FULLNAME_TEMPLATE, getServerName());
-			ObjectName remoteWLJvmStatsMBean = getConn().getCustomMBean(jvmMBeanName);
+			String headerLine = constructHeaderLine(SOA-BPM_MBEAN_MONITOR_ATTR_LIST);			
+			String soaBpmMBeanName = String.format(SOA-BPM_MBEAN_FULLNAME_TEMPLATE, getServerName());
+			ObjectName remoteWLSoaBpmStatsMBean = getConn().getCustomMBean(soaBpmMBeanName);
 			
-			if (remoteWLJvmStatsMBean != null) {
-				String name = ResourceNameNormaliser.normalise(JVM_RESOURCE_TYPE, JVM_MBEAN_NAME);
-				String contentLine = constructStatsLine(remoteWLJvmStatsMBean, JAVA_JVM_MBEAN_MONITOR_ATTR_LIST);
-				getCSVStats().appendToResourceStatisticsCSV(new Date(), getServerName(), JVM_RESOURCE_TYPE, name, headerLine, contentLine);
+			if (remoteWLSoaBpmStatsMBean != null) {
+				String name = ResourceNameNormaliser.normalise(SOA-BPM_RESOURCE_TYPE, SOA-BPM_MBEAN_NAME);
+				String contentLine = constructStatsLine(remoteWLSoaBpmStatsMBean, SOA-BPM_MBEAN_MONITOR_ATTR_LIST);
+				getCSVStats().appendToResourceStatisticsCSV(new Date(), getServerName(), SOA-BPM_RESOURCE_TYPE, name, headerLine, contentLine);
 				artifactList.put(name, now);
 			} 
 
-			getCSVStats().appendSavedOneDayResourceNameList(nowDate, JVM_RESOURCE_TYPE, artifactList);			
+			getCSVStats().appendSavedOneDayResourceNameList(nowDate, SOA-BPM_RESOURCE_TYPE, artifactList);			
 		} catch (Exception e) {
-			throw new DataRetrievalException("Problem logging " + JVM_RESOURCE_TYPE + " resources for server " + getServerName(), e);
+			throw new DataRetrievalException("Problem logging " + SOA-BPM_RESOURCE_TYPE + " resources for server " + getServerName(), e);
 		}
 		*/
 	}
