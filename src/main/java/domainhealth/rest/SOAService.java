@@ -177,9 +177,11 @@ return results;
 		String mBeanName = "oracle.soa.config:name=soa-infra,j2eeType=CompositeLifecycleConfig,Application=soa-infra";
 					
 		// -----------------------------------------------------
-		// Get a mbeanServer instance
+		// Get mbeanServer instance
 		MBeanServerConnection mBeanServer = conn.getMBeanServerConnection();
 		try {
+			
+			// ------------------------------------------------------
 //			Set<ObjectInstance> mbeans = conn.getElementByQueryMBeans(mBeanName);
 			Set<ObjectName> mbeansName = conn.getElementByQueryNames(mBeanName);
 			
@@ -190,8 +192,9 @@ return results;
 			while (iteratorNames.hasNext()) {
 				
 				ObjectName mbean = (ObjectName)iteratorNames.next();
-				CompositeData compositeData = (CompositeData)mBeanServer.getAttribute(mbean, "SOAPlatformStatus");
 				
+				// Get information from mbeanServer
+				CompositeData compositeData = (CompositeData)mBeanServer.getAttribute(mbean, "SOAPlatformStatus");
 				if(compositeData != null) {
 					
 					/*
@@ -205,29 +208,35 @@ return results;
 					}
 					*/
 					
-					AppLog.getLogger().notice("(1) isReady [" + compositeData.get("isReady") + "]");
-					AppLog.getLogger().notice("");
+					AppLog.getLogger().notice("    [isReady / MBeanServerConnection] [" + compositeData.get("isReady") + "]");
 				}
 				
+				// ------------------------------------------------------
+				// Get information from CompositeData
+								
 				// Object representation
 				//Object objectSoaPlatformStatus = conn.getObjectAttr(mbean, "SOAPlatformStatus");
 				//AppLog.getLogger().notice("    SOAPlatformStatus: [" + objectSoaPlatformStatus + "]");
 				
 				// Cast the Object into CompositeData
 				CompositeData cdSoaPlatformStatus = (CompositeData)conn.getObjectAttr(mbean, "SOAPlatformStatus");
-				AppLog.getLogger().notice("    [isReady] is " + cdSoaPlatformStatus.get("isReady"));
+				AppLog.getLogger().notice("    [isReady / CompositeData] is " + cdSoaPlatformStatus.get("isReady"));
 				
 				// ----------------------------------------------
 				// Casting issue
 				// -> javax.management.openmbean.CompositeDataSupport cannot be cast to javax.management.ObjectName
-//				objectSoaPlatformStatus = conn.getChild(mbean, "SOAPlatformStatus");
-//				AppLog.getLogger().notice("(4) SOAPlatformStatus: [" + objectSoaPlatformStatus + "]");
-				
-//				cdSoaPlatformStatus = (CompositeData)conn.getChild(mbean, "SOAPlatformStatus");
-//				AppLog.getLogger().notice("(5) SOAPlatformStatus: [" + cdSoaPlatformStatus + "]");
+				//objectSoaPlatformStatus = conn.getChild(mbean, "SOAPlatformStatus");
+				//AppLog.getLogger().notice("SOAPlatformStatus: [" + objectSoaPlatformStatus + "]");
+	
+				//cdSoaPlatformStatus = (CompositeData)conn.getChild(mbean, "SOAPlatformStatus");
+				//AppLog.getLogger().notice("SOAPlatformStatus: [" + cdSoaPlatformStatus + "]");
 				// ----------------------------------------------
+				
+				// -------------------------------------------------------
 			}
 			// -------------------------------------------------------
+			
+				
 			
 			
 			
@@ -281,6 +290,7 @@ return results;
 					}
 				}
 			}
+			// ------------------------------------------------------
 */		
 		} catch(Exception ex) {
 			AppLog.getLogger().notice("Error : " + ex.getMessage());
