@@ -14,12 +14,12 @@
 //POSSIBILITY OF SUCH DAMAGE.
 package domainhealth.core.statistics;
 
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.*;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.*;
 
 /**
  * Map of WebLogic MBean property names and their associated attributes 
@@ -95,17 +95,38 @@ public class MonitorProperties {
 	 */
 	public final static String HOST_MACHINE_MBEAN_FULLNAME_TEMPLATE = "wlhostmachinestats:Location=%s,name=" + HOST_MACHINE_MBEAN_NAME;
 
+	// ------------------------------------------------------
+	// Added by gregoan
 	/**
 	 * 'WLJvmStats' MBean instance name
 	 */
-	// Added by gregoan
 	public final static String JVM_MBEAN_NAME = "WLJvmStats";
 	
 	/**
 	 * 'wljvmstats:Location=%s,name=WLJvmStats' MBean name template
 	 */
-	// Added by gregoan
 	public final static String JVM_MBEAN_FULLNAME_TEMPLATE = "wljvmstats:Location=%s,name=" + JVM_MBEAN_NAME;
+	
+	/**
+	 * 'WLOsbStats' MBean instance name
+	 */
+	public final static String OSB_MBEAN_NAME = "WLOsbStats";
+	
+	/**
+	 * 'wlosbstats:Location=%s,name=WLOsbStats' MBean name template
+	 */
+	public final static String OSB_MBEAN_FULLNAME_TEMPLATE = "wlosbstats:Location=%s,name=" + OSB_MBEAN_NAME;
+	
+	/**
+	 * 'WLSoaBpmStats' MBean instance name
+	 */
+	public final static String SOA_BPM_MBEAN_NAME = "WLSoaBpmStats";
+	
+	/**
+	 * 'wlsoabpmstats:Location=%s,name=WLSoaBpmStats' MBean name template
+	 */
+	public final static String SOA_BPM_MBEAN_FULLNAME_TEMPLATE = "wlsoabpmstats:Location=%s,name=" + SOA_BPM_MBEAN_NAME;
+	// ------------------------------------------------------
 	
 	/**
 	 * Default Name of core resource - empty string ''
@@ -193,6 +214,11 @@ public class MonitorProperties {
 	public final static String PROXY_SERVICE_RESOURCE_TYPE = "proxyservice";
 	public final static String BUSINESS_SERVICE_RESOURCE_TYPE = "businessservice";
 	//public final static String OSB_RESOURCE_TYPE = "osbsservice";
+	
+	public final static String FLOW_COMPONENT = "flowcomponent";
+	public final static String SERVICE = "service";
+	public final static String WEBSERVICE_OPERATION = "webserviceoperation";
+	public final static String URI = "uri";
 	// -----------------------------------------------------------------
 	
 	// -----------------------------------------------------------------
@@ -302,8 +328,117 @@ public class MonitorProperties {
 	// Added by gregoan
 	public final static String[] SAF_DASHBOARD_MBEAN_MONITOR_ATTR_LIST = {NAME, MESSAGES_CURRENT_COUNT, MESSAGES_PENDING_COUNT, MESSAGES_RECEIVED_COUNT, MESSAGES_HIGH_COUNT, FAILED_MESSAGES_TOTAL, DOWNTIME_HIGH, DOWNTIME_TOTAL, UPTIME_HIGH, UPTIME_TOTAL};
 	
+	// ---------------------------------------------------------
 	// Added by gregoan
 	
+// Only for validation/testing purpose
+public final static String[] OSB_MBEAN_MONITOR_ATTR_LIST =  {OSB_COUNT, OSB_MIN, OSB_MAX, OSB_SUM, OSB_AVG};
+
+	
+// -> The metrics could be found only from Proxy/Business and then ResourceType
+// -> An analysis of OSB report should be done to see which attribute are printed !!!!
+	
+	// OSB (INTERVAL)
+	//public final static String[] OSB_INTERVAL_MBEAN_MONITOR_ATTR_LIST =  {OSB_INTERVAL_COUNT, OSB_INTERVAL_MIN, OSB_INTERVAL_MAX, OSB_INTERVAL_SUM, OSB_INTERVAL_AVG};
+
+	// OSB (COUNT)
+	//public final static String[] OSB_COUNT_MBEAN_MONITOR_ATTR_LIST = {OSB_COUNT_COUNT};
+	
+	// OSB (STATUS)
+	//public final static String[] OSB_STATUS_MBEAN_MONITOR_ATTR_LIST = {OSB_INITIAL_STATUS, OSB_CURRENT_STATUS};
+	
+	/*
+	// https://docs.oracle.com/cd/E28280_01/admin.1111/e15867/app_jmx_monitoring.htm
+	
+	----------------
+	BUSINESS_SERVICE
+	----------------
+
+	(1) ResourceType -> SERVICE
+	---------------------------
+	message-count count
+	error-count count
+	failover-count count
+	wss-error count
+	failure-rate count
+	success-rate count
+	sla-severity-warning count
+	sla-severity-major count
+	sla-severity-minor count
+	sla-severity-normal count
+	sla-severity-fatal count
+	sla-severity-critical count
+	sla-severity-all count
+	uri-offline-count count
+	hit-count count
+
+	response-time interval
+	throttling-time interval
+
+	(2) ResourceType -> WEBSERVICE_OPERATION
+	----------------------------------------
+	elapsed-time interval
+	message-count count
+	error-count count
+
+	(3) ResourceType -> URI
+	-----------------------
+	message-count count
+	error-count count
+
+	response-time interval
+
+	status status
+	
+	----------------
+	PROXY SERVICES
+	--------------
+
+	(1) ResourceType -> SERVICE
+	---------------------------
+	message-count count
+	error-count count
+	wss-error count
+	validation-errors count
+	failure-rate count
+	success-rate count
+	sla-severity-warning count
+	sla-severity-major count
+	sla-severity-minor count
+	sla-severity-normal count
+	sla-severity-fatal count
+	sla-severity-critical count
+	sla-severity-all count
+	uri-offline-count count
+	hit-count count
+	pipeline-severity-warning count
+	pipeline-severity-major count
+	pipeline-severity-minor count
+	pipeline-severity-normal count
+	pipeline-severity-fatal count
+	pipeline-severity-critical count
+	pipeline-severity-all count
+
+	response-time interval
+	throttling-time interval
+
+	(2) ResourceType -> WEBSERVICE_OPERATION
+	----------------------------------------
+	elapsed-time interval
+
+	message-count count
+	error-count count
+
+	(3) ResourceType -> FLOW_COMPONENT
+	----------------------------------
+	elapse-time interval
+
+	message-count count
+	error-count count
+	// ---------------------------------------------------------
+	*/
+	// ---------------------------------------------------------
+
 	// -----------------------------------------------------------------
 	// Actions for queues/topics
 	// -------------------------
@@ -326,7 +461,6 @@ public class MonitorProperties {
 	public final static String RESUME_RECEIVING = "resumeReceiving";
 	// -----------------------------------------------------------------
 	
-	
 	/**
 	 * 'weblogic.kernel.Default' Default Work Manager name
 	 */
@@ -335,7 +469,8 @@ public class MonitorProperties {
 	/**
 	 * List of internal webapp & ejb names which should not be monitored
 	 */
-	public final static List<String> XAPPNAME_BLACKLIST = Arrays.asList("domainhealth", "console", "consolehelp", "bea_wls9_async_response", "bea_wls_cluster_internal", "bea_wls_deployment_internal", "bea_wls_internal", "_async", "Mejb", "bea_wls_diagnostics", "bea_wls_management_internal", "bea_wls_management_internal2", "uddi", "uddiexplorer", "wls-wsat");	
+	// Commented by gregoan
+	//public final static List<String> XAPPNAME_BLACKLIST = Arrays.asList("domainhealth", "console", "consolehelp", "bea_wls9_async_response", "bea_wls_cluster_internal", "bea_wls_deployment_internal", "bea_wls_internal", "_async", "Mejb", "bea_wls_diagnostics", "bea_wls_management_internal", "bea_wls_management_internal2", "uddi", "uddiexplorer", "wls-wsat");	
 
 	/**
 	 * "Time" property value units type
@@ -550,6 +685,21 @@ public class MonitorProperties {
 		propList.put(PERM_GEN_USED, new WLProperty(PERM_GEN_USED,"Perm Gen Used", MEGABYTES_UNITS));
 		propList.put(PERM_GEN_COMMITTED, new WLProperty(PERM_GEN_COMMITTED,"Perm Gen Committed", MEGABYTES_UNITS));
 		propList.put(PERM_GEN_MAX, new WLProperty(PERM_GEN_MAX,"Perm Gen Max", MEGABYTES_UNITS));
+		
+/*
+// -> The metrics could be found only from Proxy/Business and then ResourceType
+// -> An analysis of OSB report should be done to see which attribute are printed !!!!
+		
+		// Add the OSB here
+		propList.put(OSB_INTERVAL_COUNT, new WLProperty(OSB_INTERVAL_COUNT,"Interval Count", NUMBER_UNITS));
+		propList.put(OSB_INTERVAL_MIN, new WLProperty(OSB_INTERVAL_MIN,"Interval Mix", NUMBER_UNITS));
+		propList.put(OSB_INTERVAL_MAX, new WLProperty(OSB_INTERVAL_MAX,"Interval Max", NUMBER_UNITS));
+		propList.put(OSB_INTERVAL_SUM, new WLProperty(OSB_INTERVAL_SUM,"Interval Sum", NUMBER_UNITS));
+		propList.put(OSB_INTERVAL_AVG, new WLProperty(OSB_INTERVAL_AVG,"Interval Average", NUMBER_UNITS));
+*/
+		
+// Add the SOA-BPM here
+// ...
 	}
 }
 

@@ -40,6 +40,7 @@ import domainhealth.core.util.DateUtil;
  * statistics in a set of CSV files.
  */
 public abstract class StatisticCapturer {
+	
 	/**
 	 * Base class constructor for statistic retriever logger implementation
 	 * which stores the WebLogic server connection details.
@@ -79,16 +80,12 @@ public abstract class StatisticCapturer {
 		logSafAgentStats();
 		logWebAppStats();
 		logEJBStats();
-		logHostMachineStats();
 		
 		// Added by gregoan
+		logHostMachineStats();
 		logJvmStats();
 		logExtendedStats();
-		
-		// Added for OSB collecting
 		logOsbStats();
-		
-		// Added for SOA-BPM collecting
 		logSoaBpmStats();
 	}
 
@@ -315,12 +312,12 @@ public abstract class StatisticCapturer {
 	 * @throws WebLogicMBeanException Indicates problem accessing the server to retrieve the statistics
 	 */
 	protected ObjectName getDefaultWorkManager() throws WebLogicMBeanException {
+		
 		for (ObjectName wkMgr : getConn().getChildren(getServerRuntime(), WORK_MANAGER_RUNTIMES)) {
 			if (getConn().getTextAttr(wkMgr, NAME).equals(DEFAULT_WKMGR_NAME)) {
 				return wkMgr;
 			}
 		}
-		
 		return null;
 	}
 	

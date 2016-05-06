@@ -1,5 +1,6 @@
 package domainhealth.rest;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -14,20 +15,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 
-/*
-import com.bea.wli.config.Ref;
-import com.bea.wli.monitoring.DomainMonitoringDisabledException;
-import com.bea.wli.monitoring.InvalidServiceRefException;
-import com.bea.wli.monitoring.MonitoringException;
-import com.bea.wli.monitoring.MonitoringNotEnabledException;
-import com.bea.wli.monitoring.ResourceStatistic;
-import com.bea.wli.monitoring.ResourceType;
-import com.bea.wli.monitoring.ServiceDomainMBean;
-import com.bea.wli.monitoring.ServiceResourceStatistic;
-import com.bea.wli.monitoring.StatisticType;
-import com.bea.wli.monitoring.StatisticValue;
-*/
 import domainhealth.core.env.AppLog;
+import domainhealth.core.statistics.MonitorProperties;
 
 /**
  */
@@ -44,8 +33,11 @@ public class OSBService {
      * 
      * @return
      */
-    private boolean isOsbDomain() {
-        return isClass("com.bea.wli.monitoring.ServiceDomainMBean");
+    @GET
+    @Path("isOsbDomain/")
+    @Produces({MediaType.APPLICATION_JSON})
+    public boolean isOsbDomain() {
+        return isClassExist("com.bea.wli.monitoring.ServiceDomainMBean");
     }
     
     /**
@@ -53,7 +45,7 @@ public class OSBService {
      * @param className
      * @return
      */
-    private boolean isClass(String className) {
+    private boolean isClassExist(String className) {
         try  {
             Class.forName(className);
             return true;
@@ -73,29 +65,159 @@ public class OSBService {
      * 
      * @param userAgent
      * @param scope
-     * @param jmsServer
-     * @param queue
-     * @param action
+     * @param osbResourceType
      * @return
      */
     @GET
-    @Path("osbDetail/{type}/")
+    @Path("details/{osbResourceType}/")
     @Produces({MediaType.APPLICATION_JSON})
-    public Set<String> osbDetail(	@HeaderParam("user-agent") String userAgent, 
-									@QueryParam("scope") Set<String> scope,
-									@PathParam("type") String type) {
+    public Set<String> getDetailsForOsbResourceType(	@HeaderParam("user-agent") String userAgent, 
+														@QueryParam("scope") Set<String> scope,
+														@PathParam("osbResourceType") String osbResourceType) {
+    	
+    	// Call the utility class because JERSEY instantiates all the WS at the first call (even if the call if not matching the OSB WS)
+		// If the WL domain is not an OSB, then the loading of this class will fail due to import (not found)
+		// Introspection could be used (string will be managed) but it's also OK (and much more readable) if the real OSB implementation is managed from another class.
+		// This utility class will be instantiated/loaded only and only if the WL domain is a well an OSB domain (see Class.forName() call)
     	
     	if(!isOsbDomain()) {
     		AppLog.getLogger().error("This WL domain is not an OSB WL domain ...");
     		return null;
     	} else {
-    		AppLog.getLogger().notice("This WL domain is well an OSB WL domain");
+    		//AppLog.getLogger().notice("This WL domain is well an OSB WL domain");
     		
-    		// Call the utility class because JERSEY instantiates all the WS at the first call (even if the call if not matching the OSB WS)
-    		// If the WL domain is not an OSB, then the loading of this class will fail due to import (not found)
-    		// Introspection could be used (string will be managed) but it's alsi OK (and much more readable) if the real OSB implementation is managed from another class.
-    		// This utility class will be instantiated/loaded only and only if the WL domain is a well an OSB domain (see Class.forName() call)
-    		return new OSBServiceUtil().osbDetail(type);
+    		// osbResourceType is MonitorProperties.PROXY_SERVICE_RESOURCE_TYPE or MonitorProperties.BUSINESS_SERVICE_RESOURCE_TYPE
+    		return new OSBServiceUtil().getDetailsForOsbType(osbResourceType);
     	}
+    }
+    
+    /**
+     * 
+     * @param userAgent
+     * @param scope
+     * @param resourceType
+     * @return
+     */
+    @GET
+    @Path("detail/${osbResourceType}/{resourceType}/")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Set<String> getDetailForResourceType(	@HeaderParam("user-agent") String userAgent, 
+													@QueryParam("scope") Set<String> scope,
+													@PathParam("osbResourceType") String osbResourceType,
+													@PathParam("resourceType") String resourceType) {
+    	
+    	// Call the utility class because JERSEY instantiates all the WS at the first call (even if the call if not matching the OSB WS)
+		// If the WL domain is not an OSB, then the loading of this class will fail due to import (not found)
+		// Introspection could be used (string will be managed) but it's also OK (and much more readable) if the real OSB implementation is managed from another class.
+		// This utility class will be instantiated/loaded only and only if the WL domain is a well an OSB domain (see Class.forName() call)
+    	
+    	if(!isOsbDomain()) {
+    		AppLog.getLogger().error("This WL domain is not an OSB WL domain ...");
+    		return null;
+    	} else {
+    		//AppLog.getLogger().notice("This WL domain is well an OSB WL domain");
+    		
+    		/*
+    		resourceType could be for MonitorProperties.PROXY_SERVICE_RESOURCE_TYPE :
+    			MonitorProperties.FLOW_COMPONENT
+    			MonitorProperties.SERVICE
+    			MonitorProperties.WEBSERVICE_OPERATION
+    			
+			resourceType could be for MonitorProperties.BUSINESS_SERVICE_RESOURCE_TYPE :
+    			MonitorProperties.SERVICE
+    			MonitorProperties.URI
+    			MonitorProperties.WEBSERVICE_OPERATION
+    		*/
+    		
+    		return new OSBServiceUtil().getDetailsForResourceType(osbResourceType, resourceType);
+    	}
+    }
+    
+    /**
+     * 
+     */
+    @GET
+    @Path("list/resourcetype/{osbResourceType}/")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Set<String> listResourceTypeForOsbResourceType(	@HeaderParam("user-agent") String userAgent, 
+															@QueryParam("scope") Set<String> scope,
+															@PathParam("osbResourceType") String osbResourceType) {
+    	
+    	// Call the utility class because JERSEY instantiates all the WS at the first call (even if the call if not matching the OSB WS)
+		// If the WL domain is not an OSB, then the loading of this class will fail due to import (not found)
+		// Introspection could be used (string will be managed) but it's also OK (and much more readable) if the real OSB implementation is managed from another class.
+		// This utility class will be instantiated/loaded only and only if the WL domain is a well an OSB domain (see Class.forName() call)
+    	
+    	if(!isOsbDomain()) {
+    		AppLog.getLogger().error("This WL domain is not an OSB WL domain ...");
+    		return null;
+    	} else {
+    		//AppLog.getLogger().notice("This WL domain is well an OSB WL domain");
+    	
+    		/*
+    		For MonitorProperties.PROXY_SERVICE_RESOURCE_TYPE, we should returns the list :
+    			MonitorProperties.SERVICE
+    			MonitorProperties.WEBSERVICE_OPERATION
+    			MonitorProperties.FLOW_COMPONENT
+    			
+    		For MonitorProperties.BUSINESS_SERVICE_RESOURCE_TYPE, we should return the list :
+    			MonitorProperties.SERVICE
+    			MonitorProperties.WEBSERVICE_OPERATION
+    			MonitorProperties.URI
+    		*/
+    		
+    		Set<String> resourceTypeList = new LinkedHashSet<String>();
+    		
+    		switch (osbResourceType) {
+            
+		    	case MonitorProperties.PROXY_SERVICE_RESOURCE_TYPE:
+		    		
+		    		resourceTypeList.add(MonitorProperties.SERVICE);
+		    		resourceTypeList.add(MonitorProperties.WEBSERVICE_OPERATION);
+		    		resourceTypeList.add(MonitorProperties.FLOW_COMPONENT);
+		    		
+		    		return resourceTypeList;
+		    		
+		    	case MonitorProperties.BUSINESS_SERVICE_RESOURCE_TYPE:
+		    		
+		    		resourceTypeList.add(MonitorProperties.SERVICE);
+		    		resourceTypeList.add(MonitorProperties.WEBSERVICE_OPERATION);
+		    		resourceTypeList.add(MonitorProperties.URI);
+		    		
+		    		return resourceTypeList;
+		    		
+				default:
+					AppLog.getLogger().error("Wrong osbResourceType [" + osbResourceType + "] - Must be [" + MonitorProperties.PROXY_SERVICE_RESOURCE_TYPE + "] or [" + MonitorProperties.BUSINESS_SERVICE_RESOURCE_TYPE + "]");
+					return null;
+	    	}	
+    	}
+    }
+
+    /**
+     * 
+     */
+    @GET
+    @Path("list/resources/{osbResourceType}/")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Set<String> listResourcesForOsbResourceType(	@HeaderParam("user-agent") String userAgent, 
+														@QueryParam("scope") Set<String> scope,
+														@PathParam("osbResourceType") String osbResourceType) {
+    	
+    	// Call the utility class because JERSEY instantiates all the WS at the first call (even if the call if not matching the OSB WS)
+		// If the WL domain is not an OSB, then the loading of this class will fail due to import (not found)
+		// Introspection could be used (string will be managed) but it's also OK (and much more readable) if the real OSB implementation is managed from another class.
+		// This utility class will be instantiated/loaded only and only if the WL domain is a well an OSB domain (see Class.forName() call)
+    	
+    	if(!isOsbDomain()) {
+    		AppLog.getLogger().error("This WL domain is not an OSB WL domain ...");
+    		return null;
+    	} else {
+    		//AppLog.getLogger().notice("This WL domain is well an OSB WL domain");
+    		
+    		// ...
+    		// TO IMPLEMENT
+    	}
+    	
+    	return null;
     }
 }

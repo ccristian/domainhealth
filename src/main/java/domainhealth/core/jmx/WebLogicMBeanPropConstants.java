@@ -689,6 +689,9 @@ public interface WebLogicMBeanPropConstants {
 	// Added by gregoan
 	public final static String JAVA_JVM_MBEAN = "wljvmstats.mbeans.WLJvmStats";
 	
+	public final static String OSB_MBEAN = "wlosbstats.mbeans.WLOsbStats";
+	public final static String SOA_BPM_MBEAN = "wlsoabpmstats.mbeans.WLSoaBpmStats";
+	
 	public final static String HEAP_MEMORY_INIT = "HeapMemoryInit";
 	public final static String HEAP_MEMORY_USED = "HeapMemoryUsed";
 	public final static String HEAP_MEMORY_COMMITTED = "HeapMemoryCommitted";
@@ -904,4 +907,88 @@ public interface WebLogicMBeanPropConstants {
 	final static String PAUSED_FOR_INCOMING = "PausedForIncoming";
 	final static String PAUSED_FOR_FORWARDING = "PausedForForwarding";
 	final static String PAUSED_FOR_RECEIVING = "PausedForReceiving";
+	
+	// ---------------------------------------------------------
+	// Added by gregoan
+	// OSB (INTERVAL)
+	
+// For validation/testing purpose
+public final static String OSB_COUNT = "Count";
+public final static String OSB_MIN = "Min";
+public final static String OSB_MAX = "Max";
+public final static String OSB_SUM = "Sum";
+public final static String OSB_AVG = "Avg";
+	
+	/*
+	public final static String OSB_INTERVAL_COUNT = "IntervalCount";
+	public final static String OSB_INTERVAL_MIN = "IntervalMin";
+	public final static String OSB_INTERVAL_MAX = "IntervalMax";
+	public final static String OSB_INTERVAL_SUM = "IntervalSum";
+	public final static String OSB_INTERVAL_AVG = "IntervalAverage";
+	*/
+	
+	// OSB (COUNT)
+	//public final static String OSB_COUNT_COUNT = "Count";
+	
+	// OSB (STATUS)
+	//public final static String OSB_INITIAL_STATUS = "InitialStatus";
+	//public final static String OSB_CURRENT_STATUS = "CurrentStatus";
+	
+	// -----------------------------------------------------------------------------
+	// https://docs.oracle.com/cd/E28280_01/admin.1111/e15867/app_jmx_monitoring.htm
+
+	// COUNT (1 value for this type)
+	public final static String OSB_MESSAGE_COUNT = "MessageCount";
+	public final static String OSB_ERROR_COUNT = "ErrorCount";
+	public final static String OSB_FAILOVER_COUNT = "FailoverCount";
+	public final static String OSB_WSS_ERROR = "WssError";
+	public final static String OSB_FAILURE_RATE = "FailureRate";
+	public final static String OSB_SUCCESS_RATE = "SuccessRate";
+	public final static String OSB_SLA_SEVERITY_WARNING = "SlaSeverityWarning";
+	public final static String OSB_SLA_SEVERITY_MAJOR = "SlaSeverityMajor";
+	public final static String OSB_SLA_SEVERITY_MINOR = "SlaSeverityMinor";
+	public final static String OSB_SLA_SEVERITY_NORMAL = "SlaSeverityNormal";
+	public final static String OSB_SLA_SEVERITY_FATAL = "SlaSeverityFatal";
+	public final static String OSB_SLA_SEVERITY_CRITICAL = "SlaSeverityCritical";
+	public final static String OSB_SLA_SEVERITY_ALL = "SlaSeverityAll";
+	public final static String OSB_URI_OFFLINE_COUNT = "UriOfflineCount";
+	public final static String OSB_HIT_COUNT = "HitCount";
+	public final static String OSB_VALIDATION_ERRORS = "ValidationErrors";
+	
+	public final static String OSB_PIPELINE_SEVERITY_WARNING = "PipelineSeverityWarning";
+	public final static String OSB_PIPELINE_SEVERITY_MAJOR = "PipelineSeverityMajor";
+	public final static String OSB_PIPELINE_SEVERITY_MINOR = "PipelineSeverityMinor";
+	public final static String OSB_PIPELINE_SEVERITY_NORMAL = "PipelineSeverityNormal";
+	public final static String OSB_PIPELINE_SEVERITY_FATAL = "PipelineSeverityFatal";
+	public final static String OSB_PIPELINE_SEVERITY_CRITICAL = "PipelineSeverityCritical";
+	public final static String OSB_PIPELINE_SEVERITY_ALL = "PipelineSeverityAll";
+
+	// INTERVAL (5 values for this type)
+	//public final static String OSB_RESPONSE_TIME = "response-time";
+	//public final static String OSB_THROTTLING_TIME = "throttling-time";
+	//public final static String OSB_ELAPSED_TIME = "elapsed-time";
+	
+	public final static String OSB_RESPONSE_TIME_COUNT = "ResponseTimeCount";
+	public final static String OSB_RESPONSE_TIME_MIN = "ResponseTimeMin";
+	public final static String OSB_RESPONSE_TIME_MAX = "ResponseTimeMax";
+	public final static String OSB_RESPONSE_TIME_SUM = "ResponseTimeSum";
+	public final static String OSB_RESPONSE_TIME_AVG = "ResponseTimeAvg";
+	
+	public final static String OSB_THROTTLING_TIME_COUNT = "ThrottlingTimeCount";
+	public final static String OSB_THROTTLING_TIME_MIN = "ThrottlingTimeMin";
+	public final static String OSB_THROTTLING_TIME_MAX = "ThrottlingTimeMax";
+	public final static String OSB_THROTTLING_TIME_SUM = "ThrottlingTimeSum";
+	public final static String OSB_THROTTLING_TIME_AVG = "ThrottlingTimeAvg";
+	
+	public final static String OSB_ELAPSED_TIME_COUNT = "ElapsedTimeCount";
+	public final static String OSB_ELAPSED_TIME_MIN = "ElapsedTimeMin";
+	public final static String OSB_ELAPSED_TIME_MAX = "ElapsedTimeMax";
+	public final static String OSB_ELAPSED_TIME_SUM = "ElapsedTimeSum";
+	public final static String OSB_ELAPSED_TIME_AVG = "ElapsedTimeAvg";
+	
+	// STATUS (2 values for this type)
+	//public final static String OSB_STATUS = "Status";
+	public final static String OSB_INITIAL_STATUS = "InitialStatus";
+	public final static String OSB_CURRENT_STATUS = "CurrentStatus";
+	// ---------------------------------------------------------
 }

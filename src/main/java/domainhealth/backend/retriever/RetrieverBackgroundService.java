@@ -56,12 +56,14 @@ import domainhealth.core.util.ProductVersionUtil;
  * threads.
  */
 public class RetrieverBackgroundService {
+	
 	/**
 	 * Create new service with the root path to write CSV file to
 	 *  
 	 * @param appProps The system/application key/value pairs
 	 */
 	public RetrieverBackgroundService(AppProperties appProps) {
+		
 		this.domainhealthVersionNumber = appProps.getProperty(PropKey.VERSION_NUMBER_PROP);
 		this.alwaysUseJMXPoll = appProps.getBoolProperty(PropKey.ALWAYS_USE_JMXPOLL_PROP);
 		this.statisticsRetainNumDays = appProps.getIntProperty(PropKey.CSV_RETAIN_NUM_DAYS);
@@ -469,7 +471,7 @@ public class RetrieverBackgroundService {
 	private final static float MAX_POLL_FACTOR = 0.9F;
 	private final static int INITIAL_SLEEP_DURATION = 30 * 1000;
 	private final static int INITIALISATION_ATTEMPT_AGAIN_SLEEP_DURATION = 90 * 1000;	
-	private final static String BLACKLIST_TOKENIZER_PATTERN = ",\\s*";
+	//private final static String BLACKLIST_TOKENIZER_PATTERN = ",\\s*";
 	private final static String CAPUTURE_THREADS_WORK_MGR_JNDI = "java:comp/env/DomainHealth_IndividualServerStatCapturerWorkMngr";
 	private final static long HOURLY_CSV_CLEANUP_CHECK_IN_MILLIS = 60 * 60 * 1000;
 }

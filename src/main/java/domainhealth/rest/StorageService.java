@@ -215,12 +215,15 @@ public class StorageService {
             if (scope == null || scope.size() == 0) {
                 scope = statisticsStorage.getAllPossibleServerNames(conn);
             }
-            //temp
+            
+            // -----------------------------
+            // Temp
             /*scope = new TreeSet<>();
             scope.add("EFP7-OSB_TESTosb11");
             scope.add("EFP7-OSB_TESTosb12");
             scope.add("EFP7-OSB_TESTserver");
             */
+            // -----------------------------
 
             // --------------------------------------------------------------------------
             Map<String, DateAmountDataSet> dataMap = null;
@@ -412,7 +415,9 @@ public class StorageService {
                         // Is important to find the file to read
                         resource = MonitorProperties.JVM_MBEAN_NAME;
                         
-                        break;                        
+                        break;
+                        
+                    // Add OSB and SOA here ...
                 }
 
                 // Temp solution for ordering gui
@@ -506,7 +511,7 @@ public class StorageService {
      */
     private Set<String> getResourceNamesForJmsDashboard()  {
     	
-        Set<String> result = new LinkedHashSet<>();
+        Set<String> result = new LinkedHashSet<String>();
         try {
             // Is not expensive to instantiate cause there is a local cache.
             DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();
@@ -556,7 +561,7 @@ public class StorageService {
      */
     private Set<String> getResourceNamesForSafDashboard()  {
     	    	
-        Set<String> result = new LinkedHashSet<>();
+        Set<String> result = new LinkedHashSet<String>();
         try {
             // Is not expensive to instantiate cause there is a local cache.
             DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();
