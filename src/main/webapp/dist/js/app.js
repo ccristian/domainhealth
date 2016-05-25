@@ -271,8 +271,8 @@ $(function () {
 
     var currentDate = new Date();
     $.AdminLTE.options.endTimeVal = moment(currentDate);
-    $.AdminLTE.options.startTimeVal = moment(currentDate).subtract(30, 'minutes');
-    //$.AdminLTE.options.startTimeVal = moment(currentDate).subtract(6, 'days');
+    //$.AdminLTE.options.startTimeVal = moment(currentDate).subtract(30, 'minutes');
+    $.AdminLTE.options.startTimeVal = moment(currentDate).subtract(3, 'days');
 
     var endTime = $.AdminLTE.options.endTimeVal.format('DD-MM-YYYY-HH-mm');
     var startTime = $.AdminLTE.options.startTimeVal.format('DD-MM-YYYY-HH-mm');
@@ -458,17 +458,25 @@ $(function () {
 
 
 
+    function sleep(milliseconds) {
+        var start = new Date().getTime();
+        for (var i = 0; i < 1e7; i++) {
+            if ((new Date().getTime() - start) > milliseconds){
+                break;
+            }
+        }
+    }
 
-    function getAjaxDeferred(resname, respath, value,urll){
+
+    function getAjaxDeferred(resname, respath, value){
         return function(){
             // wrap with a deferred
             var defer = $.Deferred();
-
             var url = '/domainhealth/rest/stats/' + respath + '/' + value + '?';
-
             $.ajax({ url: url, method: 'GET',cache: false,
-                data: {startTime: startTime, endTime: endTime,nodata:'false'}}).complete(function(){
-                //$.AdminLTE.options.renderedData = response;
+                data: {startTime: startTime, endTime: endTime,nodata:'false'}}).complete(function(response){
+                console.log("response:arrived");
+                $.AdminLTE.options.renderedData = jQuery.parseJSON(response.responseText);;
                 $.AdminLTE.options.selectedPath = resname + " > " + value;
                 $.AdminLTE.options.currentPath = respath;
                 $.AdminLTE.options.currentResource = value;
@@ -481,10 +489,10 @@ $(function () {
                 // resolve when complete always.  Even on failure we
                 // want to keep going with other requests
                 defer.resolve();
-                console.log(urll);
+                console.log("response:resolved");
             });
-            // return a promise so that we can chain properly in the each
-            //console.log("bb");
+            // return a promise so that we can chain properly in the
+            console.log("promise:returned");
             return defer.promise();
         };
     }
@@ -497,20 +505,19 @@ $(function () {
         //data from one day is not split in multiple intervals
         if (diff==0){
 
-
-
-
-
-            var urls = ["/echo/json1/","/echo/json2/","/echo/json3/","/echo/json4/","/echo/json4/",];
-
-// this will trigger the first callback.
+            /*
+            var urls = ["/echo/json1/"];
+            // this will trigger the first callback.
             var base = $.when({});
             $.each(urls, function(index, url){
                 console.log(index+":"+url);
                 base = base.then(getAjaxDeferred(resname, respath, value,url));
+                console.log(base);
             });
-
-
+            */
+            var base = $.when({});
+            console.log("when before then!!!!!");
+            base = base.then(getAjaxDeferred(resname, respath, value));
             console.log("END !!!!!");
             /*
             $.ajax({
@@ -535,6 +542,16 @@ $(function () {
                 }
             });
 */        }else if (diff>=1){
+
+
+            /*var urls = ["/echo/json1/"];
+            // this will trigger the first callback.
+            var base = $.when({});
+            $.each(urls, function(index, url){
+                console.log(index+":"+url);
+                base = base.then(getAjaxDeferred(resname, respath, value,url));
+                console.log(base);
+            });*/
 
 
             console.log(diff);
@@ -566,21 +583,7 @@ $(function () {
                     dhLocalObj.currentResname = $.AdminLTE.options.currentResname;
                     localStorage.setItem("dh2storage", JSON.stringify(dhLocalObj));
 
-
                     // more than 1 day ==> we split and we get data / days to avoid huge memory usage on server side
-
-                    var promises = [];
-
-                    $.when.apply($, promises).then(function () {
-                        for (var i = 0; i < arguments.length; i++) {
-                            var singleresult = arguments[i][0];
-                            console.log(singleresult);
-                        }
-                    });
-
-
-
-                    //console.log($.AdminLTE.options.startTimeVal.format('DD-MM-YYYY-HH-mm'));
                     var currentDay  = moment(st);
                     // var currentDay  =  var currentDay  = $.AdminLTE.options.startTimeVal.add(1, 'day');
 
