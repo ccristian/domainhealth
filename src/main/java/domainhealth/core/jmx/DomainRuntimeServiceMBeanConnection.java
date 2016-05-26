@@ -50,7 +50,7 @@ public class DomainRuntimeServiceMBeanConnection extends WebLogicMBeanConnection
 	 * @throws WebLogicMBeanException Indicates that a JMX connection to server could not be made
 	 */
 	public DomainRuntimeServiceMBeanConnection(String protocol, String host, int port, String username, String password) throws WebLogicMBeanException {
-		super(protocol, host, port, username, password, DOMAIN_RUNTIME_SERVICE_NAME);
+		super(protocol, host, port, username, password, DOMAIN_RUNTIME_SERVICE_NAME);		
 	}
 
 	/**

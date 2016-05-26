@@ -32,10 +32,8 @@ import static domainhealth.core.jmx.WebLogicMBeanPropConstants.SERVER_RUNTIME;
 import static domainhealth.core.jmx.WebLogicMBeanPropConstants.THREAD_POOL_RUNTIME;
 import static domainhealth.core.jmx.WebLogicMBeanPropConstants.WEBAPP_COMPONENT_RUNTIME;
 import static domainhealth.core.jmx.WebLogicMBeanPropConstants.WORK_MANAGER_RUNTIME;
-
 import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_MBEAN;
 import static domainhealth.core.jmx.WebLogicMBeanPropConstants.SOA_BPM_MBEAN;
-
 import static domainhealth.core.statistics.MonitorProperties.CORE_RESOURCE_TYPE;
 import static domainhealth.core.statistics.MonitorProperties.CORE_RSC_DEFAULT_NAME;
 import static domainhealth.core.statistics.MonitorProperties.DATASOURCE_RESOURCE_TYPE;
@@ -63,10 +61,8 @@ import static domainhealth.core.statistics.MonitorProperties.WEBAPP_MBEAN_MONITO
 import static domainhealth.core.statistics.MonitorProperties.WEBAPP_RESOURCE_TYPE;
 import static domainhealth.core.statistics.MonitorProperties.WKMGR_MBEAN_MONITOR_ATTR_LIST;
 import static domainhealth.core.statistics.MonitorProperties.WORKMGR_RESOURCE_TYPE;
-
-import static domainhealth.core.statistics.MonitorProperties.PROXY_SERVICE_RESOURCE_TYPE;
-import static domainhealth.core.statistics.MonitorProperties.BUSINESS_SERVICE_RESOURCE_TYPE;
-
+import static domainhealth.core.statistics.MonitorProperties.OSB_PS_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.OSB_BS_TYPE;
 import static domainhealth.core.statistics.StatisticsStorage.SEPARATOR;
 import static domainhealth.core.util.DateUtil.DATETIME_PARAM_FORMAT;
 
@@ -347,8 +343,8 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
                         break;
                     }
                 }
-
-                //if (resourceType.equals(HOSTMACHINE_RESOURCE_TYPE) || !blacklist) {
+                
+                // Standard DomainHealth extention
                 if ( 	resourceType.equals(HOSTMACHINE_RESOURCE_TYPE) || 
                 		resourceType.equals(JVM_RESOURCE_TYPE) || 
                 		!blacklist) {
@@ -357,6 +353,20 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
                     getCSVStats().appendToResourceStatisticsCSV(nowDate, getServerName(), resourceType, name, headerLine, contentLine);
                     artifactList.put(name, now);                	
                 }
+               
+/*
+// Specific OSB and SOA-BPM DomainHealth extention
+if ( 	resourceType.equals(OSB_PS_TYPE) || 
+		resourceType.equals(OSB_BS_TYPE) || 
+		resourceType.equals(OSB_RESOURCE_STATISTIC_TYPE_PS_TYPE) || 
+		resourceType.equals(OSB_STATISTIC_TYPE) || 
+		!blacklist) {
+	
+    String contentLine = constructStatsLine(objectRecords.get(name), monitorAttrList);
+    getCSVStats().appendToResourceStatisticsCSV(nowDate, getServerName(), resourceType, name, headerLine, contentLine);
+    artifactList.put(name, now);                	
+}
+*/
             }
             getCSVStats().appendSavedOneDayResourceNameList(nowDate, resourceType, artifactList);
         } catch (Exception e) {

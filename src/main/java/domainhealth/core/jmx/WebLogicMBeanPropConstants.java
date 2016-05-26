@@ -14,10 +14,12 @@
 //POSSIBILITY OF SUCH DAMAGE.
 package domainhealth.core.jmx;
 
+
 /**
  * Common WebLogic MBeans property names.
  */
 public interface WebLogicMBeanPropConstants {
+	
 	/**
 	 * 'ServerRuntime' MBean property
 	 */
@@ -66,7 +68,7 @@ public interface WebLogicMBeanPropConstants {
 	/**
 	 * 'WorkManagerRuntimes' MBean property
 	 */
-	public final static String WORK_MANAGER_RUNTIMES = "WorkManagerRuntimes";	
+	public final static String WORK_MANAGER_RUNTIMES = "WorkManagerRuntimes";
 
 	/**
 	 * 'JTARuntime' MBean property
@@ -88,25 +90,21 @@ public interface WebLogicMBeanPropConstants {
 	 */
 	public final static String JMS_RUNTIME = "JMSRuntime";	
 	
-	
 	/**
 	 * 'SAFRuntime' MBean property
 	 */
 	public final static String SAF_RUNTIME = "SAFRuntime";	
-
-
+	
 	/**
 	 * 'JMSDestinationRuntime' MBean property
 	 */
 	public final static String JMS_DESTINATION_RUNTIME = "JMSDestinationRuntime";	
-	
 	
 	/**
 	 * 'SafAgentRuntime' MBean property
 	 */
 	public final static String SAF_AGENT_RUNTIME = "SAFAgentRuntime";	
 	
-
 	/**
 	 * 'ApplicationRuntimes' MBean property
 	 */
@@ -910,33 +908,47 @@ public interface WebLogicMBeanPropConstants {
 	
 	// ---------------------------------------------------------
 	// Added by gregoan
-	// OSB (INTERVAL)
-	
-// For validation/testing purpose
-public final static String OSB_COUNT = "Count";
-public final static String OSB_MIN = "Min";
-public final static String OSB_MAX = "Max";
-public final static String OSB_SUM = "Sum";
-public final static String OSB_AVG = "Avg";
-	
-	/*
-	public final static String OSB_INTERVAL_COUNT = "IntervalCount";
-	public final static String OSB_INTERVAL_MIN = "IntervalMin";
-	public final static String OSB_INTERVAL_MAX = "IntervalMax";
-	public final static String OSB_INTERVAL_SUM = "IntervalSum";
-	public final static String OSB_INTERVAL_AVG = "IntervalAverage";
-	*/
-	
-	// OSB (COUNT)
-	//public final static String OSB_COUNT_COUNT = "Count";
-	
-	// OSB (STATUS)
-	//public final static String OSB_INITIAL_STATUS = "InitialStatus";
-	//public final static String OSB_CURRENT_STATUS = "CurrentStatus";
 	
 	// -----------------------------------------------------------------------------
 	// https://docs.oracle.com/cd/E28280_01/admin.1111/e15867/app_jmx_monitoring.htm
 
+	// COUNT
+	public final static String OSB_MESSAGE_COUNT_PROPERTY = "message-count";
+	public final static String OSB_ERROR_COUNT_PROPERTY = "error-count";
+	public final static String OSB_FAILOVER_COUNT_PROPERTY = "failover-count";
+	public final static String OSB_WSS_ERROR_COUNT_PROPERTY = "wss-error";
+	public final static String OSB_FAILURE_RATE_COUNT_PROPERTY = "failure-rate";
+	public final static String OSB_SUCCESS_RATE_COUNT_PROPERTY = "success-rate";
+	public final static String OSB_SEVERITY_ALL = "severity-all";
+	public final static String OSB_SLA_SEVERITY_WARNING_COUNT_PROPERTY = "sla-severity-warning";
+	public final static String OSB_SLA_SEVERITY_MAJOR_COUNT_PROPERTY = "sla-severity-major";
+	public final static String OSB_SLA_SEVERITY_MINOR_COUNT_PROPERTY = "sla-severity-minor";
+	public final static String OSB_SLA_SEVERITY_NORMAL_COUNT_PROPERTY = "sla-severity-normal";
+	public final static String OSB_SLA_SEVERITY_FATAL_COUNT_PROPERTY = "sla-severity-fatal";
+	public final static String OSB_SLA_SEVERITY_CRITICAL_COUNT_PROPERTY = "sla-severity-critical";
+	public final static String OSB_SLA_SEVERITY_ALL_COUNT_PROPERTY = "sla-severity-all";
+	public final static String OSB_URI_OFFLINE_COUNT_PROPERTY = "uri-offline-count";
+	public final static String OSB_HIT_COUNT_PROPERTY = "hit-count";
+	public final static String OSB_VALIDATION_ERRORS_COUNT_PROPERTY = "validation-errors";
+	public final static String OSB_PIPELINE_SEVERITY_WARNING_COUNT_PROPERTY = "pipeline-severity-warning";
+	public final static String OSB_PIPELINE_SEVERITY_MAJOR_COUNT_PROPERTY = "pipeline-severity-major";
+	public final static String OSB_PIPELINE_SEVERITY_MINOR_COUNT_PROPERTY = "pipeline-severity-minor";
+	public final static String OSB_PIPELINE_SEVERITY_NORMAL_COUNT_PROPERTY = "pipeline-severity-normal";
+	public final static String OSB_PIPELINE_SEVERITY_FATAL_COUNT_PROPERTY = "pipeline-severity-fatal";
+	public final static String OSB_PIPELINE_SEVERITY_CRITICAL_COUNT_PROPERTY = "pipeline-severity-critical";
+	public final static String OSB_PIPELINE_SEVERITY_ALL_COUNT_PROPERTY = "pipeline-severity-all";
+	
+	// INTERVAL
+	public final static String OSB_RESPONSE_TIME_INTERVAL_PROPERTY = "response-time";
+	public final static String OSB_THROTTLING_TIME_INTERVAL_PROPERTY = "throttling-time";
+	public final static String OSB_ELAPSED_TIME_INTERVAL_PROPERTY = "elapsed-time";
+	
+	// STATUS
+	public final static String OSB_STATUS_PROPERTY = "status";
+	
+	public final static String OSB_STATISTIC_ATTRIBUTE_NAME = "getValueForOsbStatistic";
+	
+	/*
 	// COUNT (1 value for this type)
 	public final static String OSB_MESSAGE_COUNT = "MessageCount";
 	public final static String OSB_ERROR_COUNT = "ErrorCount";
@@ -954,7 +966,6 @@ public final static String OSB_AVG = "Avg";
 	public final static String OSB_URI_OFFLINE_COUNT = "UriOfflineCount";
 	public final static String OSB_HIT_COUNT = "HitCount";
 	public final static String OSB_VALIDATION_ERRORS = "ValidationErrors";
-	
 	public final static String OSB_PIPELINE_SEVERITY_WARNING = "PipelineSeverityWarning";
 	public final static String OSB_PIPELINE_SEVERITY_MAJOR = "PipelineSeverityMajor";
 	public final static String OSB_PIPELINE_SEVERITY_MINOR = "PipelineSeverityMinor";
@@ -964,10 +975,6 @@ public final static String OSB_AVG = "Avg";
 	public final static String OSB_PIPELINE_SEVERITY_ALL = "PipelineSeverityAll";
 
 	// INTERVAL (5 values for this type)
-	//public final static String OSB_RESPONSE_TIME = "response-time";
-	//public final static String OSB_THROTTLING_TIME = "throttling-time";
-	//public final static String OSB_ELAPSED_TIME = "elapsed-time";
-	
 	public final static String OSB_RESPONSE_TIME_COUNT = "ResponseTimeCount";
 	public final static String OSB_RESPONSE_TIME_MIN = "ResponseTimeMin";
 	public final static String OSB_RESPONSE_TIME_MAX = "ResponseTimeMax";
@@ -987,8 +994,8 @@ public final static String OSB_AVG = "Avg";
 	public final static String OSB_ELAPSED_TIME_AVG = "ElapsedTimeAvg";
 	
 	// STATUS (2 values for this type)
-	//public final static String OSB_STATUS = "Status";
 	public final static String OSB_INITIAL_STATUS = "InitialStatus";
 	public final static String OSB_CURRENT_STATUS = "CurrentStatus";
+	*/
 	// ---------------------------------------------------------
 }

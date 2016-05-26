@@ -57,6 +57,17 @@ import org.joda.time.Interval;
  * (eg. datasource, destination).
  */
 public class StatisticsStorage {
+	
+	// Constants
+    private final static String CSV_SUFFIX = ".csv";
+    private final static String PROPS_SUFFIX = ".props";
+    private final static String RESOURCE_LIST_FILENAME_SUFFIX = "list";
+    private final static String PROP_LIST_CMNT_PREFIX = "List of instances available on the server to monitor for resource type: ";
+    private final static Map<String, Object> resourceMonitorObjects = new HashMap<String, Object>();
+
+    // Members
+    private final String rootDirectoryPath;
+    
     /**
      * Newline char
      */
@@ -862,7 +873,17 @@ public class StatisticsStorage {
         return resultDataSet;
     }
 
-
+    /**
+     * 
+     * @param resourceType
+     * @param resourceName
+     * @param resourcesProperty
+     * @param endDateTime
+     * @param durationMins
+     * @param serverName
+     * @return
+     * @throws IOException
+     */
     public List<DateAmountDataSet> getPropertiesData(String resourceType, String resourceName, List<String> resourcesProperty, Date endDateTime, int durationMins, String serverName) throws IOException {
         List<DateAmountDataSet> resultDataSet = new ArrayList<DateAmountDataSet>();
         //ex: StorageUtil.getPropertyData(statisticsStorage,"core",null,"HeapUsedCurrent",new Date(),1,"AdminServer");
@@ -895,7 +916,12 @@ public class StatisticsStorage {
 
     }
 
-
+    /**
+     * 
+     * @param conn
+     * @return
+     * @throws WebLogicMBeanException
+     */
     public Set<String> getAllPossibleServerNames(DomainRuntimeServiceMBeanConnection conn) throws WebLogicMBeanException {
         Set<String> serverNames = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
         ObjectName[] servers = conn.getChildren(conn.getDomainConfiguration(), WebLogicMBeanPropConstants.SERVERS);
@@ -906,14 +932,4 @@ public class StatisticsStorage {
 
         return serverNames;
     }
-
-    // Constants
-    private final static String CSV_SUFFIX = ".csv";
-    private final static String PROPS_SUFFIX = ".props";
-    private final static String RESOURCE_LIST_FILENAME_SUFFIX = "list";
-    private final static String PROP_LIST_CMNT_PREFIX = "List of instances available on the server to monitor for resource type: ";
-    private final static Map<String, Object> resourceMonitorObjects = new HashMap<String, Object>();
-
-    // Members
-    private final String rootDirectoryPath;
 }

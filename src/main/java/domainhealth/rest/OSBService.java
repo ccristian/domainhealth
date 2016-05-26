@@ -68,6 +68,7 @@ public class OSBService {
      * @param osbResourceType
      * @return
      */
+    /*
     @GET
     @Path("details/{osbResourceType}/")
     @Produces({MediaType.APPLICATION_JSON})
@@ -90,6 +91,7 @@ public class OSBService {
     		return new OSBServiceUtil().getDetailsForOsbType(osbResourceType);
     	}
     }
+    */
     
     /**
      * 
@@ -99,7 +101,7 @@ public class OSBService {
      * @return
      */
     @GET
-    @Path("detail/${osbResourceType}/{resourceType}/")
+    @Path("detail/{osbResourceType}/{resourceType}/")
     @Produces({MediaType.APPLICATION_JSON})
     public Set<String> getDetailForResourceType(	@HeaderParam("user-agent") String userAgent, 
 													@QueryParam("scope") Set<String> scope,
@@ -119,14 +121,14 @@ public class OSBService {
     		
     		/*
     		resourceType could be for MonitorProperties.PROXY_SERVICE_RESOURCE_TYPE :
-    			MonitorProperties.FLOW_COMPONENT
     			MonitorProperties.SERVICE
     			MonitorProperties.WEBSERVICE_OPERATION
+    			MonitorProperties.FLOW_COMPONENT
     			
 			resourceType could be for MonitorProperties.BUSINESS_SERVICE_RESOURCE_TYPE :
     			MonitorProperties.SERVICE
-    			MonitorProperties.URI
     			MonitorProperties.WEBSERVICE_OPERATION
+    			MonitorProperties.URI
     		*/
     		
     		return new OSBServiceUtil().getDetailsForResourceType(osbResourceType, resourceType);
@@ -137,7 +139,7 @@ public class OSBService {
      * 
      */
     @GET
-    @Path("list/resourcetype/{osbResourceType}/")
+    @Path("list/resource/{osbResourceType}/")
     @Produces({MediaType.APPLICATION_JSON})
     public Set<String> listResourceTypeForOsbResourceType(	@HeaderParam("user-agent") String userAgent, 
 															@QueryParam("scope") Set<String> scope,
@@ -170,24 +172,24 @@ public class OSBService {
     		
     		switch (osbResourceType) {
             
-		    	case MonitorProperties.PROXY_SERVICE_RESOURCE_TYPE:
+		    	case MonitorProperties.OSB_PS_TYPE:
 		    		
-		    		resourceTypeList.add(MonitorProperties.SERVICE);
-		    		resourceTypeList.add(MonitorProperties.WEBSERVICE_OPERATION);
-		    		resourceTypeList.add(MonitorProperties.FLOW_COMPONENT);
+		    		resourceTypeList.add(MonitorProperties.OSB_RESOURCE_TYPE_SERVICE);
+		    		resourceTypeList.add(MonitorProperties.OSB_RESOURCE_TYPE_WEBSERVICE_OPERATION);
+		    		resourceTypeList.add(MonitorProperties.OSB_RESOURCE_TYPE_FLOW_COMPONENT);
 		    		
 		    		return resourceTypeList;
 		    		
-		    	case MonitorProperties.BUSINESS_SERVICE_RESOURCE_TYPE:
+		    	case MonitorProperties.OSB_BS_TYPE:
 		    		
-		    		resourceTypeList.add(MonitorProperties.SERVICE);
-		    		resourceTypeList.add(MonitorProperties.WEBSERVICE_OPERATION);
-		    		resourceTypeList.add(MonitorProperties.URI);
+		    		resourceTypeList.add(MonitorProperties.OSB_RESOURCE_TYPE_SERVICE);
+		    		resourceTypeList.add(MonitorProperties.OSB_RESOURCE_TYPE_WEBSERVICE_OPERATION);
+		    		resourceTypeList.add(MonitorProperties.OSB_RESOURCE_TYPE_URI);
 		    		
 		    		return resourceTypeList;
 		    		
 				default:
-					AppLog.getLogger().error("Wrong osbResourceType [" + osbResourceType + "] - Must be [" + MonitorProperties.PROXY_SERVICE_RESOURCE_TYPE + "] or [" + MonitorProperties.BUSINESS_SERVICE_RESOURCE_TYPE + "]");
+					AppLog.getLogger().error("Wrong osbResourceType [" + osbResourceType + "] - Must be [" + MonitorProperties.OSB_PS_TYPE + "] or [" + MonitorProperties.OSB_BS_TYPE + "]");
 					return null;
 	    	}	
     	}
@@ -197,7 +199,7 @@ public class OSBService {
      * 
      */
     @GET
-    @Path("list/resources/{osbResourceType}/")
+    @Path("list/{osbResourceType}/")
     @Produces({MediaType.APPLICATION_JSON})
     public Set<String> listResourcesForOsbResourceType(	@HeaderParam("user-agent") String userAgent, 
 														@QueryParam("scope") Set<String> scope,

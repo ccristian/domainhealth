@@ -14,20 +14,33 @@
 //POSSIBILITY OF SUCH DAMAGE.
 package domainhealth.backend.retriever;
 
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.DATE_TIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.HEAP_FREE_CURRENT;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.HEAP_FREE_PERCENT;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.HEAP_SIZE_CURRENT;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.HEAP_USED_CURRENT;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.NAME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.WORK_MANAGER_RUNTIMES;
+import static domainhealth.core.statistics.MonitorProperties.DEFAULT_WKMGR_NAME;
+import static domainhealth.core.statistics.MonitorProperties.JTA_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.SERVER_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.THREADPOOL_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.StatisticsStorage.SEPARATOR;
+
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.management.ObjectName;
 
 import domainhealth.core.env.AppLog;
 import domainhealth.core.jmx.WebLogicMBeanConnection;
 import domainhealth.core.jmx.WebLogicMBeanException;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.*;
-import static domainhealth.core.statistics.StatisticsStorage.*;
-import static domainhealth.core.statistics.MonitorProperties.*;
 import domainhealth.core.statistics.StatisticsStorage;
 import domainhealth.core.util.DateUtil;
 
@@ -40,6 +53,20 @@ import domainhealth.core.util.DateUtil;
  * statistics in a set of CSV files.
  */
 public abstract class StatisticCapturer {
+	
+	// Constants
+	private static final int DEFAULT_HEADER_LINE_LEN = 100;
+	protected static final long BYTES_IN_MEGABYTE = 1024 * 1024;
+	
+	// Members
+	private final StatisticsStorage csvStats;
+	private final WebLogicMBeanConnection conn;
+	private final ObjectName serverRuntime;
+	private final String serverName;
+	private final int queryIntervalMillis;
+	private final List<String> componentBlacklist;
+	private final String wlsVersionNumber;
+	private final DateFormat secondDateFormat = new SimpleDateFormat(DateUtil.DISPLAY_DATETIME_FORMAT);
 	
 	/**
 	 * Base class constructor for statistic retriever logger implementation
@@ -72,7 +99,7 @@ public abstract class StatisticCapturer {
 	 */
 	public final void captureAndLogServerStats() throws DataRetrievalException, IOException {
 		
-		AppLog.getLogger().debug(getClass() + " initiated to collect stats for server:" + serverName);
+		AppLog.getLogger().debug(getClass() + " initiated to collect stats for server: " + serverName);
 		
 		logCoreStats();
 		logDataSourcesStats();
@@ -311,6 +338,7 @@ public abstract class StatisticCapturer {
 	 * @return The default Work Manager MBean
 	 * @throws WebLogicMBeanException Indicates problem accessing the server to retrieve the statistics
 	 */
+	// DOESN'T SEEM TO BE USED ...
 	protected ObjectName getDefaultWorkManager() throws WebLogicMBeanException {
 		
 		for (ObjectName wkMgr : getConn().getChildren(getServerRuntime(), WORK_MANAGER_RUNTIMES)) {
@@ -321,17 +349,151 @@ public abstract class StatisticCapturer {
 		return null;
 	}
 	
-	// Constants
-	private static final int DEFAULT_HEADER_LINE_LEN = 100;
-	protected static final long BYTES_IN_MEGABYTE = 1024 * 1024;
 	
-	// Members
-	private final StatisticsStorage csvStats;
-	private final WebLogicMBeanConnection conn;
-	private final ObjectName serverRuntime;
-	private final String serverName;
-	private final int queryIntervalMillis;
-	private final List<String> componentBlacklist;
-	private final String wlsVersionNumber;
-	private final DateFormat secondDateFormat = new SimpleDateFormat(DateUtil.DISPLAY_DATETIME_FORMAT);
+	
+	
+	// The next methods are not working with statistics coming from MBEAN
+	// IT SHOULD BE ANALYZED
+	// Maybe useful : http://docs.oracle.com/javase/6/docs/api/javax/management/MXBean.html
+	
+	
+	
+	/**
+	 * 
+	 * @param statistics
+	 * @param serviceName
+	 * @param resourceStatisticName
+	 * @param statisticName
+	 * @return
+	 */
+/*
+	protected String getValueForOsbStatistic(Map<String, Map<String, Map<String, String>>> statistics, String serviceName, String resourceStatisticName, String statisticName) {
+		
+		if(statistics != null) {
+			
+			try {
+				
+				AppLog.getLogger().notice("statistics contains [" + statistics.size() + "] elements");
+				
+				Map<String, Map<String, String>> resourceStatistics = statistics.get(serviceName);
+				AppLog.getLogger().notice("resourceStatistics contains [" + resourceStatistics.size() + "] elements");
+				
+				Map<String, String> statisticValues = resourceStatistics.get(resourceStatisticName);
+				AppLog.getLogger().notice("statisticValues contains [" + statisticValues.size() + "] elements");
+				
+				String statisticValue = statisticValues.get(statisticName);
+				AppLog.getLogger().notice("statisticValue is [" + statisticValue + "]");
+				
+				//return statistics.get(serviceName).get(resourceStatisticName).get(statisticName);
+				return statisticValue;
+				
+			} catch (Exception ex) {
+				AppLog.getLogger().notice("Not possible to get the value of the statistic [" + serviceName + "/" + resourceStatisticName + "/" + statisticName + "] - Message is [" + ex.getMessage() + "]");
+			}
+		} else {
+			AppLog.getLogger().error("Not possible to extract statictic value - The statistic object is null");
+		}
+		return null;
+	}
+*/
+	
+	/**
+	 * 
+	 * @param globalStatistics
+	 * 
+	 * MAP object containing all the informations
+	 * 
+	 * The KEY is the NAME of the SERVICE (name of PS or BS for example)
+	 * The CONTENT is a MAP object having :
+	 *    The KEY is the NAME of the ResourceStatistic object
+	 *    The CONTENT is a MAP object having :
+	 *        The KEY is the NAME of the StatisticValue object
+	 *        The CONTENT is the VALUE of the StatisticValue object
+	 */
+	/*
+	protected void printOsbStatistic(Map<String, Map<String, Map<String, String>>> globalStatistics) {
+
+		try {
+			if(globalStatistics != null && globalStatistics.size() > 0) {
+				
+				Iterator<String> serviceKeys = globalStatistics.keySet().iterator();
+				while(serviceKeys.hasNext()) {
+					
+					String serviceName = serviceKeys.next();
+					
+					AppLog.getLogger().notice("------------------------------------------------------------------");
+					AppLog.getLogger().notice("Service [" + serviceName + "]");
+					AppLog.getLogger().notice("--------------------------------------------");
+					
+					Map<String, Map<String, String>> services = globalStatistics.get(serviceName);
+					Iterator<String> resourceStatisticKeys = services.keySet().iterator();
+					while(resourceStatisticKeys.hasNext()) {
+						
+						String resourceStatisticName = resourceStatisticKeys.next();
+						Map<String, String> statistics = services.get(resourceStatisticName);
+						
+						AppLog.getLogger().notice("-- ResourceStatisticName  [" + resourceStatisticName + "]");
+						
+						Iterator<String> statisticsKeys = statistics.keySet().iterator();
+						while(statisticsKeys.hasNext()) {
+							
+							String statisticName = statisticsKeys.next();
+							String statisticValue = statistics.get(statisticName);
+							
+							AppLog.getLogger().notice("---- Statistic Name [" + statisticName + "] - Value [" + statisticValue + "]");
+						}
+					}
+					AppLog.getLogger().notice("------------------------------------------------------------------");
+				}
+			}
+		} catch (Exception ex) {
+			AppLog.getLogger().notice("Error during printOsbStatistic method .. - Message is [" + ex.getMessage() + "]");
+		}
+	}
+	*/
+	
+	/**
+	 * 
+	 * @param statistics
+	 * @return
+	 */
+	/*
+	protected Set<String> getOsbServiceList(Map<String, Map<String, Map<String, String>>> datas) {
+
+		if(datas != null && datas.size() > 0) {			
+			return datas.keySet();
+		}
+		return null;
+	}
+	*/
+	
+	/**
+	 * 
+	 * @param datas
+	 * return
+	 */
+	/*
+	protected Set<String> getOsbResourceStatisticList(Map<String, Map<String, String>> datas) {
+		
+		if(datas != null && datas.size() > 0) {			
+			return datas.keySet();
+		}
+		return null;
+	}
+	*/
+	
+	/**
+	 * 
+	 * @param datas
+	 * return
+	 */
+	/*
+	protected Set<String> getOsbStatisticList(Map<String, String> datas) {
+		
+		if(datas != null && datas.size() > 0) {			
+			return datas.keySet();
+		}
+		return null;
+	}
+	*/
 }

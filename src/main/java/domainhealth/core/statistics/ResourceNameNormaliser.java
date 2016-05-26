@@ -71,7 +71,7 @@ public class ResourceNameNormaliser {
 				normalisedName = resourceName.substring(startPos + WEBAPP_SERVER_NAME_SEPARATOR.length());
 			}
 		// Added by gregoan
-		} else if (resourceType == PROXY_SERVICE_RESOURCE_TYPE || resourceType == BUSINESS_SERVICE_RESOURCE_TYPE) {
+		} else if (resourceType == OSB_PS_TYPE || resourceType == OSB_BS_TYPE) {
 			int startPos = resourceName.lastIndexOf(OSB_MODULE_PHYSICAL_SEPERATOR);
 
 			if (startPos > 0) {

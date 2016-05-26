@@ -18,6 +18,7 @@ import static domainhealth.core.jmx.WebLogicMBeanPropConstants.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -211,15 +212,37 @@ public class MonitorProperties {
 	// -----------------------------------------------------------------
 	// OSB resources
 	// -------------
-	public final static String PROXY_SERVICE_RESOURCE_TYPE = "proxyservice";
-	public final static String BUSINESS_SERVICE_RESOURCE_TYPE = "businessservice";
-	//public final static String OSB_RESOURCE_TYPE = "osbsservice";
+	public final static String OSB_PS_TYPE = "osb_ps";
+	public final static String OSB_BS_TYPE = "osb_bs";
 	
-	public final static String FLOW_COMPONENT = "flowcomponent";
-	public final static String SERVICE = "service";
-	public final static String WEBSERVICE_OPERATION = "webserviceoperation";
-	public final static String URI = "uri";
 	// -----------------------------------------------------------------
+	// Used for properties files
+	// -------------------------
+	public final static String OSB_SERVICE_TYPE = "service";
+	public final static String OSB_RESOURCE_STATISTIC_TYPE = "resource";
+	public final static String OSB_STATISTIC_TYPE = "statistic";
+	
+	// -----------------------------------------------------------------
+	// OSB ResourceType
+	// ----------------
+	public final static String OSB_RESOURCE_TYPE_FLOW_COMPONENT = "flowcomponent";
+	public final static String OSB_RESOURCE_TYPE_SERVICE = "service";
+	public final static String OSB_RESOURCE_TYPE_WEBSERVICE_OPERATION = "webserviceoperation";
+	public final static String OSB_RESOURCE_TYPE_URI = "uri";
+	
+	// -----------------------------------------------------------------
+	// OSB StatisticType
+	// -----------------
+	public final static String OSB_STATISTIC_TYPE_COUNT = "count";
+	public final static String OSB_STATISTIC_TYPE_INTERVAL = "interval";
+	public final static String OSB_STATISTIC_TYPE_STATUS = "status";
+	// -----------------------------------------------------------------
+	
+	// Array used for statistic collecting
+	public final static String[] OSB_PS_RESSOURCE_TYPE = {OSB_RESOURCE_TYPE_SERVICE, OSB_RESOURCE_TYPE_WEBSERVICE_OPERATION, OSB_RESOURCE_TYPE_FLOW_COMPONENT};
+	public final static String[] OSB_BS_RESSOURCE_TYPE = {OSB_RESOURCE_TYPE_SERVICE, OSB_RESOURCE_TYPE_WEBSERVICE_OPERATION, OSB_RESOURCE_TYPE_URI};
+	
+	
 	
 	// -----------------------------------------------------------------
 	// SOA resources
@@ -232,7 +255,7 @@ public class MonitorProperties {
 	 */
 	// Updated by gregoan
 	//public final static List<String> LEGAL_RESOURCE_TYPES = Arrays.asList(CORE_RESOURCE_TYPE, DATASOURCE_RESOURCE_TYPE, DESTINATION_RESOURCE_TYPE, SAF_RESOURCE_TYPE, WEBAPP_RESOURCE_TYPE, EJB_RESOURCE_TYPE, WORKMGR_RESOURCE_TYPE, SVRCHNL_RESOURCE_TYPE, HOSTMACHINE_RESOURCE_TYPE);
-	public final static List<String> LEGAL_RESOURCE_TYPES = Arrays.asList(CORE_RESOURCE_TYPE, DATASOURCE_RESOURCE_TYPE, DESTINATION_RESOURCE_TYPE, SAF_RESOURCE_TYPE, WEBAPP_RESOURCE_TYPE, EJB_RESOURCE_TYPE, WORKMGR_RESOURCE_TYPE, SVRCHNL_RESOURCE_TYPE, HOSTMACHINE_RESOURCE_TYPE, JMSSVR_RESOURCE_TYPE, SAFAGENT_RESOURCE_TYPE, JVM_RESOURCE_TYPE, JMS_DASHBOARD_RESOURCE_TYPE, SAF_DASHBOARD_RESOURCE_TYPE, PROXY_SERVICE_RESOURCE_TYPE, BUSINESS_SERVICE_RESOURCE_TYPE);
+	public final static List<String> LEGAL_RESOURCE_TYPES = Arrays.asList(CORE_RESOURCE_TYPE, DATASOURCE_RESOURCE_TYPE, DESTINATION_RESOURCE_TYPE, SAF_RESOURCE_TYPE, WEBAPP_RESOURCE_TYPE, EJB_RESOURCE_TYPE, WORKMGR_RESOURCE_TYPE, SVRCHNL_RESOURCE_TYPE, HOSTMACHINE_RESOURCE_TYPE, JMSSVR_RESOURCE_TYPE, SAFAGENT_RESOURCE_TYPE, JVM_RESOURCE_TYPE, JMS_DASHBOARD_RESOURCE_TYPE, SAF_DASHBOARD_RESOURCE_TYPE, OSB_PS_TYPE, OSB_BS_TYPE);
 
 	/**
 	 * List of Server MBean Attributes to be monitored
@@ -332,12 +355,9 @@ public class MonitorProperties {
 	// Added by gregoan
 	
 // Only for validation/testing purpose
-public final static String[] OSB_MBEAN_MONITOR_ATTR_LIST =  {OSB_COUNT, OSB_MIN, OSB_MAX, OSB_SUM, OSB_AVG};
+//public final static String[] OSB_MBEAN_MONITOR_ATTR_LIST =  {OSB_COUNT, OSB_MIN, OSB_MAX, OSB_SUM, OSB_AVG};
+//public final static String[] OSB_MBEAN_MONITOR_ATTR_INVOKE_LIST =  {INVOKE_OSB_COUNT, INVOKE_OSB_MIN, INVOKE_OSB_MAX, INVOKE_OSB_SUM, INVOKE_OSB_AVG};
 
-	
-// -> The metrics could be found only from Proxy/Business and then ResourceType
-// -> An analysis of OSB report should be done to see which attribute are printed !!!!
-	
 	// OSB (INTERVAL)
 	//public final static String[] OSB_INTERVAL_MBEAN_MONITOR_ATTR_LIST =  {OSB_INTERVAL_COUNT, OSB_INTERVAL_MIN, OSB_INTERVAL_MAX, OSB_INTERVAL_SUM, OSB_INTERVAL_AVG};
 
@@ -666,40 +686,72 @@ public final static String[] OSB_MBEAN_MONITOR_ATTR_LIST =  {OSB_COUNT, OSB_MIN,
 		propList.put(NON_HEAP_MEMORY_COMMITTED, new WLProperty(NON_HEAP_MEMORY_COMMITTED, "NonHeap Memory Committed", MEGABYTES_UNITS));
 		propList.put(NON_HEAP_MEMORY_MAX, new WLProperty(NON_HEAP_MEMORY_MAX, "NonHeap Memory Max", MEGABYTES_UNITS));
 		
-		propList.put(EDEN_SPACE_INIT, new WLProperty(EDEN_SPACE_INIT,"Eden Space Init", MEGABYTES_UNITS));
-		propList.put(EDEN_SPACE_USED, new WLProperty(EDEN_SPACE_USED,"Eden Space Used", MEGABYTES_UNITS));
-		propList.put(EDEN_SPACE_COMMITTED, new WLProperty(EDEN_SPACE_COMMITTED,"Eden Space Committed", MEGABYTES_UNITS));
-		propList.put(EDEN_SPACE_MAX, new WLProperty(EDEN_SPACE_MAX,"Eden Space Max", MEGABYTES_UNITS));
+		propList.put(EDEN_SPACE_INIT, new WLProperty(EDEN_SPACE_INIT, "Eden Space Init", MEGABYTES_UNITS));
+		propList.put(EDEN_SPACE_USED, new WLProperty(EDEN_SPACE_USED, "Eden Space Used", MEGABYTES_UNITS));
+		propList.put(EDEN_SPACE_COMMITTED, new WLProperty(EDEN_SPACE_COMMITTED, "Eden Space Committed", MEGABYTES_UNITS));
+		propList.put(EDEN_SPACE_MAX, new WLProperty(EDEN_SPACE_MAX, "Eden Space Max", MEGABYTES_UNITS));
 		
-		propList.put(SURVIVOR_SPACE_INIT, new WLProperty(SURVIVOR_SPACE_INIT,"Suvivor Space Init", MEGABYTES_UNITS));
-		propList.put(SURVIVOR_SPACE_USED, new WLProperty(SURVIVOR_SPACE_USED,"Survivor Space Used", MEGABYTES_UNITS));
-		propList.put(SURVIVOR_SPACE_COMMITTED, new WLProperty(SURVIVOR_SPACE_COMMITTED,"Survivor Space Committed", MEGABYTES_UNITS));
-		propList.put(SURVIVOR_SPACE_MAX, new WLProperty(SURVIVOR_SPACE_MAX,"Survivor Space Max", MEGABYTES_UNITS));
+		propList.put(SURVIVOR_SPACE_INIT, new WLProperty(SURVIVOR_SPACE_INIT, "Suvivor Space Init", MEGABYTES_UNITS));
+		propList.put(SURVIVOR_SPACE_USED, new WLProperty(SURVIVOR_SPACE_USED, "Survivor Space Used", MEGABYTES_UNITS));
+		propList.put(SURVIVOR_SPACE_COMMITTED, new WLProperty(SURVIVOR_SPACE_COMMITTED, "Survivor Space Committed", MEGABYTES_UNITS));
+		propList.put(SURVIVOR_SPACE_MAX, new WLProperty(SURVIVOR_SPACE_MAX, "Survivor Space Max", MEGABYTES_UNITS));
 		
-		propList.put(TENURED_GEN_INIT, new WLProperty(TENURED_GEN_INIT,"Tenured Gen Init", MEGABYTES_UNITS));
-		propList.put(TENURED_GEN_USED, new WLProperty(TENURED_GEN_USED,"Tenured Gen Used", MEGABYTES_UNITS));
-		propList.put(TENURED_GEN_COMMITTED, new WLProperty(TENURED_GEN_COMMITTED,"Tenured Gen Committed", MEGABYTES_UNITS));
-		propList.put(TENURED_GEN_MAX, new WLProperty(TENURED_GEN_MAX,"Tenured Gen Max", MEGABYTES_UNITS));
+		propList.put(TENURED_GEN_INIT, new WLProperty(TENURED_GEN_INIT, "Tenured Gen Init", MEGABYTES_UNITS));
+		propList.put(TENURED_GEN_USED, new WLProperty(TENURED_GEN_USED, "Tenured Gen Used", MEGABYTES_UNITS));
+		propList.put(TENURED_GEN_COMMITTED, new WLProperty(TENURED_GEN_COMMITTED, "Tenured Gen Committed", MEGABYTES_UNITS));
+		propList.put(TENURED_GEN_MAX, new WLProperty(TENURED_GEN_MAX, "Tenured Gen Max", MEGABYTES_UNITS));
 		
-		propList.put(PERM_GEN_INIT, new WLProperty(PERM_GEN_INIT,"Perm Gen Init", MEGABYTES_UNITS));
-		propList.put(PERM_GEN_USED, new WLProperty(PERM_GEN_USED,"Perm Gen Used", MEGABYTES_UNITS));
-		propList.put(PERM_GEN_COMMITTED, new WLProperty(PERM_GEN_COMMITTED,"Perm Gen Committed", MEGABYTES_UNITS));
-		propList.put(PERM_GEN_MAX, new WLProperty(PERM_GEN_MAX,"Perm Gen Max", MEGABYTES_UNITS));
+		propList.put(PERM_GEN_INIT, new WLProperty(PERM_GEN_INIT, "Perm Gen Init", MEGABYTES_UNITS));
+		propList.put(PERM_GEN_USED, new WLProperty(PERM_GEN_USED, "Perm Gen Used", MEGABYTES_UNITS));
+		propList.put(PERM_GEN_COMMITTED, new WLProperty(PERM_GEN_COMMITTED, "Perm Gen Committed", MEGABYTES_UNITS));
+		propList.put(PERM_GEN_MAX, new WLProperty(PERM_GEN_MAX, "Perm Gen Max", MEGABYTES_UNITS));
 		
 /*
 // -> The metrics could be found only from Proxy/Business and then ResourceType
 // -> An analysis of OSB report should be done to see which attribute are printed !!!!
 		
 		// Add the OSB here
-		propList.put(OSB_INTERVAL_COUNT, new WLProperty(OSB_INTERVAL_COUNT,"Interval Count", NUMBER_UNITS));
-		propList.put(OSB_INTERVAL_MIN, new WLProperty(OSB_INTERVAL_MIN,"Interval Mix", NUMBER_UNITS));
-		propList.put(OSB_INTERVAL_MAX, new WLProperty(OSB_INTERVAL_MAX,"Interval Max", NUMBER_UNITS));
-		propList.put(OSB_INTERVAL_SUM, new WLProperty(OSB_INTERVAL_SUM,"Interval Sum", NUMBER_UNITS));
-		propList.put(OSB_INTERVAL_AVG, new WLProperty(OSB_INTERVAL_AVG,"Interval Average", NUMBER_UNITS));
+		propList.put(OSB_INTERVAL_COUNT, new WLProperty(OSB_INTERVAL_COUNT, "Interval Count", NUMBER_UNITS));
+		propList.put(OSB_INTERVAL_MIN, new WLProperty(OSB_INTERVAL_MIN, "Interval Mix", NUMBER_UNITS));
+		propList.put(OSB_INTERVAL_MAX, new WLProperty(OSB_INTERVAL_MAX, "Interval Max", NUMBER_UNITS));
+		propList.put(OSB_INTERVAL_SUM, new WLProperty(OSB_INTERVAL_SUM, "Interval Sum", NUMBER_UNITS));
+		propList.put(OSB_INTERVAL_AVG, new WLProperty(OSB_INTERVAL_AVG, "Interval Average", NUMBER_UNITS));
 */
 		
 // Add the SOA-BPM here
 // ...
+	}
+	
+	public final static List<String> OSB_STATISTIC_LIST = new LinkedList<String>();
+	static {
+		OSB_STATISTIC_LIST.add(OSB_MESSAGE_COUNT_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_ERROR_COUNT_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_FAILOVER_COUNT_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_WSS_ERROR_COUNT_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_FAILURE_RATE_COUNT_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_SUCCESS_RATE_COUNT_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_SEVERITY_ALL);
+		OSB_STATISTIC_LIST.add(OSB_SLA_SEVERITY_WARNING_COUNT_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_SLA_SEVERITY_MAJOR_COUNT_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_SLA_SEVERITY_MINOR_COUNT_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_SLA_SEVERITY_NORMAL_COUNT_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_SLA_SEVERITY_FATAL_COUNT_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_SLA_SEVERITY_CRITICAL_COUNT_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_SLA_SEVERITY_ALL_COUNT_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_URI_OFFLINE_COUNT_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_HIT_COUNT_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_VALIDATION_ERRORS_COUNT_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_PIPELINE_SEVERITY_WARNING_COUNT_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_PIPELINE_SEVERITY_MAJOR_COUNT_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_PIPELINE_SEVERITY_MINOR_COUNT_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_PIPELINE_SEVERITY_NORMAL_COUNT_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_PIPELINE_SEVERITY_FATAL_COUNT_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_PIPELINE_SEVERITY_CRITICAL_COUNT_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_PIPELINE_SEVERITY_ALL_COUNT_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_RESPONSE_TIME_INTERVAL_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_THROTTLING_TIME_INTERVAL_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_ELAPSED_TIME_INTERVAL_PROPERTY);
+		OSB_STATISTIC_LIST.add(OSB_STATUS_PROPERTY);
 	}
 }
 
