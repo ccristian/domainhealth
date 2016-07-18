@@ -271,8 +271,8 @@ $(function () {
 
     var currentDate = new Date();
     $.AdminLTE.options.endTimeVal = moment(currentDate);
-    //$.AdminLTE.options.startTimeVal = moment(currentDate).subtract(30, 'minutes');
-    $.AdminLTE.options.startTimeVal = moment(currentDate).subtract(3, 'days');
+    $.AdminLTE.options.startTimeVal = moment(currentDate).subtract(30, 'minutes');
+    //$.AdminLTE.options.startTimeVal = moment(currentDate).subtract(3, 'days');
 
     var endTime = $.AdminLTE.options.endTimeVal.format('DD-MM-YYYY-HH-mm');
     var startTime = $.AdminLTE.options.startTimeVal.format('DD-MM-YYYY-HH-mm');
@@ -505,22 +505,10 @@ $(function () {
         //data from one day is not split in multiple intervals
         if (diff==0){
 
-            /*
-            var urls = ["/echo/json1/"];
-            // this will trigger the first callback.
-            var base = $.when({});
-            $.each(urls, function(index, url){
-                console.log(index+":"+url);
-                base = base.then(getAjaxDeferred(resname, respath, value,url));
-                console.log(base);
-            });
-            */
-            var base = $.when({});
-            console.log("when before then!!!!!");
-            base = base.then(getAjaxDeferred(resname, respath, value));
-            console.log("END !!!!!");
-            /*
-            $.ajax({
+
+
+
+            $.ajaxq("DHQueue",{
                 url: '/domainhealth/rest/stats/' + respath + '/' + value + '?',
                 cache: false,
                 data: {startTime: startTime, endTime: endTime,nodata:'false'},
@@ -541,7 +529,7 @@ $(function () {
                     alert("error");
                 }
             });
-*/        }else if (diff>=1){
+        }else if (diff>=1){
 
 
             /*var urls = ["/echo/json1/"];

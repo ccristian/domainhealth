@@ -50,11 +50,6 @@
       <version>1.17.1</version>
     </dependency>
     <dependency>
-      <groupId>joda-time</groupId>
-      <artifactId>joda-time</artifactId>
-      <version>2.5</version>
-    </dependency>
-    <dependency>
       <groupId>com.sun.jersey</groupId>
       <artifactId>jersey-servlet</artifactId>
       <version>1.17.1</version>
@@ -82,23 +77,41 @@
   <build>
     <finalName>domainhealth</finalName>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
-        <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>2.1.1</version>
-        <configuration>
-          <failOnMissingWebXml>false</failOnMissingWebXml>
-        </configuration>
-      </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.3</version>
+            <configuration>
+                <compilerId>javac-with-errorprone</compilerId>
+                <forceJavacCompilerUse>true</forceJavacCompilerUse>
+                <!-- maven-compiler-plugin defaults to targeting Java 5, but our javac
+                     only supports >=6 -->
+                <source>7</source>
+                <target>7</target>
+            </configuration>
+            <dependencies>
+                <dependency>
+                    <groupId>org.codehaus.plexus</groupId>
+                    <artifactId>plexus-compiler-javac-errorprone</artifactId>
+                    <version>2.5</version>
+                </dependency>
+                <!-- override plexus-compiler-javac-errorprone's dependency on
+                     Error Prone with the latest version -->
+                <dependency>
+                    <groupId>com.google.errorprone</groupId>
+                    <artifactId>error_prone_core</artifactId>
+                    <version>2.0.1</version>
+                </dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>2.1.1</version>
+            <configuration>
+                <failOnMissingWebXml>false</failOnMissingWebXml>
+            </configuration>
+        </plugin>
       
       <!-- Added by gregoan -->
       <!--
