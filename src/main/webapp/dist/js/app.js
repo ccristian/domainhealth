@@ -271,8 +271,8 @@ $(function () {
 
     var currentDate = new Date();
     $.AdminLTE.options.endTimeVal = moment(currentDate);
-    $.AdminLTE.options.startTimeVal = moment(currentDate).subtract(30, 'minutes');
-    //$.AdminLTE.options.startTimeVal = moment(currentDate).subtract(3, 'days');
+    //$.AdminLTE.options.startTimeVal = moment(currentDate).subtract(30, 'minutes');
+    $.AdminLTE.options.startTimeVal = moment(currentDate).subtract(3, 'days');
 
     var endTime = $.AdminLTE.options.endTimeVal.format('DD-MM-YYYY-HH-mm');
     var startTime = $.AdminLTE.options.startTimeVal.format('DD-MM-YYYY-HH-mm');
@@ -291,49 +291,17 @@ $(function () {
     getAndDisplayCharts($.AdminLTE.options.currentResname, $.AdminLTE.options.currentPath, $.AdminLTE.options.currentResource);
 
 
-
-        //initialize the date range and add a listener when new interval is selected
-        $('#daterange-btn').daterangepicker(
-            {
-                timePicker: true,
-                timePickerIncrement: 1,
-                locale: {
-                    format: 'DD/MM/YYYY h:mm A'
-                },
-
-                ranges: {
-                    '5 minutes': [moment().subtract(5, 'minutes'), moment()],
-                    '15 minutes': [moment().subtract(15, 'minutes'), moment()],
-                    '30 minutes': [moment().subtract(30, 'minutes'), moment()],
-                    '1 hour': [moment().subtract(1, 'hours'), moment()],
-                    '3 hours': [moment().subtract(3, 'hours'), moment()],
-                    '6 hours': [moment().subtract(6, 'hours'), moment()],
-                    '12 hours': [moment().subtract(12, 'hours'), moment()],
-                    '24 hours': [moment().subtract(24, 'hours'), moment()],
-                    'Today': [moment().startOf('day'), moment()],
-                    'Last 2 Days': [moment().subtract(2, 'days'), moment()],
-                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                    'This Month': [moment().startOf('month'), moment().endOf('month')]
-                },
-                startDate: moment().subtract(1, 'day'),
-                endDate: moment()
+    //initialize the date range and add a listener when new interval is selected
+    $('#daterange-btn').daterangepicker(
+        {
+            timePicker: true,
+            timePickerIncrement: 1,
+            locale: {
+                format: 'DD/MM/YYYY h:mm A'
             },
-            function (start, end) {
-                endTime = end.format('DD-MM-YYYY-HH-mm');
-                startTime = start.format('DD-MM-YYYY-HH-mm');
-                $.AdminLTE.options.endTimeVal = end;
-                $.AdminLTE.options.startTimeVal = start;
-                console.log("----------------------------------------");
-                console.log(start.format('DD-MM-YYYY-HH-mm'));
-                console.log(end.format('DD-MM-YYYY-HH-mm'));
-                displayDateInterval($.AdminLTE.options.startTimeVal, $.AdminLTE.options.endTimeVal);
-                getAndDisplayCharts($.AdminLTE.options.currentResname, $.AdminLTE.options.currentPath, $.AdminLTE.options.currentResource);
-            }
-        );
-    $('#daterange-btn').on('show.daterangepicker', function(ev, picker) {
-        picker.ranges =  {
-            '5 minutes': [moment().subtract(5, 'minutes'), moment()],
+
+            ranges: {
+                '5 minutes': [moment().subtract(5, 'minutes'), moment()],
                 '15 minutes': [moment().subtract(15, 'minutes'), moment()],
                 '30 minutes': [moment().subtract(30, 'minutes'), moment()],
                 '1 hour': [moment().subtract(1, 'hours'), moment()],
@@ -346,11 +314,41 @@ $(function () {
                 'Last 7 Days': [moment().subtract(6, 'days'), moment()],
                 'Last 30 Days': [moment().subtract(29, 'days'), moment()],
                 'This Month': [moment().startOf('month'), moment().endOf('month')]
+            },
+            startDate: moment().subtract(1, 'day'),
+            endDate: moment()
+        },
+        function (start, end) {
+            endTime = end.format('DD-MM-YYYY-HH-mm');
+            startTime = start.format('DD-MM-YYYY-HH-mm');
+            $.AdminLTE.options.endTimeVal = end;
+            $.AdminLTE.options.startTimeVal = start;
+            console.log("----------------------------------------");
+            console.log(start.format('DD-MM-YYYY-HH-mm'));
+            console.log(end.format('DD-MM-YYYY-HH-mm'));
+            displayDateInterval($.AdminLTE.options.startTimeVal, $.AdminLTE.options.endTimeVal);
+            getAndDisplayCharts($.AdminLTE.options.currentResname, $.AdminLTE.options.currentPath, $.AdminLTE.options.currentResource);
+        }
+    );
+    $('#daterange-btn').on('show.daterangepicker', function (ev, picker) {
+        picker.ranges = {
+            '5 minutes': [moment().subtract(5, 'minutes'), moment()],
+            '15 minutes': [moment().subtract(15, 'minutes'), moment()],
+            '30 minutes': [moment().subtract(30, 'minutes'), moment()],
+            '1 hour': [moment().subtract(1, 'hours'), moment()],
+            '3 hours': [moment().subtract(3, 'hours'), moment()],
+            '6 hours': [moment().subtract(6, 'hours'), moment()],
+            '12 hours': [moment().subtract(12, 'hours'), moment()],
+            '24 hours': [moment().subtract(24, 'hours'), moment()],
+            'Today': [moment().startOf('day'), moment()],
+            'Last 2 Days': [moment().subtract(2, 'days'), moment()],
+            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+            'This Month': [moment().startOf('month'), moment().endOf('month')]
         }
 
-       // console.log(picker.ranges);
+        // console.log(picker.ranges);
     });
-
 
 
     //http://localhost:7001/domainhealth/rest/resources/workmgr?startTime=01-09-2014-00-00&endTime=17-09-2015-0-00
@@ -373,7 +371,7 @@ $(function () {
     var templateDashboardActionSaf = Handlebars.compile(sourceDashboardActionSaf);
     //----------------------------------------------------------------
 
-    $("#move-left").click(function () {
+    $("#move-left").unbind().click(function () {
         var duration = moment.duration($.AdminLTE.options.endTimeVal.diff($.AdminLTE.options.startTimeVal));
         var minutes = duration.asMinutes();
         //alert("Navigation by interval"+minutes);
@@ -386,7 +384,7 @@ $(function () {
 
     });
 
-    $("#move-right").click(function () {
+    $("#move-right").unbind().click(function () {
         var duration = moment.duration($.AdminLTE.options.endTimeVal.diff($.AdminLTE.options.startTimeVal));
         var minutes = duration.asMinutes();
         //alert("Navigation by interval"+minutes);
@@ -453,66 +451,18 @@ $(function () {
         });
     }
 
-
-
-
-
-
-    function sleep(milliseconds) {
-        var start = new Date().getTime();
-        for (var i = 0; i < 1e7; i++) {
-            if ((new Date().getTime() - start) > milliseconds){
-                break;
-            }
-        }
-    }
-
-
-    function getAjaxDeferred(resname, respath, value){
-        return function(){
-            // wrap with a deferred
-            var defer = $.Deferred();
-            var url = '/domainhealth/rest/stats/' + respath + '/' + value + '?';
-            $.ajax({ url: url, method: 'GET',cache: false,
-                data: {startTime: startTime, endTime: endTime,nodata:'false'}}).complete(function(response){
-                console.log("response:arrived");
-                $.AdminLTE.options.renderedData = jQuery.parseJSON(response.responseText);;
-                $.AdminLTE.options.selectedPath = resname + " > " + value;
-                $.AdminLTE.options.currentPath = respath;
-                $.AdminLTE.options.currentResource = value;
-                $.AdminLTE.options.currentResname = resname;
-                $(".content-wrapper").html(templateHighstock($.AdminLTE));
-                dhLocalObj.currentPath = $.AdminLTE.options.currentPath;
-                dhLocalObj.currentResource = $.AdminLTE.options.currentResource;
-                dhLocalObj.currentResname = $.AdminLTE.options.currentResname;
-                localStorage.setItem("dh2storage", JSON.stringify(dhLocalObj));
-                // resolve when complete always.  Even on failure we
-                // want to keep going with other requests
-                defer.resolve();
-                console.log("response:resolved");
-            });
-            // return a promise so that we can chain properly in the
-            console.log("promise:returned");
-            return defer.promise();
-        };
-    }
-
-
     function getAndDisplayCharts(resname, respath, value) {
 
+        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!getAndDisplayCharts")
+
         //get the date diff
-        var diff = $.AdminLTE.options.endTimeVal.diff($.AdminLTE.options.startTimeVal,'days');
+        var diff = $.AdminLTE.options.endTimeVal.diff($.AdminLTE.options.startTimeVal, 'days');
         //data from one day is not split in multiple intervals
-        if (diff==0){
-
-
-
-
-            $.ajaxq("DHQueue",{
+        if (diff == 0) {
+            $.ajaxq("DHQueue", {
                 url: '/domainhealth/rest/stats/' + respath + '/' + value + '?',
                 cache: false,
-                data: {startTime: startTime, endTime: endTime,nodata:'false'},
-
+                data: {startTime: startTime, endTime: endTime, nodata: 'false'},
                 success: function (response) {
                     $.AdminLTE.options.renderedData = response;
                     $.AdminLTE.options.selectedPath = resname + " > " + value;
@@ -529,150 +479,107 @@ $(function () {
                     alert("error");
                 }
             });
-        }else if (diff>=1){
-
-
-            /*var urls = ["/echo/json1/"];
-            // this will trigger the first callback.
-            var base = $.when({});
-            $.each(urls, function(index, url){
-                console.log(index+":"+url);
-                base = base.then(getAjaxDeferred(resname, respath, value,url));
-                console.log(base);
-            });*/
-
+        } else if (diff >= 1) {
 
             console.log(diff);
             console.log($.AdminLTE.options.startTimeVal.format('DD-MM-YYYY-HH-mm'));
             var st = moment($.AdminLTE.options.startTimeVal);
             //var ed = moment($.AdminLTE.options.startTimeVal).endOf('day');
             var ed = moment($.AdminLTE.options.endTimeVal);
-            console.log("Interval :"+st.format('DD-MM-YYYY-HH-mm')+"    "+ed.format('DD-MM-YYYY-HH-mm'));
-
-            $.ajax({
+            console.log("Total Interval :" + st.format('DD-MM-YYYY-HH-mm') + "    " + ed.format('DD-MM-YYYY-HH-mm'));
+            var sts =  st.format('DD-MM-YYYY-HH-mm');
+            var eds = ed.format('DD-MM-YYYY-HH-mm');
+            $.ajaxq("DHQueue", {
                 url: '/domainhealth/rest/stats/' + respath + '/' + value + '?',
                 cache: false,
-                complete:function (){
-                    console.log("Done !!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                },
-                async:'false',
-                data: {startTime: st.format('DD-MM-YYYY-HH-mm'), endTime: ed.format('DD-MM-YYYY-HH-mm'),nodata:'true'},
-
+                data: {startTime: sts,endTime: eds, nodata: 'true'},
                 success: function (response) {
                     $.AdminLTE.options.renderedData = response;
                     $.AdminLTE.options.selectedPath = resname + " > " + value;
                     $.AdminLTE.options.currentPath = respath;
                     $.AdminLTE.options.currentResource = value;
                     $.AdminLTE.options.currentResname = resname;
-                   //$(".content-wrapper").html(templateHighstock($.AdminLTE));
-                    console.log("Initial Stucture:"+response)
+                    //not yet only after the response is fully received for each day.
+                    //$(".content-wrapper").html(templateHighstock($.AdminLTE));
                     dhLocalObj.currentPath = $.AdminLTE.options.currentPath;
                     dhLocalObj.currentResource = $.AdminLTE.options.currentResource;
                     dhLocalObj.currentResname = $.AdminLTE.options.currentResname;
                     localStorage.setItem("dh2storage", JSON.stringify(dhLocalObj));
-
-                    // more than 1 day ==> we split and we get data / days to avoid huge memory usage on server side
-                    var currentDay  = moment(st);
-                    // var currentDay  =  var currentDay  = $.AdminLTE.options.startTimeVal.add(1, 'day');
-
-                    st  = moment(st).add(1, 'day').startOf('day');
-                    ed = moment(st).endOf('day');
-
-
-                    var charts = $(".currentcharts");
-                    var chartMap = new Object();
-                    $.each(charts, function (key, value) {
-                        var chart = $("#" + value.id).highcharts();
-                        //chart.xAxis[0].setExtremes(Date.UTC(2016, 2, 3), Date.UTC(2016, 2, 17));
-                        chartMap[value.id] = chart;
-                        //chart.redraw();
-                    });
-
-
-
-                     $.ajax({
-                        url: '/domainhealth/rest/stats/' + $.AdminLTE.options.currentPath + '/' + $.AdminLTE.options.currentResource + '?',
-                        cache: false,
-                        async:true,
-                        data: {startTime: st.format('DD-MM-YYYY-HH-mm'), endTime: ed.format('DD-MM-YYYY-HH-mm')},
-                        success: function (response) {
-                            //each chart
-                            $.each(response, function (key, value) {
-                                //example key :HeapUsedCurrent
-
-                                if (key == 'HeapUsedCurrent') {
-
-                                var currentChart = chartMap[key];
-                                //iterate each serie in the response for key
-                                for (var seriesIndex = 0; seriesIndex < value.length; seriesIndex++) {
-
-                                    //ex :  serie for admin server (value[seriesIndex].id = 'AdminServer')
-                                    var currentSeries = currentChart.get(value[seriesIndex].id);
-                                    console.log(currentSeries);
-
-                                    for (var i = 0; i < value[seriesIndex].data.length; i++) {
-                                        //if (value[seriesIndex].name  = )
-                                        var point = value[seriesIndex].data[i];
-                                        var index = currentSeries.xData.indexOf(point[0]);
-                                        if (index == -1) {
-                                            // console.log(point[0]);
-                                            //console.log("CUCU");
-                                            //currentSeries.addPoint([point[0], point[1]], true, true);
-                                            //console.log(moment(point[0]).format('DD-MM-YYYY-HH-mm'));
-                                        }
-                                    }
-                                }
-
-                                //currentChart.redraw();
-                                //    currentChart.reflow();
-                                    console.log("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS"+currentChart);
-                                }
-                            });
-                        },
-                        error: function (xhr) {
-                            alert("error");
-                        }
-                    });
-
-
-
-
-                    for (var iii = 0; iii < diff; iii++) {
-                        st  = moment(st).add(1, 'day').startOf('day');
-                        if (iii==diff-1){
-                            ed = $.AdminLTE.options.endTimeVal
-                        }else{
-                            ed = moment(st).endOf('day');
-                        }
-
-                        console.log("Interval :"+st.format('DD-MM-YYYY-HH-mm')+"    "+ed.format('DD-MM-YYYY-HH-mm'));
-
-                        //var sss = moment($.AdminLTE.options.startTimeVal).endOf("day");
-
-                    }
-
-
+                    console.log("Struture:"+$.AdminLTE.options.renderedData);
                 },
                 error: function (xhr) {
                     alert("error");
                 }
             });
+            for (var cnt = 0; cnt < diff; cnt++) {
+                st  = moment(st).add(1, 'day').startOf('day');
+                if (cnt == diff - 1) {
+                    ed = $.AdminLTE.options.endTimeVal
+                    $.ajaxq("DHQueue", {
+                        url: '/domainhealth/rest/stats/' + respath + '/' + value + '?',
+                        cache: false,
+                        data: {startTime: sts,endTime: eds, nodata: 'false'},
+                        success: function (response) {
+                            appendResponse(response);
+                            console.log(JSON.stringify($.AdminLTE.options.renderedData));
+                            //$(".content-wrapper").html(templateHighstock($.AdminLTE));
+                        },
+                        error: function (xhr) {
+                            alert("error");
+                        }
+                    });
+                } else {
+                    ed = moment(st).endOf('day');
+                    $.ajaxq("DHQueue", {
+                        url: '/domainhealth/rest/stats/' + respath + '/' + value + '?',
+                        cache: false,
+                        data: {startTime: sts,endTime: eds, nodata: 'false'},
+                        success: function (response) {
+                            appendResponse(response);
 
-
-
+                        },
+                        error: function (xhr) {
+                            alert("error");
+                        }
+                    });
+                }
+                 sts =  st.format('DD-MM-YYYY-HH-mm');
+                 eds = ed.format('DD-MM-YYYY-HH-mm');
+            }
         }
-
-
-        //ajax call to get the structure of the graphs with no data retrived.
-
-
 
 
     }
 
+    function appendResponse(response){
+        console.log("Append response"+response);
+        //$.AdminLTE.options.renderedData
+        $.each(response, function (key, value) {
+            //example key :HeapUsedCurrent
+            //key
+            //val.id (ex: AdminServer)
+            //val.data (data to append)
+            $.each(value, function( index, val ) {
+               //console.log( key+"  "+index + ": " + val.data);
+                $.each($.AdminLTE.options.renderedData[key], function( indexTemplate, valTemplate ) {
+                    if (valTemplate.id == val.id){
+                        console.log("valTemplate.id "+valTemplate.id);
+                        console.log("key "+key);
+                        valTemplate.data = valTemplate.data.concat(val.data);
+                        console.log("valdata "+val.data.length);
+                        console.log("valTemplate.data "+valTemplate.data.length);
+                    }
+                });
+            });
+            //var servers = $.AdminLTE.options.renderedData[key];
+            //for
+        });
+    }
+
+
     function addListener(res, resname, respath) {
         $.each(res.list, function (key, value) {
-            $("#" + res.uniquename + value).click(function () {
+            $("#" + res.uniquename + value).unbind().click(function () {
                 getAndDisplayCharts(resname, respath, value);
             });
         });
@@ -687,25 +594,25 @@ $(function () {
         });
     }
 
-    $("#core").click(function () {
+    $("#core").unbind().click(function () {
         getAndDisplayCharts("Core", "core", "params");
     });
 
     // Added by gregoan
-    $("#jvm").click(function () {
+    $("#jvm").unbind().click(function () {
         getAndDisplayCharts("JVM", "jvm", "params");
     });
 
     // Added by gregoan
-    $("#hostmachine").click(function () {
+    $("#hostmachine").unbind().click(function () {
         getAndDisplayCharts("HostMachine", "hostmachine", "params");
     });
 
-    $("#dhnavigatorCb").click(function () {
+    $("#dhnavigatorCb").unbind().click(function () {
         getAndDisplayCharts($.AdminLTE.options.currentResname, $.AdminLTE.options.currentPath, $.AdminLTE.options.currentResource);
     });
 
-    $("#livedataCb").click(function () {
+    $("#livedataCb").unbind().click(function () {
 
 
         //if livedata is selected start interval
@@ -716,53 +623,53 @@ $(function () {
             $.AdminLTE.options.interval = setInterval(
                 function () {
 
-                var charts = $(".currentcharts");
-                var chartMap = new Object();
-                $.each(charts, function (key, value) {
-                    var chart = $("#" + value.id).highcharts();
-                    chartMap[value.id] = chart;
-                });
+                    var charts = $(".currentcharts");
+                    var chartMap = new Object();
+                    $.each(charts, function (key, value) {
+                        var chart = $("#" + value.id).highcharts();
+                        chartMap[value.id] = chart;
+                    });
 
-                var intrevalTime = 60;
-                var now = new Date();
-                var end = moment(now);
-                var start = moment(end).subtract(intrevalTime, 'seconds');
-                var endTimeInterval = end.format('DD-MM-YYYY-HH-mm');
-                var startTimeInterval = start.format('DD-MM-YYYY-HH-mm');
+                    var intrevalTime = 60;
+                    var now = new Date();
+                    var end = moment(now);
+                    var start = moment(end).subtract(intrevalTime, 'seconds');
+                    var endTimeInterval = end.format('DD-MM-YYYY-HH-mm');
+                    var startTimeInterval = start.format('DD-MM-YYYY-HH-mm');
 
-                $.ajax({
-                    url: '/domainhealth/rest/stats/' + $.AdminLTE.options.currentPath + '/' + $.AdminLTE.options.currentResource + '?',
-                    cache: false,
-                    data: {startTime: startTimeInterval, endTime: endTimeInterval},
-                    success: function (response) {
-                        //each chart
-                        $.each(response, function (key, value) {
-                            //example key :HeapUsedCurrent
-                            var currentChart = chartMap[key];
-                            //iterate each serie in the response for key
-                            for (var seriesIndex = 0; seriesIndex < value.length; seriesIndex++) {
+                    $.ajax({
+                        url: '/domainhealth/rest/stats/' + $.AdminLTE.options.currentPath + '/' + $.AdminLTE.options.currentResource + '?',
+                        cache: false,
+                        data: {startTime: startTimeInterval, endTime: endTimeInterval},
+                        success: function (response) {
+                            //each chart
+                            $.each(response, function (key, value) {
+                                //example key :HeapUsedCurrent
+                                var currentChart = chartMap[key];
+                                //iterate each serie in the response for key
+                                for (var seriesIndex = 0; seriesIndex < value.length; seriesIndex++) {
 
-                                //ex :  serie for admin server (value[seriesIndex].id = 'AdminServer')
-                                var currentSeries = currentChart.get(value[seriesIndex].id);
-                                
-                                for (var i = 0; i < value[seriesIndex].data.length; i++) {
-                                    //if (value[seriesIndex].name  = )
-                                    var point = value[seriesIndex].data[i];
-                                    var index = currentSeries.xData.indexOf(point[0]);
-                                    if (index == -1) {
-                                        currentSeries.addPoint([point[0], point[1]], true, true);
+                                    //ex :  serie for admin server (value[seriesIndex].id = 'AdminServer')
+                                    var currentSeries = currentChart.get(value[seriesIndex].id);
+
+                                    for (var i = 0; i < value[seriesIndex].data.length; i++) {
+                                        //if (value[seriesIndex].name  = )
+                                        var point = value[seriesIndex].data[i];
+                                        var index = currentSeries.xData.indexOf(point[0]);
+                                        if (index == -1) {
+                                            currentSeries.addPoint([point[0], point[1]], true, true);
+                                        }
                                     }
                                 }
-                            }
-                        });
-                    },
-                    error: function (xhr) {
-                        alert("error");
-                    }
-                });
+                            });
+                        },
+                        error: function (xhr) {
+                            alert("error");
+                        }
+                    });
 
-                console.log("tick ...");
-            }, 30000);
+                    console.log("tick ...");
+                }, 30000);
         } else {
             console.log("stop live data ...");
             clearInterval($.AdminLTE.options.interval);
@@ -772,7 +679,7 @@ $(function () {
     });
 
 
-    $.ajax({
+    $.ajaxq("DHQueue",{
         url: '/domainhealth/rest/resources',
         dataType: 'JSON',
         data: {startTime: startTime, endTime: endTime},
