@@ -271,8 +271,8 @@ $(function () {
 
     var currentDate = new Date();
     $.AdminLTE.options.endTimeVal = moment(currentDate);
-    //$.AdminLTE.options.startTimeVal = moment(currentDate).subtract(30, 'minutes');
-    $.AdminLTE.options.startTimeVal = moment(currentDate).subtract(3, 'days');
+    $.AdminLTE.options.startTimeVal = moment(currentDate).subtract(30, 'minutes');
+    //$.AdminLTE.options.startTimeVal = moment(currentDate).subtract(3, 'days');
 
     var endTime = $.AdminLTE.options.endTimeVal.format('DD-MM-YYYY-HH-mm');
     var startTime = $.AdminLTE.options.startTimeVal.format('DD-MM-YYYY-HH-mm');
@@ -323,9 +323,9 @@ $(function () {
             startTime = start.format('DD-MM-YYYY-HH-mm');
             $.AdminLTE.options.endTimeVal = end;
             $.AdminLTE.options.startTimeVal = start;
-            console.log("----------------------------------------");
-            console.log(start.format('DD-MM-YYYY-HH-mm'));
-            console.log(end.format('DD-MM-YYYY-HH-mm'));
+            //console.log("----------------------------------------");
+            //console.log(start.format('DD-MM-YYYY-HH-mm'));
+            //console.log(end.format('DD-MM-YYYY-HH-mm'));
             displayDateInterval($.AdminLTE.options.startTimeVal, $.AdminLTE.options.endTimeVal);
             getAndDisplayCharts($.AdminLTE.options.currentResname, $.AdminLTE.options.currentPath, $.AdminLTE.options.currentResource);
         }
@@ -453,7 +453,7 @@ $(function () {
 
     function getAndDisplayCharts(resname, respath, value) {
 
-        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!getAndDisplayCharts")
+        //console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!getAndDisplayCharts")
 
         //get the date diff
         var diff = $.AdminLTE.options.endTimeVal.diff($.AdminLTE.options.startTimeVal, 'days');
@@ -481,12 +481,12 @@ $(function () {
             });
         } else if (diff >= 1) {
 
-            console.log(diff);
-            console.log($.AdminLTE.options.startTimeVal.format('DD-MM-YYYY-HH-mm'));
+            //console.log(diff);
+            //console.log($.AdminLTE.options.startTimeVal.format('DD-MM-YYYY-HH-mm'));
             var st = moment($.AdminLTE.options.startTimeVal);
             //var ed = moment($.AdminLTE.options.startTimeVal).endOf('day');
             var ed = moment($.AdminLTE.options.endTimeVal);
-            console.log("Total Interval :" + st.format('DD-MM-YYYY-HH-mm') + "    " + ed.format('DD-MM-YYYY-HH-mm'));
+            //console.log("Total Interval :" + st.format('DD-MM-YYYY-HH-mm') + "    " + ed.format('DD-MM-YYYY-HH-mm'));
             var sts =  st.format('DD-MM-YYYY-HH-mm');
             var eds = ed.format('DD-MM-YYYY-HH-mm');
             $.ajaxq("DHQueue", {
@@ -505,24 +505,26 @@ $(function () {
                     dhLocalObj.currentResource = $.AdminLTE.options.currentResource;
                     dhLocalObj.currentResname = $.AdminLTE.options.currentResname;
                     localStorage.setItem("dh2storage", JSON.stringify(dhLocalObj));
-                    console.log("Struture:"+$.AdminLTE.options.renderedData);
+                    //console.log("Struture:"+$.AdminLTE.options.renderedData);
                 },
                 error: function (xhr) {
                     alert("error");
                 }
             });
             for (var cnt = 0; cnt < diff; cnt++) {
-                st  = moment(st).add(1, 'day').startOf('day');
+                sts =  st.format('DD-MM-YYYY-HH-mm');
                 if (cnt == diff - 1) {
                     ed = $.AdminLTE.options.endTimeVal
+                    eds = ed.format('DD-MM-YYYY-HH-mm');
+
                     $.ajaxq("DHQueue", {
                         url: '/domainhealth/rest/stats/' + respath + '/' + value + '?',
                         cache: false,
                         data: {startTime: sts,endTime: eds, nodata: 'false'},
                         success: function (response) {
                             appendResponse(response);
-                            console.log(JSON.stringify($.AdminLTE.options.renderedData));
-                            //$(".content-wrapper").html(templateHighstock($.AdminLTE));
+                            //console.log(JSON.stringify($.AdminLTE.options.renderedData));
+                            $(".content-wrapper").html(templateHighstock($.AdminLTE));
                         },
                         error: function (xhr) {
                             alert("error");
@@ -530,21 +532,20 @@ $(function () {
                     });
                 } else {
                     ed = moment(st).endOf('day');
+                    eds = ed.format('DD-MM-YYYY-HH-mm');
                     $.ajaxq("DHQueue", {
                         url: '/domainhealth/rest/stats/' + respath + '/' + value + '?',
                         cache: false,
                         data: {startTime: sts,endTime: eds, nodata: 'false'},
                         success: function (response) {
                             appendResponse(response);
-
                         },
                         error: function (xhr) {
                             alert("error");
                         }
                     });
                 }
-                 sts =  st.format('DD-MM-YYYY-HH-mm');
-                 eds = ed.format('DD-MM-YYYY-HH-mm');
+                st  = moment(st).add(1, 'day').startOf('day');
             }
         }
 
@@ -552,22 +553,24 @@ $(function () {
     }
 
     function appendResponse(response){
-        console.log("Append response"+response);
+        //console.log("Append response"+response);
         //$.AdminLTE.options.renderedData
         $.each(response, function (key, value) {
             //example key :HeapUsedCurrent
             //key
             //val.id (ex: AdminServer)
             //val.data (data to append)
+            console.log(key);
             $.each(value, function( index, val ) {
-               //console.log( key+"  "+index + ": " + val.data);
+               console.log( key+"  "+index + ": " + val.data.length);
                 $.each($.AdminLTE.options.renderedData[key], function( indexTemplate, valTemplate ) {
                     if (valTemplate.id == val.id){
-                        console.log("valTemplate.id "+valTemplate.id);
-                        console.log("key "+key);
+                        //console.log("valTemplate.id "+valTemplate.id);
+                        //console.log("valTemplate.data "+valTemplate.data.length);
+                        //console.log("key "+key);
                         valTemplate.data = valTemplate.data.concat(val.data);
-                        console.log("valdata "+val.data.length);
-                        console.log("valTemplate.data "+valTemplate.data.length);
+                        //console.log("valdata "+val.data.length);
+                        //console.log("valTemplate.data "+valTemplate.data.length);
                     }
                 });
             });

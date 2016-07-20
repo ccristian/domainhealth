@@ -208,15 +208,15 @@ public class StorageService {
                     case MonitorProperties.DATASOURCE_RESOURCE_TYPE:
 
                         coreProps.add(WebLogicMBeanPropConstants.NUM_AVAILABLE);
-                        coreProps.add(WebLogicMBeanPropConstants.NUM_UNAVAILABLE);
-                        coreProps.add(WebLogicMBeanPropConstants.ACTIVE_CONNECTONS_CURRENT_COUNT);
-                        coreProps.add(WebLogicMBeanPropConstants.CONNECTION_DELAY_TIME);
-                        coreProps.add(WebLogicMBeanPropConstants.FAILED_RESERVE_REQUEST_COUNT);
-                        coreProps.add(WebLogicMBeanPropConstants.FAILURES_TO_RECONNECT_COUNT);
-                        coreProps.add(WebLogicMBeanPropConstants.LEAKED_CONNECTION_COUNT);
-                        coreProps.add(WebLogicMBeanPropConstants.WAITING_FOR_CONNECTION_CURRENT_COUNT);
-                        coreProps.add(WebLogicMBeanPropConstants.WAITING_FOR_CONNECTION_FAILURES_TOTAL);
-                        coreProps.add(WebLogicMBeanPropConstants.WAITING_SECONDS_HIGH_COUNT);
+                        //coreProps.add(WebLogicMBeanPropConstants.NUM_UNAVAILABLE);
+                        //coreProps.add(WebLogicMBeanPropConstants.ACTIVE_CONNECTONS_CURRENT_COUNT);
+                        //coreProps.add(WebLogicMBeanPropConstants.CONNECTION_DELAY_TIME);
+                        //coreProps.add(WebLogicMBeanPropConstants.FAILED_RESERVE_REQUEST_COUNT);
+                        //coreProps.add(WebLogicMBeanPropConstants.FAILURES_TO_RECONNECT_COUNT);
+                        //coreProps.add(WebLogicMBeanPropConstants.LEAKED_CONNECTION_COUNT);
+                        //coreProps.add(WebLogicMBeanPropConstants.WAITING_FOR_CONNECTION_CURRENT_COUNT);
+                        //coreProps.add(WebLogicMBeanPropConstants.WAITING_FOR_CONNECTION_FAILURES_TOTAL);
+                        //coreProps.add(WebLogicMBeanPropConstants.WAITING_SECONDS_HIGH_COUNT);
 
                         break;
 
