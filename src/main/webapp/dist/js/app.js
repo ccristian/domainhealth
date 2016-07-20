@@ -311,9 +311,7 @@ $(function () {
                 '24 hours': [moment().subtract(24, 'hours'), moment()],
                 'Today': [moment().startOf('day'), moment()],
                 'Last 2 Days': [moment().subtract(2, 'days'), moment()],
-                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                'This Month': [moment().startOf('month'), moment().endOf('month')]
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()]
             },
             startDate: moment().subtract(1, 'day'),
             endDate: moment()
@@ -342,14 +340,17 @@ $(function () {
             '24 hours': [moment().subtract(24, 'hours'), moment()],
             'Today': [moment().startOf('day'), moment()],
             'Last 2 Days': [moment().subtract(2, 'days'), moment()],
-            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-            'This Month': [moment().startOf('month'), moment().endOf('month')]
+            'Last 7 Days': [moment().subtract(6, 'days'), moment()]
         }
 
         // console.log(picker.ranges);
     });
 
+
+    $('.calendar.left').hide();
+    $('.calendar.right').hide();
+    $('.ranges li:last-child' ).hide();
+    $('.range_inputs' ).hide();
 
     //http://localhost:7001/domainhealth/rest/resources/workmgr?startTime=01-09-2014-00-00&endTime=17-09-2015-0-00
 
