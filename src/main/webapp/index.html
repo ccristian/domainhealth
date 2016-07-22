@@ -158,28 +158,58 @@ desired effect
           <span>JVM</span></a>
         </li>
 
-          <li class="treeview">
-              <a href="#">
-                  <i class="fa fa-share"></i> <span>Multilevel</span>
-                  <i class="fa fa-angle-left pull-right"></i>
-              </a>
-              <ul class="treeview-menu">
-                  <li class="treeview">
-                      <a href="#"><i class="fa fa-dashboard"></i><span>JMS Dashboard</span> <i class="fa fa-angle-left pull-right"></i></a>
-                      <ul id="jmsdashboard" class="treeview-menu"></ul>
-                  </li>
-                  <li class="treeview">
-                      <a href="#"><i class="fa fa-dashboard"></i><span>SAF Dashboard</span> <i class="fa fa-angle-left pull-right"></i></a>
-                      <ul id="safdashboard" class="treeview-menu"></ul>
-                  </li>
-              </ul>
-          </li>
-
-
-
-
-
-
+        <li class="treeview">
+            <a href="#">
+                <i class="fa fa-share"></i> <span>Dashboard</span>
+                <i class="fa fa-angle-left pull-right"></i>
+            </a>
+            <ul class="treeview-menu">
+                <li class="treeview">
+                    <a href="#"><i class="fa fa-dashboard"></i><span>JMS Dashboard</span> <i class="fa fa-angle-left pull-right"></i></a>
+                    <ul id="jmsdashboard" class="treeview-menu"></ul>
+                </li>
+                <li class="treeview">
+                    <a href="#"><i class="fa fa-dashboard"></i><span>SAF Dashboard</span> <i class="fa fa-angle-left pull-right"></i></a>
+                    <ul id="safdashboard" class="treeview-menu"></ul>
+                </li>
+            </ul>
+        </li>
+        
+        <li class="treeview">
+            <a href="#">
+                <i class="fa fa-share"></i> <span>OSB</span>
+                <i class="fa fa-angle-left pull-right"></i>
+            </a>
+            <ul class="treeview-menu">
+                
+                <li class="treeview">
+		          <a href="#"><i class="fa fa-dashboard"></i><span>OSB PS Services</span> <i class="fa fa-angle-left pull-right"></i></a>
+		          <ul id="osb_ps_service" class="treeview-menu"></ul>
+		        </li>
+		        <li class="treeview">
+		          <a href="#"><i class="fa fa-dashboard"></i><span>OSB PS WS Operations</span> <i class="fa fa-angle-left pull-right"></i></a>
+		          <ul id="osb_ps_webserviceoperation" class="treeview-menu"></ul>
+		        </li>
+		        <li class="treeview">
+		          <a href="#"><i class="fa fa-dashboard"></i><span>OSB PS FlowComponent</span> <i class="fa fa-angle-left pull-right"></i></a>
+		          <ul id="osb_ps_flowcomponent" class="treeview-menu"></ul>
+		        </li>
+		        
+		        <li class="treeview">
+		          <a href="#"><i class="fa fa-dashboard"></i><span>OSB BS Services</span> <i class="fa fa-angle-left pull-right"></i></a>
+		          <ul id="osb_bs_service" class="treeview-menu"></ul>
+		        </li>
+		        <li class="treeview">
+		          <a href="#"><i class="fa fa-dashboard"></i><span>OSB BS WS Operations</span> <i class="fa fa-angle-left pull-right"></i></a>
+		          <ul id="osb_bs_webserviceoperation" class="treeview-menu"></ul>
+		        </li>
+		        <li class="treeview">
+		          <a href="#"><i class="fa fa-dashboard"></i><span>OSB BS URI</span> <i class="fa fa-angle-left pull-right"></i></a>
+		          <ul id="osb_bs_uri" class="treeview-menu"></ul>
+		        </li>
+                
+            </ul>
+        </li>
 
       </ul><!-- /.sidebar-menu -->
 
@@ -452,6 +482,20 @@ Action not possible for SAF RemoteEndPoints
                             <li id="pauseins"><a href="#"><span class="fa fa-pause"></span>Pause</a></li>
                             <li class="divider"></li>
                             <li id="resumeins"><a href="#"><span class="fa fa-play"></span>Resume</a></li>
+                        </ul>
+                    </div>
+
+<!-- Added by gregoan -->
+					<div class="btn-group">
+                        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" id="msgdesttgl">
+                            <span>Messages</span>
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li id="viewdestmsg"><a href="#"><span class="fa fa-view"></span>View</a></li>
+                            <li class="divider"></li>
+                            <li id="movedestmsg"><a href="#"><span class="fa fa-move"></span>Move</a></li>
                         </ul>
                     </div>
                 </div>

@@ -1,8 +1,76 @@
 package domainhealth.rest;
 
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_ELAPSED_TIME_INTERVAL_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_ERROR_COUNT_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_FAILOVER_COUNT_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_FAILURE_RATE_COUNT_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_HIT_COUNT_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_MESSAGE_COUNT_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_PIPELINE_SEVERITY_ALL_COUNT_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_PIPELINE_SEVERITY_CRITICAL_COUNT_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_PIPELINE_SEVERITY_FATAL_COUNT_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_PIPELINE_SEVERITY_MAJOR_COUNT_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_PIPELINE_SEVERITY_MINOR_COUNT_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_PIPELINE_SEVERITY_NORMAL_COUNT_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_PIPELINE_SEVERITY_WARNING_COUNT_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_RESPONSE_TIME_INTERVAL_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_SLA_SEVERITY_ALL_COUNT_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_SLA_SEVERITY_CRITICAL_COUNT_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_SLA_SEVERITY_FATAL_COUNT_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_SLA_SEVERITY_MAJOR_COUNT_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_SLA_SEVERITY_MINOR_COUNT_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_SLA_SEVERITY_NORMAL_COUNT_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_SLA_SEVERITY_WARNING_COUNT_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_STATUS_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_SUCCESS_RATE_COUNT_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_THROTTLING_TIME_INTERVAL_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_URI_OFFLINE_COUNT_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_VALIDATION_ERRORS_COUNT_PROPERTY;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_WSS_ERROR_COUNT_PROPERTY;
+import static domainhealth.core.statistics.MonitorProperties.OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT;
+import static domainhealth.core.statistics.MonitorProperties.OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_AVERAGE;
+import static domainhealth.core.statistics.MonitorProperties.OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_COUNT;
+import static domainhealth.core.statistics.MonitorProperties.OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_MAX;
+import static domainhealth.core.statistics.MonitorProperties.OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_MIN;
+import static domainhealth.core.statistics.MonitorProperties.OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_SUM;
+import static domainhealth.core.statistics.MonitorProperties.OSB_STATISTIC_TYPE_STATUS_PROPERTY_CURRENT;
+import static domainhealth.core.statistics.MonitorProperties.OSB_STATISTIC_TYPE_STATUS_PROPERTY_INITIAL;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.PostConstruct;
+import javax.management.ObjectName;
+import javax.servlet.ServletContext;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import domainhealth.core.env.AppLog;
 import domainhealth.core.env.AppProperties;
 import domainhealth.core.jmx.DomainRuntimeServiceMBeanConnection;
+import domainhealth.core.jmx.WebLogicMBeanPropConstants;
 import domainhealth.core.statistics.MonitorProperties;
 import domainhealth.core.statistics.ResourceNameNormaliser;
 import domainhealth.core.statistics.StatisticsStorage;
@@ -10,23 +78,6 @@ import domainhealth.core.util.BlacklistUtil;
 import domainhealth.frontend.data.DateAmountDataItem;
 import domainhealth.frontend.data.DateAmountDataSet;
 import domainhealth.frontend.data.Statistics;
-import org.joda.time.DateTime;
-import org.joda.time.Interval;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
-import javax.annotation.PostConstruct;
-import javax.management.ObjectName;
-import javax.servlet.ServletContext;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-
-import domainhealth.core.jmx.WebLogicMBeanPropConstants;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.*;
 
 /**
  * Created by chiovcr on 02/12/2014.
@@ -73,8 +124,15 @@ public class StorageService {
             DateTime end = fmt.parseDateTime(endTime);
             Interval interval = new Interval(start, end);
 
-            //no resources for core...just properties
+            // -----------------------------------------------------
+            // No resources (children) for core and dashboard ...
+            // Just properties so it means there is no need to add these lines
             //resourcesMap.put(MonitorProperties.CORE_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.CORE_RESOURCE_TYPE));
+            //resourcesMap.put(MonitorProperties.HOSTMACHINE_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.HOSTMACHINE_RESOURCE_TYPE));
+			//resourcesMap.put(MonitorProperties.JVM_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.JVM_RESOURCE_TYPE));
+            // -----------------------------------------------------
+            
+            // -----------------------------------------------------
             resourcesMap.put(MonitorProperties.DATASOURCE_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.DATASOURCE_RESOURCE_TYPE));
             resourcesMap.put(MonitorProperties.DESTINATION_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.DESTINATION_RESOURCE_TYPE));
             resourcesMap.put(MonitorProperties.SAF_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.SAF_RESOURCE_TYPE));
@@ -82,14 +140,39 @@ public class StorageService {
             resourcesMap.put(MonitorProperties.WORKMGR_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.WORKMGR_RESOURCE_TYPE));
             resourcesMap.put(MonitorProperties.WEBAPP_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.WEBAPP_RESOURCE_TYPE));
             resourcesMap.put(MonitorProperties.SVRCHNL_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.SVRCHNL_RESOURCE_TYPE));
+            // -----------------------------------------------------
             
-            // Add the extensions of DH
-			//resourcesMap.put(MonitorProperties.HOSTMACHINE_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.HOSTMACHINE_RESOURCE_TYPE));
-			//resourcesMap.put(MonitorProperties.JVM_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.JVM_RESOURCE_TYPE));
+            // -----------------------------------------------------
+            // Add the OSB elements
+
+            // ProxyService
+            for(int index = 0; index < MonitorProperties.OSB_PS_RESSOURCE_TYPE.length; index ++) {
+				
+				String resourceType = MonitorProperties.OSB_PS_RESSOURCE_TYPE[index];
+				String serviceFilename = MonitorProperties.OSB_PS_TYPE + "_" + resourceType;
+				resourcesMap.put(serviceFilename, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, serviceFilename));
+            }
             
-			// Add the dashboard
+            // BusinessService
+            for(int index = 0; index < MonitorProperties.OSB_BS_RESSOURCE_TYPE.length; index ++) {
+				
+				String resourceType = MonitorProperties.OSB_BS_RESSOURCE_TYPE[index];
+				String serviceFilename = MonitorProperties.OSB_BS_TYPE + "_" + resourceType;				
+				resourcesMap.put(serviceFilename, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, serviceFilename));
+            }
+            // -----------------------------------------------------
+            
+            // -----------------------------------------------------
+            // Add the SOA-BPM elements
+            //@TODO
+            //resourcesMap.put(MonitorProperties.SOA_BPM_RESOURCE_TYPE, statisticsStorage.getResourceNamesFromPropsListForInterval(interval, MonitorProperties.SOA_BPM_RESOURCE_TYPE));
+            // -----------------------------------------------------
+            
+            // -----------------------------------------------------
+			// Add the dashboards
 			resourcesMap.put(MonitorProperties.JMS_DASHBOARD_RESOURCE_TYPE, getResourceNamesForJmsDashboard());
 			resourcesMap.put(MonitorProperties.SAF_DASHBOARD_RESOURCE_TYPE, getResourceNamesForSafDashboard());
+			// -----------------------------------------------------
 			
         } catch (IOException ex) {
             AppLog.getLogger().error("Error while getting resources", ex);
@@ -140,7 +223,6 @@ public class StorageService {
     //http://localhost:7001/domainhealth/rest/stats/core?scope=ALL&startTime=ss&endTime=ss
     //http://localhost:7001/domainhealth/rest/stats/core/xdd?startTime=01-09-2014-00-00&endTime=17-11-2015-0-00
     //http://localhost:7001/domainhealth/rest/stats/datasource/xdd?startTime=01-09-2014-00-00&endTime=17-11-2015-0-00
-
     @GET
     @Path("stats/{resourceType}/{resource}")
     @Produces({MediaType.APPLICATION_JSON})
@@ -179,15 +261,17 @@ public class StorageService {
             if (scope == null || scope.size() == 0) {
                 scope = statisticsStorage.getAllPossibleServerNames(conn);
             }
-            //temp
+            
+            // -----------------------------
+            // Temp
             /*scope = new TreeSet<>();
             scope.add("EFP7-OSB_TESTosb11");
             scope.add("EFP7-OSB_TESTosb12");
             scope.add("EFP7-OSB_TESTserver");
-               */
+            */
+            // -----------------------------
 
             // --------------------------------------------------------------------------
-            
             Map<String, DateAmountDataSet> dataMap = null;
 
             for (String server : scope) {
@@ -217,7 +301,6 @@ public class StorageService {
                         coreProps.add(WebLogicMBeanPropConstants.TRANSACTION_ROLLEDBACK_COUNT);
                         coreProps.add(WebLogicMBeanPropConstants.TRANSACTION_HEURISTICS_TOTAL_COUNT);
                         coreProps.add(WebLogicMBeanPropConstants.TRANSACTION_ABANDONED_TOTAL_COUNT);
-
                 		
                         resource = null;
                         break;
@@ -378,28 +461,147 @@ public class StorageService {
                         // Is important to find the file to read
                         resource = MonitorProperties.JVM_MBEAN_NAME;
                         
-                        break;                        
-                }
+                        break;
+                        
+                    case MonitorProperties.OSB_PS_TYPE + "_" + MonitorProperties.OSB_RESOURCE_TYPE_SERVICE:
+                    	                    	
+                    	coreProps.add(OSB_MESSAGE_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+	                	coreProps.add(OSB_ERROR_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+	                	coreProps.add(OSB_FAILOVER_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+	                	coreProps.add(OSB_WSS_ERROR_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+	                	coreProps.add(OSB_RESPONSE_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_COUNT);
+	                	coreProps.add(OSB_RESPONSE_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_MIN);
+	                	coreProps.add(OSB_RESPONSE_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_MAX);
+	                	coreProps.add(OSB_RESPONSE_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_AVERAGE);
+	                	coreProps.add(OSB_RESPONSE_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_SUM);
+	                	coreProps.add(OSB_VALIDATION_ERRORS_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+	                	coreProps.add(OSB_FAILURE_RATE_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+	                	coreProps.add(OSB_SUCCESS_RATE_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+	                	coreProps.add(OSB_SLA_SEVERITY_WARNING_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+	                	coreProps.add(OSB_SLA_SEVERITY_MAJOR_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+	                	coreProps.add(OSB_SLA_SEVERITY_MINOR_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+	                	coreProps.add(OSB_SLA_SEVERITY_NORMAL_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+	                	coreProps.add(OSB_SLA_SEVERITY_FATAL_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+	                	coreProps.add(OSB_SLA_SEVERITY_CRITICAL_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+	                	coreProps.add(OSB_SLA_SEVERITY_ALL_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+	                	coreProps.add(OSB_THROTTLING_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_COUNT);
+	                	coreProps.add(OSB_THROTTLING_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_MIN);
+	                	coreProps.add(OSB_THROTTLING_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_MAX);
+	                	coreProps.add(OSB_THROTTLING_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_AVERAGE);
+	                	coreProps.add(OSB_THROTTLING_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_SUM);
+	                	coreProps.add(OSB_URI_OFFLINE_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+	                	coreProps.add(OSB_HIT_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+	                	coreProps.add(OSB_PIPELINE_SEVERITY_WARNING_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+	                	coreProps.add(OSB_PIPELINE_SEVERITY_MAJOR_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+	                	coreProps.add(OSB_PIPELINE_SEVERITY_MINOR_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+	                	coreProps.add(OSB_PIPELINE_SEVERITY_NORMAL_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+	                	coreProps.add(OSB_PIPELINE_SEVERITY_FATAL_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+	                	coreProps.add(OSB_PIPELINE_SEVERITY_CRITICAL_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+	                	coreProps.add(OSB_PIPELINE_SEVERITY_ALL_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
 
+                    	break;
+                    	
+					case MonitorProperties.OSB_PS_TYPE + "_" + MonitorProperties.OSB_RESOURCE_TYPE_WEBSERVICE_OPERATION:
+											    
+						coreProps.add(OSB_ELAPSED_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_COUNT);
+						coreProps.add(OSB_ELAPSED_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_MIN);
+						coreProps.add(OSB_ELAPSED_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_MAX);
+						coreProps.add(OSB_ELAPSED_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_AVERAGE);
+						coreProps.add(OSB_ELAPSED_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_SUM);
+						coreProps.add(OSB_MESSAGE_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+						coreProps.add(OSB_ERROR_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+					
+                    	break;
+					                    	
+					case MonitorProperties.OSB_PS_TYPE + "_" + MonitorProperties.OSB_RESOURCE_TYPE_FLOW_COMPONENT:
+												
+						coreProps.add(OSB_ELAPSED_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_COUNT);
+						coreProps.add(OSB_ELAPSED_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_MIN);
+						coreProps.add(OSB_ELAPSED_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_MAX);
+						coreProps.add(OSB_ELAPSED_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_AVERAGE);
+						coreProps.add(OSB_ELAPSED_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_SUM);
+						coreProps.add(OSB_MESSAGE_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+						coreProps.add(OSB_ERROR_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+					
+						break;
+						
+					case MonitorProperties.OSB_BS_TYPE + "_" + MonitorProperties.OSB_RESOURCE_TYPE_SERVICE:
+												
+						coreProps.add(OSB_MESSAGE_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+						coreProps.add(OSB_ERROR_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+						coreProps.add(OSB_FAILOVER_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+						coreProps.add(OSB_WSS_ERROR_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+						coreProps.add(OSB_RESPONSE_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_COUNT);
+						coreProps.add(OSB_RESPONSE_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_MIN);
+						coreProps.add(OSB_RESPONSE_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_MAX);
+						coreProps.add(OSB_RESPONSE_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_AVERAGE);
+						coreProps.add(OSB_RESPONSE_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_SUM);
+						coreProps.add(OSB_FAILURE_RATE_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+						coreProps.add(OSB_SUCCESS_RATE_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+						coreProps.add(OSB_SLA_SEVERITY_WARNING_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+						coreProps.add(OSB_SLA_SEVERITY_MAJOR_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+						coreProps.add(OSB_SLA_SEVERITY_MINOR_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+						coreProps.add(OSB_SLA_SEVERITY_NORMAL_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+						coreProps.add(OSB_SLA_SEVERITY_FATAL_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+						coreProps.add(OSB_SLA_SEVERITY_CRITICAL_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+						coreProps.add(OSB_SLA_SEVERITY_ALL_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+						coreProps.add(OSB_THROTTLING_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_COUNT);
+						coreProps.add(OSB_THROTTLING_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_MIN);
+						coreProps.add(OSB_THROTTLING_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_MAX);
+						coreProps.add(OSB_THROTTLING_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_AVERAGE);
+						coreProps.add(OSB_THROTTLING_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_SUM);
+						coreProps.add(OSB_URI_OFFLINE_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+						coreProps.add(OSB_HIT_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+					
+						break;
+						
+					case MonitorProperties.OSB_BS_TYPE + "_" + MonitorProperties.OSB_RESOURCE_TYPE_WEBSERVICE_OPERATION:
+												
+						coreProps.add(OSB_ELAPSED_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_COUNT);
+						coreProps.add(OSB_ELAPSED_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_MIN);
+						coreProps.add(OSB_ELAPSED_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_MAX);
+						coreProps.add(OSB_ELAPSED_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_AVERAGE);
+						coreProps.add(OSB_ELAPSED_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_SUM);
+						coreProps.add(OSB_MESSAGE_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+						coreProps.add(OSB_ERROR_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+					
+						break;
+						
+					case MonitorProperties.OSB_BS_TYPE + "_" + MonitorProperties.OSB_RESOURCE_TYPE_URI:
+											
+						coreProps.add(OSB_MESSAGE_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+						coreProps.add(OSB_ERROR_COUNT_PROPERTY + OSB_STATISTIC_TYPE_COUNT_PROPERTY_COUNT);
+						coreProps.add(OSB_RESPONSE_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_COUNT);
+						coreProps.add(OSB_RESPONSE_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_MIN);
+						coreProps.add(OSB_RESPONSE_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_MAX);
+						coreProps.add(OSB_RESPONSE_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_AVERAGE);
+						coreProps.add(OSB_RESPONSE_TIME_INTERVAL_PROPERTY + OSB_STATISTIC_TYPE_INTERVAL_PROPERTY_SUM);
+						coreProps.add(OSB_STATUS_PROPERTY + OSB_STATISTIC_TYPE_STATUS_PROPERTY_INITIAL);
+						coreProps.add(OSB_STATUS_PROPERTY + OSB_STATISTIC_TYPE_STATUS_PROPERTY_CURRENT);
+					
+						break;
+                    	                        
+                    // Add OSB and SOA here ...
+                }
+                
                 // Temp solution for ordering gui
                 Collections.reverse(coreProps);
                 Set prp = new LinkedHashSet(coreProps);
                 dataMap = statisticsStorage.getPropertyData(resourceType, resource, prp, interval, server);
                 
                 for (String res:dataMap.keySet()) {
-
+                	
                     DateAmountDataSet dataSet  = dataMap.get(res);
-                    dataMap.put(res,null);
+                    dataMap.put(res, null);
                     
                     // Not used so commented
                     //String property = dataSet.getResourceProperty();
                     
                     List dataList = new LinkedList();
                     for (DateAmountDataItem dateAmountDataItem:dataSet.getData()) {
-                        //System.out.println("!");
                         dataList.add(new Object[]{dateAmountDataItem.getDateTime().getTime(), dateAmountDataItem.getAmount()});
                     }
-
+                    
                     Map map = new LinkedHashMap();
                     map.put("name",server);
                     map.put("id",server);
@@ -420,7 +622,9 @@ public class StorageService {
             // addMissingData(result,start,end);
             
             long t2 = System.currentTimeMillis();
+            
             return result;
+            
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -443,10 +647,11 @@ public class StorageService {
 			    													@PathParam("resourceType") String resourceType,
 			    													@PathParam("resource") String resource) {
         try {
+        	
         	DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();;
             // --------------------------------------------------------------------------
-            // for now we should get all jmsservers/safagent and skip the scope cause it just does a loop now and not used as param
-                        
+            // For now we should get all jmsservers/safagent and skip the scope cause it just does a loop now and not used as param
+                    
             //for (String server : scope) {        	
                 switch (resourceType) {
                 
@@ -471,7 +676,7 @@ public class StorageService {
      */
     private Set<String> getResourceNamesForJmsDashboard()  {
     	
-        Set<String> result = new LinkedHashSet<>();
+        Set<String> result = new LinkedHashSet<String>();
         try {
             // Is not expensive to instantiate cause there is a local cache.
             DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();
@@ -485,7 +690,7 @@ public class StorageService {
                 for (ObjectName jmsServer : jmsServers)
                 {
                     String currentElement = conn.getTextAttr(jmsServer, WebLogicMBeanPropConstants.NAME);
-                    
+                                        
                     // Check if not blacklisted
                     //String blackListString = (String)application.getAttribute(AppProperties.PropKey.COMPONENT_BLACKLIST_PROP.toString());
                     //List<String> componentBlacklist = new BlacklistUtil(blackListString).getComponentBlacklist();
@@ -497,6 +702,7 @@ public class StorageService {
 
                     while (iteratorBlacklist.hasNext()) {
                         String element = iteratorBlacklist.next();
+                                                
                         if (currentElement.contains(element)) {
                             blacklist = true;
                             break;
@@ -519,8 +725,8 @@ public class StorageService {
      * @return
      */
     private Set<String> getResourceNamesForSafDashboard()  {
-    	
-        Set<String> result = new LinkedHashSet<>();
+    	    	
+        Set<String> result = new LinkedHashSet<String>();
         try {
             // Is not expensive to instantiate cause there is a local cache.
             DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();
@@ -534,7 +740,7 @@ public class StorageService {
                 for (ObjectName safAgent : safAgents)
                 {
                     String currentElement = conn.getTextAttr(safAgent, WebLogicMBeanPropConstants.NAME);
-                                            
+                                                                
                     // Check if not blacklisted
                     //String blackListString = (String)application.getAttribute(AppProperties.PropKey.COMPONENT_BLACKLIST_PROP.toString());
                     //List<String> componentBlacklist = new BlacklistUtil(blackListString).getComponentBlacklist();
@@ -546,15 +752,16 @@ public class StorageService {
 
                     while (iteratorBlacklist.hasNext()) {
                         String element = iteratorBlacklist.next();
+                                                
                         if (currentElement.contains(element)) {
                             blacklist = true;
                             break;
                         }
                     }
-                        
+                    
                     if (!blacklist) {
                     	result.add(currentElement);
-                    }                     
+                    }
                 }
             }
         } catch(Exception ex){
@@ -665,7 +872,6 @@ public class StorageService {
 		        	String currentJmsServerName = conn.getTextAttr(jmsServer, WebLogicMBeanPropConstants.NAME);
 		        	if(currentJmsServerName.equals(jmsServerName)){
 		        		
-
 		        		for (ObjectName destination : conn.getChildren(jmsServer, WebLogicMBeanPropConstants.DESTINATIONS)) {
 
                             // This map should be inside the loop otherwise will contain only the latest values
@@ -720,7 +926,6 @@ public class StorageService {
 		        for (ObjectName safAgent : safAgents)
 		        {	
 		        	String currentSafAgentName = conn.getTextAttr(safAgent, WebLogicMBeanPropConstants.NAME);
-			        		        	
 		        	if(currentSafAgentName.equals(safAgentName)){
 
 		        		for (ObjectName remoteEndPoint : conn.getChildren(safAgent, WebLogicMBeanPropConstants.REMOTE_END_POINTS)) {

@@ -14,6 +14,65 @@
 //POSSIBILITY OF SUCH DAMAGE.
 package domainhealth.backend.wldfcapture;
 
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.EJB_POOL_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.EJB_TRANSACTION_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.HEAP_FREE_CURRENT;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.HEAP_FREE_PERCENT;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.HEAP_SIZE_CURRENT;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.HOST_MACHINE_MBEAN;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.JAVA_JVM_MBEAN;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.JDBC_DATASOURCE_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.JMS_DESTINATION_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.JROCKIT_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.JTA_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.JVM_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.SAF_AGENT_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.SERVER_CHANNEL_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.SERVER_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.THREAD_POOL_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.WEBAPP_COMPONENT_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.WORK_MANAGER_RUNTIME;
+import static domainhealth.core.statistics.MonitorProperties.CORE_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.CORE_RSC_DEFAULT_NAME;
+import static domainhealth.core.statistics.MonitorProperties.DATASOURCE_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.DESTINATION_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.EJB_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.EJB_POOL_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.EJB_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.EJB_TRANSACTION_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.HOSTMACHINE_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.HOST_MACHINE_STATS_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.JAVA_JVM_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.JDBC_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.JMS_DESTINATION_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.JTA_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.JVM_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.JVM_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.RUNTIME_MBEAN_TYPE_TEMPLATE;
+import static domainhealth.core.statistics.MonitorProperties.SAF_AGENT_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.SAF_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.SERVER_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.SVRCHNL_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.SVR_CHANNEL_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.THREADPOOL_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.WEBAPP_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.WEBAPP_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.WKMGR_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.WORKMGR_RESOURCE_TYPE;
+import static domainhealth.core.statistics.StatisticsStorage.SEPARATOR;
+import static domainhealth.core.util.DateUtil.DATETIME_PARAM_FORMAT;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.management.ObjectName;
+
 import domainhealth.backend.retriever.DataRetrievalException;
 import domainhealth.backend.retriever.StatisticCapturer;
 import domainhealth.backend.wldfcapture.data.DataRecordsCollection;
@@ -26,24 +85,13 @@ import domainhealth.core.statistics.ResourceNameNormaliser;
 import domainhealth.core.statistics.StatisticsStorage;
 import domainhealth.frontend.data.ServerState;
 
-import javax.management.ObjectName;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.*;
-import static domainhealth.core.statistics.MonitorProperties.*;
-import static domainhealth.core.statistics.StatisticsStorage.SEPARATOR;
-import static domainhealth.core.util.DateUtil.DATETIME_PARAM_FORMAT;
-
 /**
  * Enables a specific WebLogic server's Core, JDBC and JMS related statistics
  * to be retrieved from a server's 'HarvestedDataArchive' store using WLDF
  * queries and then stored in a local statistics CSV file
  */
 public class StatisticCapturerWLDFQuery extends StatisticCapturer {
+	
     /**
      * Creates a new statistics capute instance based on the given Weblogic
      * server connection details
@@ -212,6 +260,30 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
     protected void logJvmStats() throws DataRetrievalException {
         logResourceStats(JVM_RESOURCE_TYPE, JAVA_JVM_MBEAN, JAVA_JVM_MBEAN_MONITOR_ATTR_LIST, javaJvmStatsQuery);
     }
+    
+    /**
+     * Implements the abstract method to log WLOsbStats optional mbean stats to a CSV file.
+     *
+     * @throws DataRetrievalException Indicates problem occurred in trying to obtain and persist the server's statistics
+     */
+    protected void logOsbStats() throws DataRetrievalException {
+    	    	
+    	// OSB Proxy elements
+		logOsbProxyStats();
+		
+		// OSB Business elements
+		logOsbBusinessStats();
+    }
+    
+    /**
+     * Implements the abstract method to log WLSoaBpmStats optional mbean stats to a CSV file.
+     *
+     * @throws DataRetrievalException Indicates problem occurred in trying to obtain and persist the server's statistics
+     */
+    protected void logSoaBpmStats() throws DataRetrievalException {
+    	
+    	//@TODO
+    }
 
     /**
      * Implements the abstract method to log extended stats to a CSV file.
@@ -240,7 +312,8 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
     private void logResourceStats(String resourceType, String mbeanPropertyName, String[] monitorAttrList, String wldfQuery) throws DataRetrievalException {
             	
     	try {
-            String headerLine = constructHeaderLine(monitorAttrList);
+            
+    		String headerLine = constructHeaderLine(monitorAttrList);
             Date nowDate = new Date();
             String now = (new SimpleDateFormat(DATETIME_PARAM_FORMAT)).format(nowDate);
             Properties artifactList = new Properties();
@@ -265,16 +338,26 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
                         break;
                     }
                 }
-
-                //if (resourceType.equals(HOSTMACHINE_RESOURCE_TYPE) || !blacklist) {
+                
+                // Standard DomainHealth extention
                 if ( 	resourceType.equals(HOSTMACHINE_RESOURCE_TYPE) || 
                 		resourceType.equals(JVM_RESOURCE_TYPE) || 
                 		!blacklist) {
                 	
                     String contentLine = constructStatsLine(objectRecords.get(name), monitorAttrList);
                     getCSVStats().appendToResourceStatisticsCSV(nowDate, getServerName(), resourceType, name, headerLine, contentLine);
-                    artifactList.put(name, now);                	
+                    artifactList.put(name, now);
                 }
+                
+                /*
+                // Specific SOA-BPM DomainHealth extention
+				if (resourceType.equals(OSB_SOA_TYPE) || !blacklist) {
+					
+				    String contentLine = constructOsbStatsLine(objectRecords.get(name), monitorAttrList);
+				    getCSVStats().appendToResourceStatisticsCSV(nowDate, getServerName(), resourceType, name, headerLine, contentLine);
+				    artifactList.put(name, now);
+				}
+				*/
             }
             getCSVStats().appendSavedOneDayResourceNameList(nowDate, resourceType, artifactList);
         } catch (Exception e) {
@@ -301,7 +384,7 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
             while (objectNames.hasNext()) {
                 String objectName = objectNames.next();
                 String normalisedName = ResourceNameNormaliser.normalise(resourceType, objectName);
-
+                
                 if (!uniquelyNamedRecords.containsKey(normalisedName)) {
                     uniquelyNamedRecords.put(normalisedName, mbeanTypeRecord.getInstanceDataRecord(objectName));
                 }
@@ -446,37 +529,48 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
     private final static String svrChnlStatsQuery;
     private final static String hostMachineStatsQuery;
     private final static String javaJvmStatsQuery;
-
+    
+    //private final static String soaBpmStatsQuery;
+    
     // Static initialiser
     static {
+    	
         StringBuilder coreStatsQueryBuilder = new StringBuilder(100);
         appendWLDFQueryPart(coreStatsQueryBuilder, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, SERVER_RUNTIME), SERVER_MBEAN_MONITOR_ATTR_LIST);
         appendWLDFQueryPart(coreStatsQueryBuilder, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, JVM_RUNTIME), JVM_MBEAN_MONITOR_ATTR_LIST);
         appendWLDFQueryPart(coreStatsQueryBuilder, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, JROCKIT_RUNTIME), JVM_MBEAN_MONITOR_ATTR_LIST);
         appendWLDFQueryPart(coreStatsQueryBuilder, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, THREAD_POOL_RUNTIME), THREADPOOL_MBEAN_MONITOR_ATTR_LIST);
+        
         // Example of a query for a restricted set of MBean instances
         //appendWLDFQueryPartWithQueryTemplate(DEF_WKMGR_WLDF_QUERY_PART_TEMPLATE, coreStatsQueryBuilder, WORK_MANAGER_RUNTIME, WKMGR_MBEAN_MONITOR_ATTR_LIST);
         appendWLDFQueryPart(coreStatsQueryBuilder, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, JTA_RUNTIME), JTA_MBEAN_MONITOR_ATTR_LIST);
         coreServerStatsQuery = coreStatsQueryBuilder.toString();
+        
         StringBuilder jdbcStatsQueryBuilder = new StringBuilder(100);
         appendWLDFQueryPart(jdbcStatsQueryBuilder, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, JDBC_DATASOURCE_RUNTIME), JDBC_MBEAN_MONITOR_ATTR_LIST);
         jdbcStatsQuery = jdbcStatsQueryBuilder.toString();
+        
         StringBuilder jmsDestinationStatsQueryBuilder = new StringBuilder(100);
         appendWLDFQueryPart(jmsDestinationStatsQueryBuilder, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, JMS_DESTINATION_RUNTIME), JMS_DESTINATION_MBEAN_MONITOR_ATTR_LIST);
         jmsDestinationStatsQuery = jmsDestinationStatsQueryBuilder.toString();
+        
         StringBuilder safAgentStatsQueryBuilder = new StringBuilder(100);
         appendWLDFQueryPart(safAgentStatsQueryBuilder, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, SAF_AGENT_RUNTIME), SAF_AGENT_MBEAN_MONITOR_ATTR_LIST);
         safAgentStatsQuery = safAgentStatsQueryBuilder.toString();
+        
         StringBuilder webAppStatsQueryBuilder = new StringBuilder(100);
         appendWLDFQueryPart(webAppStatsQueryBuilder, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, WEBAPP_COMPONENT_RUNTIME), WEBAPP_MBEAN_MONITOR_ATTR_LIST);
         webAppStatsQuery = webAppStatsQueryBuilder.toString();
+        
         StringBuilder ejbStatsQueryBuilder = new StringBuilder(100);
         appendWLDFQueryPart(ejbStatsQueryBuilder, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, EJB_POOL_RUNTIME), EJB_POOL_MBEAN_MONITOR_ATTR_LIST);
         appendWLDFQueryPart(ejbStatsQueryBuilder, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, EJB_TRANSACTION_RUNTIME), EJB_TRANSACTION_MBEAN_MONITOR_ATTR_LIST);
         ejbStatsQuery = ejbStatsQueryBuilder.toString();
+        
         StringBuilder wkMgrStatsQueryBuilder = new StringBuilder(100);
         appendWLDFQueryPart(wkMgrStatsQueryBuilder, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, WORK_MANAGER_RUNTIME), WKMGR_MBEAN_MONITOR_ATTR_LIST);
         wkMgrStatsQuery = wkMgrStatsQueryBuilder.toString();
+        
         StringBuilder svrChnlStatsQueryBuilder = new StringBuilder(100);
         appendWLDFQueryPart(svrChnlStatsQueryBuilder, String.format(RUNTIME_MBEAN_TYPE_TEMPLATE, SERVER_CHANNEL_RUNTIME), SVR_CHANNEL_MBEAN_MONITOR_ATTR_LIST);
         svrChnlStatsQuery = svrChnlStatsQueryBuilder.toString();
@@ -489,6 +583,11 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
 		StringBuilder javaJvmStatsQueryBuilder = new StringBuilder(100);
 		appendWLDFQueryPart(javaJvmStatsQueryBuilder, JAVA_JVM_MBEAN, JAVA_JVM_MBEAN_MONITOR_ATTR_LIST);
 		javaJvmStatsQuery = javaJvmStatsQueryBuilder.toString();
-        
+		
+		/*
+		StringBuilder soaBpmStatsQueryBuilder = new StringBuilder(100);
+		appendWLDFQueryPart(soaBpmStatsQueryBuilder, SOA_BPM_MBEAN, SOA-BPM_MBEAN_MONITOR_ATTR_LIST);
+		soaBpmStatsQuery = soaBpmStatsQueryBuilder.toString();
+		*/
     }
 }

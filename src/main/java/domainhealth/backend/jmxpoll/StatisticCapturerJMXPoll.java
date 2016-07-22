@@ -14,6 +14,57 @@
 //POSSIBILITY OF SUCH DAMAGE.
 package domainhealth.backend.jmxpoll;
 
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.AGENTS;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.APPLICATION_RUNTIMES;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.COMPONENT_RUNTIMES;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.DESTINATIONS;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.EJB_COMPONENT_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.EJB_RUNTIMES;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.HEAP_FREE_CURRENT;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.HEAP_FREE_PERCENT;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.HEAP_SIZE_CURRENT;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.JDBC_DATA_SOURCE_RUNTIMES;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.JDBC_SERVICE_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.JMS_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.JMS_SERVERS;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.JTA_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.JVM_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.NAME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OPEN_SOCKETS_CURRENT_COUNT;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.POOL_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.SAF_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.SERVER_STATE;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.THREAD_POOL_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.TRANSACTION_RUNTIME;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.TYPE;
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.WEBAPP_COMPONENT_RUNTIME;
+import static domainhealth.core.statistics.MonitorProperties.CORE_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.CORE_RSC_DEFAULT_NAME;
+import static domainhealth.core.statistics.MonitorProperties.DATASOURCE_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.DESTINATION_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.EJB_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.EJB_POOL_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.EJB_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.EJB_TRANSACTION_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.HOSTMACHINE_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.HOST_MACHINE_MBEAN_FULLNAME_TEMPLATE;
+import static domainhealth.core.statistics.MonitorProperties.HOST_MACHINE_MBEAN_NAME;
+import static domainhealth.core.statistics.MonitorProperties.HOST_MACHINE_STATS_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.JAVA_JVM_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.JDBC_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.JMS_DESTINATION_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.JTA_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.JVM_MBEAN_FULLNAME_TEMPLATE;
+import static domainhealth.core.statistics.MonitorProperties.JVM_MBEAN_NAME;
+import static domainhealth.core.statistics.MonitorProperties.JVM_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.SAF_AGENT_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.SAF_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.THREADPOOL_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.WEBAPP_MBEAN_MONITOR_ATTR_LIST;
+import static domainhealth.core.statistics.MonitorProperties.WEBAPP_RESOURCE_TYPE;
+import static domainhealth.core.statistics.StatisticsStorage.SEPARATOR;
+import static domainhealth.core.util.DateUtil.DATETIME_PARAM_FORMAT;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
@@ -27,14 +78,9 @@ import domainhealth.backend.retriever.StatisticCapturer;
 import domainhealth.core.env.AppLog;
 import domainhealth.core.jmx.WebLogicMBeanConnection;
 import domainhealth.core.jmx.WebLogicMBeanException;
-import domainhealth.core.statistics.StatisticsStorage;
 import domainhealth.core.statistics.ResourceNameNormaliser;
+import domainhealth.core.statistics.StatisticsStorage;
 import domainhealth.frontend.data.ServerState;
-
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.*;
-import static domainhealth.core.statistics.StatisticsStorage.*;
-import static domainhealth.core.statistics.MonitorProperties.*;
-import static domainhealth.core.util.DateUtil.DATETIME_PARAM_FORMAT;
 
 /**
  * Implementation of the statistics capturer for capturing a specific WebLogic 
@@ -42,6 +88,10 @@ import static domainhealth.core.util.DateUtil.DATETIME_PARAM_FORMAT;
  * storing the result row in a local statistics CSV file.
  */
 public class StatisticCapturerJMXPoll extends StatisticCapturer {
+	
+	// Constants
+	private static final int DEFAULT_CONTENT_LINE_LEN = 100;
+		
 	/**
 	 * Creates a new JMX Poll capturer instance based on the given Weblogic 
 	 * server connection details
@@ -126,6 +176,7 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 	 */
 	protected void logDataSourcesStats() throws DataRetrievalException {
 		try {
+						
 			Date nowDate = new Date();
 			String now = (new SimpleDateFormat(DATETIME_PARAM_FORMAT)).format(nowDate);
 			Properties artifactList = new Properties();
@@ -135,23 +186,13 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 			for (ObjectName ds : getConn().getChildren(jdbcRuntime, JDBC_DATA_SOURCE_RUNTIMES)) {
 				try {
 					
-					/*
-					String name = ResourceNameNormaliser.normalise(DATASOURCE_RESOURCE_TYPE, getConn().getTextAttr(ds, NAME));
-					String contentLine = constructStatsLine(ds, JDBC_MBEAN_MONITOR_ATTR_LIST);
-					getCSVStats().appendToResourceStatisticsCSV(new Date(), getServerName(), DATASOURCE_RESOURCE_TYPE, name, headerLine, contentLine);
-					artifactList.put(name, now);
-					*/
-					
 					String name = ResourceNameNormaliser.normalise(DATASOURCE_RESOURCE_TYPE, getConn().getTextAttr(ds, NAME));
 					Iterator<String> iteratorBlacklist = getComponentBlacklist().iterator();
 	            	boolean blacklist = false;
 	            	
 	            	while(iteratorBlacklist.hasNext()){
 	            		String element = iteratorBlacklist.next();
-	            		
-							if(name.contains(element)){
-							
-//System.out.println("StatisticCapturerJMXPool::logDataSourcesStats() - A part of the element " + name + " is blacklisted [" + element + "]");
+						if(name.contains(element)){
 							blacklist = true;
 							break;
 						}
@@ -193,23 +234,13 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 				for (ObjectName destination : getConn().getChildren(jmsServer, DESTINATIONS)) {
 					try {
 						
-						/*
-						String name = ResourceNameNormaliser.normalise(DESTINATION_RESOURCE_TYPE, getConn().getTextAttr(destination, NAME));
-						String contentLine = constructStatsLine(destination, JMS_DESTINATION_MBEAN_MONITOR_ATTR_LIST);
-						getCSVStats().appendToResourceStatisticsCSV(new Date(), getServerName(), DESTINATION_RESOURCE_TYPE, name, headerLine, contentLine);
-						artifactList.put(name, now);
-						*/
-						
 						String name = ResourceNameNormaliser.normalise(DESTINATION_RESOURCE_TYPE, getConn().getTextAttr(destination, NAME));		
 						Iterator<String> iteratorBlacklist = getComponentBlacklist().iterator();
 		            	boolean blacklist = false;
 		            	
 		            	while(iteratorBlacklist.hasNext()){
 		            		String element = iteratorBlacklist.next();
-		            		
-								if(name.contains(element)){
-								
-//System.out.println("StatisticCapturerJMXPool::logDestinationsStats() - A part of the element " + name + " is blacklisted [" + element + "]");
+							if(name.contains(element)){
 								blacklist = true;
 								break;
 							}
@@ -250,23 +281,13 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 			for (ObjectName safAgent : getConn().getChildren(safRuntime, AGENTS)) { 
 					try {
 						
-						/*
-						String name = ResourceNameNormaliser.normalise(SAF_RESOURCE_TYPE, getConn().getTextAttr(safAgent, NAME));
-						String contentLine = constructStatsLine(safAgent, SAF_AGENT_MBEAN_MONITOR_ATTR_LIST);
-						getCSVStats().appendToResourceStatisticsCSV(new Date(), getServerName(), SAF_RESOURCE_TYPE, name, headerLine, contentLine);
-						artifactList.put(name, now);
-						*/
-						
 						String name = ResourceNameNormaliser.normalise(SAF_RESOURCE_TYPE, getConn().getTextAttr(safAgent, NAME));		
 						Iterator<String> iteratorBlacklist = getComponentBlacklist().iterator();
 		            	boolean blacklist = false;
 		            	
 		            	while(iteratorBlacklist.hasNext()){
 		            		String element = iteratorBlacklist.next();
-		            		
-								if(name.contains(element)){
-								
-//System.out.println("StatisticCapturerJMXPool::logSafAgentStats() - A part of the element " + name + " is blacklisted [" + element + "]");
+							if(name.contains(element)){
 								blacklist = true;
 								break;
 							}
@@ -303,7 +324,7 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 			Properties artifactList = new Properties();
 			String headerLine = constructHeaderLine(WEBAPP_MBEAN_MONITOR_ATTR_LIST);
 			ObjectName[] appRuntimes = getConn().getChildren(getServerRuntime(), APPLICATION_RUNTIMES);
-
+			
 			for (ObjectName appRuntime : appRuntimes) {
 				try {
 					ObjectName[] componentRuntimes = getConn().getChildren(appRuntime, COMPONENT_RUNTIMES);
@@ -315,23 +336,12 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 							if (componentType.equals(WEBAPP_COMPONENT_RUNTIME)) {
 								String name = ResourceNameNormaliser.normalise(WEBAPP_RESOURCE_TYPE, getConn().getTextAttr(componentRuntime, NAME));
 								
-								/*
-								if (!getComponentBlacklist().contains(name)) {
-									String contentLine = constructStatsLine(componentRuntime, WEBAPP_MBEAN_MONITOR_ATTR_LIST);
-									getCSVStats().appendToResourceStatisticsCSV(nowDate, getServerName(), WEBAPP_RESOURCE_TYPE, name, headerLine, contentLine);
-									artifactList.put(name, now);
-								}
-								*/
-								
 								Iterator<String> iteratorBlacklist = getComponentBlacklist().iterator();
 				            	boolean blacklist = false;
 				            	
 				            	while(iteratorBlacklist.hasNext()){
 				            		String element = iteratorBlacklist.next();
-				            		
-										if(name.contains(element)){
-										
-//System.out.println("StatisticCapturerJMXPool::logWebAppStats() - A part of the element " + name + " is blacklisted [" + element + "]");
+									if(name.contains(element)){
 										blacklist = true;
 										break;
 									}
@@ -370,7 +380,7 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 			Properties artifactList = new Properties();
 			String headerLine = constructHeaderLine(EJB_MBEAN_MONITOR_ATTR_LIST);
 			ObjectName[] appRuntimes = getConn().getChildren(getServerRuntime(), APPLICATION_RUNTIMES);
-
+			
 			for (ObjectName appRuntime : appRuntimes) {
 				try {
 					ObjectName[] componentRuntimes = getConn().getChildren(appRuntime, COMPONENT_RUNTIMES);
@@ -385,27 +395,13 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 								for (ObjectName ejbRuntime : ejbRuntimes) {
 									try { 
 										String name = ResourceNameNormaliser.normalise(EJB_RESOURCE_TYPE, getConn().getTextAttr(ejbRuntime, NAME));
-			
-										/*
-										if (!getComponentBlacklist().contains(name)) {													
-											ObjectName poolRuntime = getConn().getChild(ejbRuntime, POOL_RUNTIME);
-											ObjectName txRuntime = getConn().getChild(ejbRuntime, TRANSACTION_RUNTIME);
-											StringBuilder contentLine = new StringBuilder(constructStatsLine(poolRuntime, EJB_POOL_MBEAN_MONITOR_ATTR_LIST));
-											appendToStatsLine(contentLine, txRuntime, EJB_TRANSACTION_MBEAN_MONITOR_ATTR_LIST);							
-											getCSVStats().appendToResourceStatisticsCSV(new Date(), getServerName(), EJB_RESOURCE_TYPE, name, headerLine, contentLine.toString());
-											artifactList.put(name, now);
-										}
-										*/
 										
 										Iterator<String> iteratorBlacklist = getComponentBlacklist().iterator();
 						            	boolean blacklist = false;
 						            	
 						            	while(iteratorBlacklist.hasNext()){
 						            		String element = iteratorBlacklist.next();
-						            		
-												if(name.contains(element)){
-												
-//System.out.println("StatisticCapturerJMXPool::logEJBStats() - A part of the element " + name + " is blacklisted [" + element + "]");
+											if(name.contains(element)){
 												blacklist = true;
 												break;
 											}
@@ -454,6 +450,7 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 			ObjectName remoteWLHostMachineStatsMBean = getConn().getCustomMBean(hostMBeanName);
 			
 			if (remoteWLHostMachineStatsMBean != null) {
+								
 				String name = ResourceNameNormaliser.normalise(HOSTMACHINE_RESOURCE_TYPE, HOST_MACHINE_MBEAN_NAME);
 				String contentLine = constructStatsLine(remoteWLHostMachineStatsMBean, HOST_MACHINE_STATS_MBEAN_MONITOR_ATTR_LIST);
 				getCSVStats().appendToResourceStatisticsCSV(new Date(), getServerName(), HOSTMACHINE_RESOURCE_TYPE, name, headerLine, contentLine);
@@ -485,12 +482,36 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 				String contentLine = constructStatsLine(remoteWLJvmStatsMBean, JAVA_JVM_MBEAN_MONITOR_ATTR_LIST);
 				getCSVStats().appendToResourceStatisticsCSV(new Date(), getServerName(), JVM_RESOURCE_TYPE, name, headerLine, contentLine);
 				artifactList.put(name, now);
-			} 
+			}
 
 			getCSVStats().appendSavedOneDayResourceNameList(nowDate, JVM_RESOURCE_TYPE, artifactList);			
 		} catch (Exception e) {
 			throw new DataRetrievalException("Problem logging " + JVM_RESOURCE_TYPE + " resources for server " + getServerName(), e);
 		}		
+	}
+	
+	/**
+	 * Implements the abstract method to log WLOsb optional mbean stats to a CSV file.
+	 * 
+	 * @throws DataRetrievalException Indicates problem occurred in trying to obtain and persist the server's statistics
+	 */
+	protected void logOsbStats() throws DataRetrievalException {
+				
+		// OSB Proxy elements
+		logOsbProxyStats();
+		
+		// OSB Business elements
+		logOsbBusinessStats();
+	}
+	
+	/**
+	 * Implements the abstract method to log WLSoaBpm optional mbean stats to a CSV file.
+	 * 
+	 * @throws DataRetrievalException Indicates problem occurred in trying to obtain and persist the server's statistics
+	 */
+	protected void logSoaBpmStats() throws DataRetrievalException {		
+		
+		// @TODO
 	}
 
 	/**
@@ -520,11 +541,9 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 		appendToStatsLine(line, objectName, attrList);
 		return line.toString();
 	}
-
+	
 	/**
-	 * Add to a partial line of statistics to go in a CSV file, by querying 
-	 * an MBean object's specific attributes from a list of given attribute 
-	 * names.
+	 * Add to a partial line of statistics to go in a CSV file, by querying an MBean object's specific attributes from a list of given attribute names.
 	 * 
 	 * @param line The line of text to add statistics info to
 	 * @param objectName MBean object name to query the statistics from
@@ -536,7 +555,71 @@ public class StatisticCapturerJMXPoll extends StatisticCapturer {
 			line.append(getConn().getNumberAttr(objectName, attr) + SEPARATOR);
 		}
 	}
+	
+	// ---------------------------------------------------------------------
+	// Added by gregoan
+	/**
+	 * Construct a single line of statistics to go in a CSV file, by querying 
+	 * an MBean object's specific attributes from a list of given attribute 
+	 * names.
+	 * 
+	 * @param objectName MBean object name to query the statistics from
+	 * @param argList List of arguments
+	 * @param argTypeList List of argument's type
+	 * @return The new statistics text line
+	 * @throws WebLogicMBeanException Indicates problem occurred retrieving MBean properties
+	 */
+// MOVE inside StatisticCapturer
+/*
+	private String constructOsbStatsLine(ObjectName objectName, Object serviceName, Object resourceStatisticName, Object[] statisticNameList) throws WebLogicMBeanException {
+		
+		StringBuilder line = new StringBuilder(DEFAULT_CONTENT_LINE_LEN);
+		line.append(formatSeconsdDateTime(new Date()) + SEPARATOR);
+		appendToOsbStatsLine(line, objectName, serviceName, resourceStatisticName, statisticNameList);
+		return line.toString();
+	}
+*/
+	// ---------------------------------------------------------------------	
+	
+	// ---------------------------------------------------------------------
+	// Added by gregoan
+	/**
+	 * Add to a partial line of statistics to go in a CSV file, by querying an MBean object's specific attributes from a list of given attribute names.
+	 * 
+	 * @param line The line of text to add statistics info to
+	 * @param objectName MBean object name to query the statistics from
+	 * @param serviceName Service's name
+	 * @param resourceStatisticName ResourceStatistic's name
+	 * @param statisticNameList List of statistic to retrieve
+	 * @throws WebLogicMBeanException Indicates problem occurred retrieving MBean properties
+	 */
+/*
+	private void appendToOsbStatsLine(StringBuilder line, ObjectName objectName, Object serviceName, Object resourceStatisticName, Object[] statisticNameList) throws WebLogicMBeanException {
+		
+		// Define the the type of arguments for "invoke"
+		String[] argType = new String[]{String.class.getName(), String.class.getName(), String.class.getName()};
+		
+		// Check the input parameters
+		if(objectName != null && serviceName != null && resourceStatisticName != null && statisticNameList != null && statisticNameList.length > 0) {
+			
+			for(int index = 0; index < statisticNameList.length; index ++) {
+				
+				Object statisticName = statisticNameList[index];
+				Object[] arg = new Object [] {serviceName, resourceStatisticName, statisticName};
+				
+				String result = getConn().invoke(objectName, WebLogicMBeanPropConstants.OSB_GET_VALUE_FOR_STATISTIC_METHOD, arg, argType).toString();					
+				line.append(result).append(SEPARATOR);
+					
+//AppLog.getLogger().debug("appendToStatsLine method - Calling the method [" + WebLogicMBeanPropConstants.OSB_STATISTIC_ATTRIBUTE_NAME + "] with arguments and got the result [" + result + "]");
 
-	// Constants
-	private static final int DEFAULT_CONTENT_LINE_LEN = 100;
+			}
+		} else {
+			
+			// Simple method definition without any arguments
+			String result = getConn().invoke(objectName, WebLogicMBeanPropConstants.OSB_GET_VALUE_FOR_STATISTIC_METHOD, null, null).toString();
+			line.append(result).append(SEPARATOR);
+		}
+	}
+*/
+	// ---------------------------------------------------------------------
 }

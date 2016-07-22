@@ -19,7 +19,6 @@ import static domainhealth.core.jmx.WebLogicMBeanPropConstants.NAME;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -27,9 +26,9 @@ import javax.management.ObjectName;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import com.sun.management.OperatingSystemMXBean;
 import commonj.work.WorkItem;
 import commonj.work.WorkManager;
+
 import domainhealth.backend.jmxpoll.StatisticCapturerJMXPoll;
 import domainhealth.backend.wldfcapture.HarvesterWLDFModuleCreator;
 import domainhealth.backend.wldfcapture.StatisticCapturerWLDFQuery;
@@ -57,12 +56,14 @@ import domainhealth.core.util.ProductVersionUtil;
  * threads.
  */
 public class RetrieverBackgroundService {
+	
 	/**
 	 * Create new service with the root path to write CSV file to
 	 *  
 	 * @param appProps The system/application key/value pairs
 	 */
 	public RetrieverBackgroundService(AppProperties appProps) {
+		
 		this.domainhealthVersionNumber = appProps.getProperty(PropKey.VERSION_NUMBER_PROP);
 		this.alwaysUseJMXPoll = appProps.getBoolProperty(PropKey.ALWAYS_USE_JMXPOLL_PROP);
 		this.statisticsRetainNumDays = appProps.getIntProperty(PropKey.CSV_RETAIN_NUM_DAYS);
@@ -101,9 +102,9 @@ public class RetrieverBackgroundService {
 		WorkManager localCaptureThreadsWkMgr = null;
 		
 		try {
-			localCaptureThreadsWkMgr = getWorkManager(CAPUTURE_THREADS_WORK_MGR_JNDI);
+			localCaptureThreadsWkMgr = getWorkManager(CAPTURE_THREADS_WORK_MGR_JNDI);
 		} catch (NamingException e) {
-			throw new IllegalStateException(getClass() + " cannot be instantiateed because Work Manager '" + CAPUTURE_THREADS_WORK_MGR_JNDI + "' cannot be located. " + e.getMessage());
+			throw new IllegalStateException(getClass() + " cannot be instantiateed because Work Manager '" + CAPTURE_THREADS_WORK_MGR_JNDI + "' cannot be located. " + e.getMessage());
 		}
 		
 		this.captureThreadsWkMgr = localCaptureThreadsWkMgr;
@@ -204,16 +205,6 @@ public class RetrieverBackgroundService {
 			long lagMillis = Math.max(System.currentTimeMillis() - startWorkTime - sleepPeriodMillis, 0);
 			sleepPeriodMillis = Math.max(minPollIntervalMillis, newSleepIntervalMillis - lagMillis);
 		}
-
-
-
-		/*
-		TODO adding later some cpu stats (wlhostmachine or ...)
-		OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
-		// What % CPU load this current JVM is taking, from 0.0-1.0
-		System.out.println(osBean.getProcessCpuLoad());
-		// What % load the overall system is at, from 0.0-1.0
-		System.out.println(osBean.getSystemCpuLoad());*/
 	}
 
 	/**
@@ -239,10 +230,6 @@ public class RetrieverBackgroundService {
 		if (alwaysUseJMXPoll) {
 			useWLDFHarvester = false;				
 		} else {
-
-AppLog.getLogger().info("RetrieverBackgroundService - wlsVersionNumber is [" + wlsVersionNumber + "]");
-AppLog.getLogger().info("RetrieverBackgroundService - WLS_MIN_VERSION_FOR_USING_WLDF_RELIABLY is [" + WLS_MIN_VERSION_FOR_USING_WLDF_RELIABLY + "]");			
-				
 			useWLDFHarvester = ProductVersionUtil.isVersion_X_GreaterThanOrEqualTo_Y(wlsVersionNumber, WLS_MIN_VERSION_FOR_USING_WLDF_RELIABLY);
 		}
 		
@@ -292,7 +279,7 @@ AppLog.getLogger().info("RetrieverBackgroundService - WLS_MIN_VERSION_FOR_USING_
 		try {
 			AppLog.getLogger().debug("Statistics Retriever Background Service running another iteration to capture and log stats");
 			conn = new DomainRuntimeServiceMBeanConnection();
-			ObjectName[] serverRuntimes = conn.getAllServerRuntimes();			
+			ObjectName[] serverRuntimes = conn.getAllServerRuntimes();
 			int length = serverRuntimes.length;
 			List<WorkItem> pollerWorkItemList = new ArrayList<WorkItem>();
 			
@@ -314,7 +301,7 @@ AppLog.getLogger().info("RetrieverBackgroundService - WLS_MIN_VERSION_FOR_USING_
 							//e.printStackTrace();
 							// ----------------------------------------------
 							
-							AppLog.getLogger().error("Statistics Retriever Background Service - unable to retrieve statistics for specific server '" + serverName + "' for this iteration");
+							AppLog.getLogger().error("Statistics Retriever Background Service - unable to retrieve statistics for specific server [" + serverName + "] for this iteration");
 						}						
 					}					
 				}));				
@@ -378,8 +365,7 @@ AppLog.getLogger().info("RetrieverBackgroundService - WLS_MIN_VERSION_FOR_USING_
 			ObjectName domainConfig = conn.getDomainConfiguration();
 			version = conn.getTextAttr(domainConfig, DOMAIN_VERSION);
 		} catch (WebLogicMBeanException e) {
-			// Assume caused by "DomainVersion" attribute not existing which
-			// would indicate that this is a 9.0 or 9.1 domain version
+			// Assume caused by "DomainVersion" attribute not existing which would indicate that this is a 9.0 or 9.1 domain version
 			version = DEFAULTED_WLS_VERSION;
 		} finally {
 			if (conn != null) {
@@ -407,32 +393,6 @@ AppLog.getLogger().info("RetrieverBackgroundService - WLS_MIN_VERSION_FOR_USING_
 		    try { ctx.close(); } catch (Exception e) {}
 		}
 	}
-
-	/**
-	 * Gets list of names of web-app and ejb components which should not have 
-	 * statistics collected and shown.
-	 * 
-	 * @param blacklistText The text containing comma separated list of names to ignore
-	 * @return A strongly type list of names to ignore
-	 */
-/*
-	private List<String> tokenizeBlacklistText(String blacklistText) {
-		List<String> blacklist = new ArrayList<String>();
-		String[] blacklistArray = null;
-		
-		if (blacklistText != null) {
-			blacklistArray = blacklistText.split(BLACKLIST_TOKENIZER_PATTERN);
-		}
-		
-		if ((blacklistArray != null) && (blacklistArray.length > 0)) {
-			blacklist = Arrays.asList(blacklistArray);
-		} else {
-			blacklist = new ArrayList<String>();
-		}
-				
-		return blacklist;
-	}
-*/
 	
 	/**
 	 * Clean up the old day statistics directories according to number of days
@@ -480,7 +440,7 @@ AppLog.getLogger().info("RetrieverBackgroundService - WLS_MIN_VERSION_FOR_USING_
 	private final static float MAX_POLL_FACTOR = 0.9F;
 	private final static int INITIAL_SLEEP_DURATION = 30 * 1000;
 	private final static int INITIALISATION_ATTEMPT_AGAIN_SLEEP_DURATION = 90 * 1000;	
-	private final static String BLACKLIST_TOKENIZER_PATTERN = ",\\s*";
-	private final static String CAPUTURE_THREADS_WORK_MGR_JNDI = "java:comp/env/DomainHealth_IndividualServerStatCapturerWorkMngr";
+	//private final static String BLACKLIST_TOKENIZER_PATTERN = ",\\s*";
+	private final static String CAPTURE_THREADS_WORK_MGR_JNDI = "java:comp/env/DomainHealth_IndividualServerStatCapturerWorkMngr";
 	private final static long HOURLY_CSV_CLEANUP_CHECK_IN_MILLIS = 60 * 60 * 1000;
 }

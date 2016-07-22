@@ -14,7 +14,13 @@
 //POSSIBILITY OF SUCH DAMAGE.
 package domainhealth.core.statistics;
 
-import static domainhealth.core.statistics.MonitorProperties.*;
+import static domainhealth.core.statistics.MonitorProperties.DESTINATION_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.EJB_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.JMSSVR_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.OSB_RESOURCE_TYPE_URI;
+import static domainhealth.core.statistics.MonitorProperties.SAFAGENT_RESOURCE_TYPE;
+import static domainhealth.core.statistics.MonitorProperties.WEBAPP_RESOURCE_TYPE;
+import domainhealth.core.env.AppLog;
 
 /**
  * Utility class for changing some of the bad characters contains in 
@@ -36,8 +42,7 @@ public class ResourceNameNormaliser {
 				
 		// Updated by gregoan
 		//if (resourceType == DESTINATION_RESOURCE_TYPE) {
-		if (resourceType == DESTINATION_RESOURCE_TYPE || resourceType == JMSSVR_RESOURCE_TYPE) {
-			
+		if (resourceType == DESTINATION_RESOURCE_TYPE || resourceType == JMSSVR_RESOURCE_TYPE || resourceType == EJB_RESOURCE_TYPE) {	
 			int startPos = resourceName.indexOf(DEST_MODULE_PHYSICAL_SEPERATOR);
 			
 			if (startPos < 0) {
@@ -71,11 +76,29 @@ public class ResourceNameNormaliser {
 			if (startPos > 0) {
 				normalisedName = resourceName.substring(startPos + WEBAPP_SERVER_NAME_SEPARATOR.length());
 			}
+
+		// Added by gregoan (URI of BS)
+		} else if (resourceType == OSB_RESOURCE_TYPE_URI) {
+			
+			// Find the "//"
+			int startPos = resourceName.indexOf(URL_DOUBLE_SLASH_SEPARATOR);
+			if(startPos > 0) {
+				
+				// Find the "/" after the port number
+				normalisedName = resourceName.substring(startPos + URL_DOUBLE_SLASH_SEPARATOR.length());
+				startPos = normalisedName.indexOf(BAD_CHAR_1);
+				if (startPos > 0) {
+					normalisedName = normalisedName.substring(startPos + 1);
+				}
+			}
 		}
 
-		normalisedName = normalisedName.replace(BAD_CHAR_1, GOOD_CHAR);		
-		normalisedName = normalisedName.replace(BAD_CHAR_2, GOOD_CHAR);		
+		normalisedName = normalisedName.replace(BAD_CHAR_1, GOOD_CHAR);
+		normalisedName = normalisedName.replace(BAD_CHAR_2, GOOD_CHAR);
 		normalisedName = normalisedName.replace(BAD_CHAR_3, GOOD_CHAR);
+		
+		// Added by gregoan (the "." is causing issue with JS)
+		normalisedName = normalisedName.replace(BAD_CHAR_4, GOOD_CHAR);		
 		
 		if (normalisedName.endsWith(REDUNDANT_GOOD_STR)) {
 			return normalisedName.substring(0, (normalisedName.length() - 1));			
@@ -85,12 +108,26 @@ public class ResourceNameNormaliser {
 	}
 
 	// Constants
+	private final static String URL_DOUBLE_SLASH_SEPARATOR = "//";
+	
+	//private final static char OSB_MODULE_PHYSICAL_SEPERATOR = '$';
 	private final static char DEST_MODULE_PHYSICAL_SEPERATOR = '@';
 	private final static char DEST_SERVER_MODULE_SEPARATOR = '!';
 	private final static String WEBAPP_SERVER_NAME_SEPARATOR = "_/";
+	
 	private final static char BAD_CHAR_1 = '/';
 	private final static char BAD_CHAR_2 = '[';
 	private final static char BAD_CHAR_3 = ']';
+	private final static char BAD_CHAR_4 = '.';
 	private final static char GOOD_CHAR = '_';
 	private final static String REDUNDANT_GOOD_STR = "" + GOOD_CHAR;
+	
+	public static void main (String[] args){
+		
+		String normalisedName = "SDMXConverter1.1_Transport";
+		AppLog.getLogger().notice("ResourceNameNormaliser::normalise - normalisedName is [" + normalisedName + "]");
+		
+		normalisedName = normalisedName.replace(BAD_CHAR_4, GOOD_CHAR);
+		AppLog.getLogger().notice("ResourceNameNormaliser::normalise - normalisedName is [" + normalisedName + "]");		
+	   }
 }
