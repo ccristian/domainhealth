@@ -448,6 +448,9 @@ $(function () {
 
 
     function getAndDisplayCharts(resname, respath, value) {
+    	
+//console.log("getAndDisplayCharts - Get metric for element [" + value + "]");
+    	
         $.ajax({
             url: '/domainhealth/rest/stats/' + respath + '/' + value + '?',
             cache: false,
@@ -479,11 +482,13 @@ $(function () {
     	
     	$.each(res.list, function (key, value) {
             $("#" + res.uniquename + value).click(function () {
+            	            	
+//console.log("addListener - Add listener for respath [" + resname + "/" + respath + "]");
+
                 getAndDisplayCharts(resname, respath, value);
             });
         });
     }
-
 
     function addDashboardListener(res, resname, respath) {
 
@@ -498,6 +503,7 @@ $(function () {
         getAndDisplayCharts("Core", "core", "params");
     });
 
+    // --------------------------------------------------------------------
     // Added by gregoan
     $("#jvm").click(function () {
         getAndDisplayCharts("JVM", "jvm", "params");
@@ -507,6 +513,7 @@ $(function () {
     $("#hostmachine").click(function () {
         getAndDisplayCharts("HostMachine", "hostmachine", "params");
     });
+    // --------------------------------------------------------------------
 
     $("#dhnavigatorCb").click(function () {
         getAndDisplayCharts($.AdminLTE.options.currentResname, $.AdminLTE.options.currentPath, $.AdminLTE.options.currentResource);
@@ -572,9 +579,7 @@ $(function () {
             clearInterval($.AdminLTE.options.interval);
         }
 
-
     });
-
 
     $.ajax({
         url: '/domainhealth/rest/resources',
@@ -614,6 +619,7 @@ $(function () {
             $("#svrchnl").html(template(res));
             addListener(res, "Channels", "svrchnl");
 
+            // Dashboards
             res.uniquename = "jmsdashboard"
             res.list = response[res.uniquename];
             $("#jmsdashboard").html(template(res));
@@ -623,6 +629,41 @@ $(function () {
             res.list = response[res.uniquename];
             $("#safdashboard").html(template(res));
             addDashboardListener(res, "SAF Dashboard", "safdashboard");
+          
+            // --------------------------------------------------------------------
+            // Added by gregoan the 15/06
+            // OSB Proxy
+            res.uniquename = "osb_ps_service"
+            res.list = response[res.uniquename];
+            $("#osb_ps_service").html(template(res));
+            addListener(res, "OSB PS Service", "osb_ps_service");
+            
+            res.uniquename = "osb_ps_webserviceoperation"
+            res.list = response[res.uniquename];
+            $("#osb_ps_webserviceoperation").html(template(res));
+            addListener(res, "OSB PS WS Operation", "osb_ps_webserviceoperation");
+                
+            res.uniquename = "osb_ps_flowcomponent"
+            res.list = response[res.uniquename];
+            $("#osb_ps_flowcomponent").html(template(res));
+            addListener(res, "OSB PS FlowComponent", "osb_ps_flowcomponent");
+            
+            // OSB Business
+            res.uniquename = "osb_bs_service"
+            res.list = response[res.uniquename];
+            $("#osb_bs_service").html(template(res));
+            addListener(res, "OSB BS Service", "osb_bs_service");
+            
+            res.uniquename = "osb_bs_webserviceoperation"
+            res.list = response[res.uniquename];
+            $("#osb_bs_webserviceoperation").html(template(res));
+            addListener(res, "OSB BS WS Operation", "osb_bs_webserviceoperation");
+            
+            res.uniquename = "osb_bs_uri"
+            res.list = response[res.uniquename];
+            $("#osb_bs_uri").html(template(res));
+            addListener(res, "OSB BS URI", "osb_bs_uri");
+            // --------------------------------------------------------------------
 
         },
         error: function (xhr) {

@@ -454,6 +454,7 @@ public class OSBServiceUtil {
 	 * @param statisticName
 	 * @return
 	 */
+	/*
 	private boolean isValidStatisticName(String statisticName) {
 
 		if (MonitorProperties.OSB_STATISTIC_LIST.contains(statisticName)) {
@@ -462,6 +463,7 @@ public class OSBServiceUtil {
 			return false;
 		}
 	}
+	*/
 
 	/**
 	 * 
@@ -489,7 +491,6 @@ public class OSBServiceUtil {
 		for (Map.Entry<Ref, ServiceResourceStatistic> mapEntry : set) {
 
 			AppLog.getLogger().notice("");
-			// AppLog.getLogger().notice("----- Printing statistics for service [" + mapEntry.getKey().getFullName() + "] -----");
 			AppLog.getLogger().notice("----- Printing statistics for service [" + mapEntry.getKey().getLocalName() + "] -----");
 
 			ServiceResourceStatistic serviceStats = mapEntry.getValue();
@@ -539,10 +540,14 @@ public class OSBServiceUtil {
 				StatisticValue[] statValues = resStats.getStatistics();
 				for (StatisticValue value : statValues) {
 
-					if (isValidStatisticName(value.getName()))
+					/*
+					if (isValidStatisticName(value.getName())) {
 						AppLog.getLogger().notice("  Statistic Name: [" + value.getName() + "] - Statistic Type: [" + value.getType().toString() + "]");
-					else
+					}
+					else {
 						AppLog.getLogger().notice("  Statistic Name: [" + value.getName() + " - UNKNOWN] - Statistic Type: [" + value.getType().toString() + "]");
+					}
+					*/
 
 					// Determine statistics type
 					if (value.getType() == StatisticType.INTERVAL) {
@@ -555,6 +560,7 @@ public class OSBServiceUtil {
 						AppLog.getLogger().notice("    Max Value: [" + is.getMax() + "]");
 						AppLog.getLogger().notice("    Sum Value: [" + is.getSum() + "]");
 						AppLog.getLogger().notice("    Avg Value: [" + is.getAverage() + "]");
+						
 					} else if (value.getType() == StatisticType.COUNT) {
 
 						StatisticValue.CountStatistic cs = (StatisticValue.CountStatistic) value;
@@ -566,9 +572,11 @@ public class OSBServiceUtil {
 
 						// Is used in 12.1.3
 						StatisticValue.StatusStatistic ss = (StatisticValue.StatusStatistic) value;
+						
 						// Print count statistics value
 						AppLog.getLogger().notice("    Initial Status: [" + ss.getInitialStatus() + "]");
 						AppLog.getLogger().notice("    Current Status: [" + ss.getCurrentStatus() + "]");
+						
 					}
 				}
 			}

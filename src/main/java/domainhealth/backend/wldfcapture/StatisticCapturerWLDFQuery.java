@@ -32,8 +32,6 @@ import static domainhealth.core.jmx.WebLogicMBeanPropConstants.SERVER_RUNTIME;
 import static domainhealth.core.jmx.WebLogicMBeanPropConstants.THREAD_POOL_RUNTIME;
 import static domainhealth.core.jmx.WebLogicMBeanPropConstants.WEBAPP_COMPONENT_RUNTIME;
 import static domainhealth.core.jmx.WebLogicMBeanPropConstants.WORK_MANAGER_RUNTIME;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.OSB_MBEAN;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.SOA_BPM_MBEAN;
 import static domainhealth.core.statistics.MonitorProperties.CORE_RESOURCE_TYPE;
 import static domainhealth.core.statistics.MonitorProperties.CORE_RSC_DEFAULT_NAME;
 import static domainhealth.core.statistics.MonitorProperties.DATASOURCE_RESOURCE_TYPE;
@@ -61,8 +59,6 @@ import static domainhealth.core.statistics.MonitorProperties.WEBAPP_MBEAN_MONITO
 import static domainhealth.core.statistics.MonitorProperties.WEBAPP_RESOURCE_TYPE;
 import static domainhealth.core.statistics.MonitorProperties.WKMGR_MBEAN_MONITOR_ATTR_LIST;
 import static domainhealth.core.statistics.MonitorProperties.WORKMGR_RESOURCE_TYPE;
-import static domainhealth.core.statistics.MonitorProperties.OSB_PS_TYPE;
-import static domainhealth.core.statistics.MonitorProperties.OSB_BS_TYPE;
 import static domainhealth.core.statistics.StatisticsStorage.SEPARATOR;
 import static domainhealth.core.util.DateUtil.DATETIME_PARAM_FORMAT;
 
@@ -271,11 +267,12 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
      * @throws DataRetrievalException Indicates problem occurred in trying to obtain and persist the server's statistics
      */
     protected void logOsbStats() throws DataRetrievalException {
-    	
-    	// PROXY and BUSINESS elements
-//    	logResourceStats(PROXY_SERVICE_RESOURCE_TYPE, OSB_MBEAN, OSB_INTERVAL_MBEAN_MONITOR_ATTR_LIST, osbProxyStatsQuery);
-//    	logResourceStats(BUSINESS_SERVICE_RESOURCE_TYPE, OSB_MBEAN, OSB_INTERVAL_MBEAN_MONITOR_ATTR_LIST, osbBusinessStatsQuery);
-//@TODO
+    	    	
+    	// OSB Proxy elements
+		logOsbProxyStats();
+		
+		// OSB Business elements
+		logOsbBusinessStats();
     }
     
     /**
@@ -285,10 +282,7 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
      */
     protected void logSoaBpmStats() throws DataRetrievalException {
     	
-    	// SOA-BPM elements
-    	
-        //logResourceStats(SOA-BPM_RESOURCE_TYPE, SOA-BPM_MBEAN, SOA-BPM_MBEAN_MONITOR_ATTR_LIST, soaBpmStatsQuery);
-//@TODO
+    	//@TODO
     }
 
     /**
@@ -318,7 +312,8 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
     private void logResourceStats(String resourceType, String mbeanPropertyName, String[] monitorAttrList, String wldfQuery) throws DataRetrievalException {
             	
     	try {
-            String headerLine = constructHeaderLine(monitorAttrList);
+            
+    		String headerLine = constructHeaderLine(monitorAttrList);
             Date nowDate = new Date();
             String now = (new SimpleDateFormat(DATETIME_PARAM_FORMAT)).format(nowDate);
             Properties artifactList = new Properties();
@@ -351,22 +346,18 @@ public class StatisticCapturerWLDFQuery extends StatisticCapturer {
                 	
                     String contentLine = constructStatsLine(objectRecords.get(name), monitorAttrList);
                     getCSVStats().appendToResourceStatisticsCSV(nowDate, getServerName(), resourceType, name, headerLine, contentLine);
-                    artifactList.put(name, now);                	
+                    artifactList.put(name, now);
                 }
-               
-/*
-// Specific OSB and SOA-BPM DomainHealth extention
-if ( 	resourceType.equals(OSB_PS_TYPE) || 
-		resourceType.equals(OSB_BS_TYPE) || 
-		resourceType.equals(OSB_RESOURCE_STATISTIC_TYPE_PS_TYPE) || 
-		resourceType.equals(OSB_STATISTIC_TYPE) || 
-		!blacklist) {
-	
-    String contentLine = constructStatsLine(objectRecords.get(name), monitorAttrList);
-    getCSVStats().appendToResourceStatisticsCSV(nowDate, getServerName(), resourceType, name, headerLine, contentLine);
-    artifactList.put(name, now);                	
-}
-*/
+                
+                /*
+                // Specific SOA-BPM DomainHealth extention
+				if (resourceType.equals(OSB_SOA_TYPE) || !blacklist) {
+					
+				    String contentLine = constructOsbStatsLine(objectRecords.get(name), monitorAttrList);
+				    getCSVStats().appendToResourceStatisticsCSV(nowDate, getServerName(), resourceType, name, headerLine, contentLine);
+				    artifactList.put(name, now);
+				}
+				*/
             }
             getCSVStats().appendSavedOneDayResourceNameList(nowDate, resourceType, artifactList);
         } catch (Exception e) {
@@ -539,8 +530,6 @@ if ( 	resourceType.equals(OSB_PS_TYPE) ||
     private final static String hostMachineStatsQuery;
     private final static String javaJvmStatsQuery;
     
-    //private final static String osbProxyStatsQuery;
-    //private final static String osbBusinessStatsQuery;
     //private final static String soaBpmStatsQuery;
     
     // Static initialiser
@@ -595,15 +584,6 @@ if ( 	resourceType.equals(OSB_PS_TYPE) ||
 		appendWLDFQueryPart(javaJvmStatsQueryBuilder, JAVA_JVM_MBEAN, JAVA_JVM_MBEAN_MONITOR_ATTR_LIST);
 		javaJvmStatsQuery = javaJvmStatsQueryBuilder.toString();
 		
-/*
-		StringBuilder osbProxyStatsQueryBuilder = new StringBuilder(100);
-		appendWLDFQueryPart(osbProxyStatsQueryBuilder, OSB_MBEAN, OSB_INTERVAL_MBEAN_MONITOR_ATTR_LIST);
-		osbProxyStatsQuery = osbProxyStatsQueryBuilder.toString();
-		
-		StringBuilder osbBusinessStatsQueryBuilder = new StringBuilder(100);
-		appendWLDFQueryPart(osbBusinessStatsQueryBuilder, OSB_MBEAN, OSB_INTERVAL_MBEAN_MONITOR_ATTR_LIST);
-		osbBusinessStatsQuery = osbBusinessStatsQueryBuilder.toString();
-*/
 		/*
 		StringBuilder soaBpmStatsQueryBuilder = new StringBuilder(100);
 		appendWLDFQueryPart(soaBpmStatsQueryBuilder, SOA_BPM_MBEAN, SOA-BPM_MBEAN_MONITOR_ATTR_LIST);

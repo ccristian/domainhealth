@@ -279,7 +279,7 @@ public class RetrieverBackgroundService {
 		try {
 			AppLog.getLogger().debug("Statistics Retriever Background Service running another iteration to capture and log stats");
 			conn = new DomainRuntimeServiceMBeanConnection();
-			ObjectName[] serverRuntimes = conn.getAllServerRuntimes();			
+			ObjectName[] serverRuntimes = conn.getAllServerRuntimes();
 			int length = serverRuntimes.length;
 			List<WorkItem> pollerWorkItemList = new ArrayList<WorkItem>();
 			
