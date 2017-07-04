@@ -14,52 +14,41 @@
 //POSSIBILITY OF SUCH DAMAGE.
 package domainhealth.core.statistics;
 
-import static domainhealth.core.statistics.MonitorProperties.CORE_RESOURCE_TYPE;
-import static domainhealth.core.util.DateUtil.DATE_PATH_FORMAT;
-import static domainhealth.core.util.DateUtil.DISPLAY_DATETIME_FORMAT;
-import static java.io.File.separatorChar;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.FileReader;
+import java.io.IOException;
+
+import static java.io.File.*;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 import javax.management.ObjectName;
-
-import org.joda.time.DateTime;
-import org.joda.time.Interval;
 
 import domainhealth.core.env.AppLog;
 import domainhealth.core.jmx.DomainRuntimeServiceMBeanConnection;
 import domainhealth.core.jmx.WebLogicMBeanException;
 import domainhealth.core.jmx.WebLogicMBeanPropConstants;
+
+import static domainhealth.core.statistics.MonitorProperties.*;
+import static domainhealth.core.util.DateUtil.*;
+
 import domainhealth.core.util.DateUtil;
 import domainhealth.core.util.FileUtil;
 import domainhealth.frontend.data.DateAmountDataSet;
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
 
 /**
  * Provides access and persistence to the file-system based storage for
@@ -68,17 +57,6 @@ import domainhealth.frontend.data.DateAmountDataSet;
  * (eg. datasource, destination).
  */
 public class StatisticsStorage {
-	
-	// Constants
-    private final static String CSV_SUFFIX = ".csv";
-    private final static String PROPS_SUFFIX = ".props";
-    private final static String RESOURCE_LIST_FILENAME_SUFFIX = "list";
-    private final static String PROP_LIST_CMNT_PREFIX = "List of instances available on the server to monitor for resource type: ";
-    private final static Map<String, Object> resourceMonitorObjects = new HashMap<String, Object>();
-
-    // Members
-    private final String rootDirectoryPath;
-    
     /**
      * Newline char
      */
@@ -527,7 +505,6 @@ public class StatisticsStorage {
         } else if (resourceName.length() > 0) {
             resourceName += "_";
         }
-                
         DateTime start = interval.getStart();
         DateTime stop = interval.getEnd();
         DateTime inter = start;
@@ -538,10 +515,8 @@ public class StatisticsStorage {
             // Go to next
             Date date = inter.toDate();
             String dirPath = getDayServerResourceDirectoryPath(date, serverName, resourceType);
-                        
             if (dirPath != null) {
                 String fileName = String.format("%s%s%s_%s_%s%s%s", dirPath, separatorChar, resourceType, serverName, resourceName, dayDateFormat.format(date), CSV_SUFFIX);
-                                
                 File file = FileUtil.retrieveFile(fileName);
                 if (file != null) {
                     daysMap.put(file, date);
@@ -780,7 +755,6 @@ public class StatisticsStorage {
                 //return new DateAmountDataSet();
             }
             for (String resourceProperty : resourceProperties) {
-            	            	
                 DateAmountDataSet resultDataSet = data.get(resourceProperty);
                 if (resultDataSet==null){
                     resultDataSet = new DateAmountDataSet();
@@ -792,11 +766,9 @@ public class StatisticsStorage {
 
                 // TODO : Later to review because the file is already located for a each day from the interval so getting it one more time does not make sense
                 int propertyPosition = this.getPropertyPositionInStatsFile(resourceType, resourceName, csvLocationPerFile.get(file), serverName, resourceProperty);
-                                
                 if (propertyPosition < 0) {
                     continue;
                 }
-                
                 BufferedReader in = null;
                 try {
                     in = new BufferedReader(new FileReader(file));
@@ -890,17 +862,7 @@ public class StatisticsStorage {
         return resultDataSet;
     }
 
-    /**
-     * 
-     * @param resourceType
-     * @param resourceName
-     * @param resourcesProperty
-     * @param endDateTime
-     * @param durationMins
-     * @param serverName
-     * @return
-     * @throws IOException
-     */
+
     public List<DateAmountDataSet> getPropertiesData(String resourceType, String resourceName, List<String> resourcesProperty, Date endDateTime, int durationMins, String serverName) throws IOException {
         List<DateAmountDataSet> resultDataSet = new ArrayList<DateAmountDataSet>();
         //ex: StorageUtil.getPropertyData(statisticsStorage,"core",null,"HeapUsedCurrent",new Date(),1,"AdminServer");
@@ -933,12 +895,7 @@ public class StatisticsStorage {
 
     }
 
-    /**
-     * 
-     * @param conn
-     * @return
-     * @throws WebLogicMBeanException
-     */
+
     public Set<String> getAllPossibleServerNames(DomainRuntimeServiceMBeanConnection conn) throws WebLogicMBeanException {
         Set<String> serverNames = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
         ObjectName[] servers = conn.getChildren(conn.getDomainConfiguration(), WebLogicMBeanPropConstants.SERVERS);
@@ -949,4 +906,14 @@ public class StatisticsStorage {
 
         return serverNames;
     }
+
+    // Constants
+    private final static String CSV_SUFFIX = ".csv";
+    private final static String PROPS_SUFFIX = ".props";
+    private final static String RESOURCE_LIST_FILENAME_SUFFIX = "list";
+    private final static String PROP_LIST_CMNT_PREFIX = "List of instances available on the server to monitor for resource type: ";
+    private final static Map<String, Object> resourceMonitorObjects = new HashMap<String, Object>();
+
+    // Members
+    private final String rootDirectoryPath;
 }
