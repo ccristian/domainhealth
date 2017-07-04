@@ -78,7 +78,6 @@ public class AppStartStopListener extends GenericServlet {
 	 * @see javax.servlet.GenericServlet#destroy()
 	 */
 	public void destroy() {
-		
 		AppLog.getLogger().notice("Stopping DomainHealth application");
 		retrieverBackgroundService.shutdown();
 	}

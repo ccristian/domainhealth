@@ -14,12 +14,6 @@
 //POSSIBILITY OF SUCH DAMAGE.
 package domainhealth.core.jmx;
 
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.ADMIN_SERVER_HOSTNAME;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.ADMIN_SERVER_PORT;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.IS_ADMIN_SERVER;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.IS_ADMIN_SERVER_PORT_SECURED;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.SERVER_RUNTIME;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,7 +29,9 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.*;
 import domainhealth.core.env.AppLog;
+
 
 /**
  * Encapsulates a WebLogic remote JMX connector and its associated JMX MBean 
@@ -74,7 +70,6 @@ public class WebLogicMBeanConnection {
 	 * @throws WebLogicMBeanException Indicates that a JMX connection to server could not be made
 	 */
 	protected WebLogicMBeanConnection(String protocol, String host, int port, String username, String password, String serviceName) throws WebLogicMBeanException {
-				
 		try {			
 			Map<String, String> props = getJMXContextProps();
 			props.put(Context.SECURITY_PRINCIPAL, username);
@@ -95,7 +90,6 @@ public class WebLogicMBeanConnection {
 	 * @throws WebLogicMBeanException Indicates that a JMX connection to server could not be made
 	 */
 	protected WebLogicMBeanConnection(JMXServiceURL jmxServiceURL) throws WebLogicMBeanException {
-				
 		try {			
 			jmxConnector = JMXConnectorFactory.connect(jmxServiceURL, getJMXContextProps());
 			conn = jmxConnector.getMBeanServerConnection();
@@ -119,7 +113,6 @@ public class WebLogicMBeanConnection {
 	 * @throws WebLogicMBeanException Indicates that a JMX connection to server could not be made
 	 */
 	protected WebLogicMBeanConnection(String serviceName) throws WebLogicMBeanException {
-				
 		try {
 			MBeanServerConnection localConn = getCachedLocalConn();
 			ObjectName serverRuntime = (ObjectName) localConn.getAttribute(serverRuntimeServiceMBean, SERVER_RUNTIME);
@@ -484,11 +477,8 @@ public class WebLogicMBeanConnection {
 	}
 	
 	// Members
-	//private final JMXConnector jmxConnector;
-	//private final MBeanServerConnection conn;
-	protected final JMXConnector jmxConnector;
-	protected final MBeanServerConnection conn;
-	
+	private final JMXConnector jmxConnector;
+	private final MBeanServerConnection conn;
 	private final String connectionDescription;
 		
 	// Constants
@@ -510,5 +500,5 @@ public class WebLogicMBeanConnection {
 		} catch (MalformedObjectNameException e) {
 			throw new AssertionError(e.toString());
 		}
-	}
+	}	
 }

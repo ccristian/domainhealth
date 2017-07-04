@@ -50,7 +50,9 @@
 
 	</run-as-role-assignment>
 	
-	<context-root>domainhealth</context-root>
+	
+
+	<context-root>/domainhealth</context-root>
 
 	<work-manager>
 		<name>DomainHealth_IndividualServerStatCapturerWorkMngr</name>
@@ -64,3 +66,5 @@
 		<timeout-secs>3600</timeout-secs>
 	</session-descriptor>
 </weblogic-web-app>
+
+

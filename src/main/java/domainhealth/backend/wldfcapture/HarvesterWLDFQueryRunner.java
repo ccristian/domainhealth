@@ -89,8 +89,7 @@ public class HarvesterWLDFQueryRunner {
 				}
 			}
 		} catch (WebLogicMBeanException e) {
-			//AppLog.getLogger().debug("ERROR - For server '" + serverName + "', WLDF Query captured " + dataRecords.getTotalNumberReocrds() + " results with query: " + wldfQuery + "  - Exception message: " + e);
-			AppLog.getLogger().error("ERROR - For server '" + serverName + "', WLDF Query captured " + dataRecords.getTotalNumberReocrds() + " results with query: " + wldfQuery + "  - Exception message: " + e);
+			AppLog.getLogger().debug("ERROR - For server '" + serverName + "', WLDF Query captured " + dataRecords.getTotalNumberReocrds() + " results with query: " + wldfQuery + "  --Exception message: " + e);
 			throw e;
 		} finally {
 			if (cursorId != null) {

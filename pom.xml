@@ -45,6 +45,11 @@
       <version>1.17.1</version>
     </dependency>
     <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+      <version>2.5</version>
+    </dependency>
+    <dependency>
       <groupId>com.sun.jersey</groupId>
       <artifactId>jersey-servlet</artifactId>
       <version>1.17.1</version>
@@ -64,40 +69,8 @@
       <artifactId>jersey-multipart</artifactId>
       <version>1.8</version>
     </dependency>
-    
-    <!-- ********************************************* -->
-    <!-- OSB library -->
-    <dependency>
-      <groupId>com.oracle.weblogic</groupId>
-      <artifactId>servicebus</artifactId>
-      <version>${weblogic.server.merged.version}</version>
-      <scope>provided</scope>
-    </dependency>
-        
-    <dependency>
-      <groupId>com.oracle.weblogic</groupId>
-      <artifactId>servicebus.kernel</artifactId>
-      <version>${weblogic.server.merged.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>com.oracle.weblogic</groupId>
-      <artifactId>servicebus.configfwk</artifactId>
-      <version>${weblogic.server.merged.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <!-- ********************************************* -->
-    
-    <!-- ********************************************* -->
-    <!-- SOA-BPM library  -->
-    <dependency>
-      <groupId>com.oracle.weblogic</groupId>
-      <artifactId>fabric.runtime</artifactId>
-      <version>${weblogic.server.merged.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <!-- ********************************************* -->
+
+
 
   </dependencies>
 
@@ -139,12 +112,62 @@
           <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
       </plugin>
+      
+      <!-- Added by gregoan -->
+      <!--
+      <plugin>
+		  <groupId>com.oracle.servicebus</groupId>
+		  <artifactId>oracle-servicebus-plugin</artifactId>
+		  <version>${weblogic.server.merged.version}</version>
+		  <extensions>true</extensions>
+		  <configuration>
+		    <oracleHome>/u01/osbhome</oracleHome>
+		    <oracleServerUrl>http://test.server:7001</oracleServerUrl>
+		    <oracleUsername>weblogic</oracleUsername>
+		    <oraclePassword>welcome1</oraclePassword>
+		  </configuration>
+	  </plugin>
+	  -->
+	  
+	  <!-- ******************************************************** -->
+	  <!-- Added by gregoan -->
+	  <!--
+	  <plugin>
+	  	<groupId>com.oracle.servicebus.archetype</groupId>
+		<artifactId>oracle-servicebus-project</artifactId>
+		<version>${weblogic.server.merged.version}</version>
+	  </plugin>
+
+	  <plugin>
+		<groupId>com.oracle.servicebus.archetype</groupId>
+		<artifactId>oracle-servicebus-system</artifactId>
+		<version>${weblogic.server.merged.version}</version>
+	  </plugin>
+	  
+	  <plugin>
+		<groupId>com.oracle.soa.plugin</groupId>
+		<artifactId>oracle-soa-plugin</artifactId>
+		<version>${weblogic.server.merged.version}</version>
+	  </plugin>
+	  
+	  <plugin>
+		<groupId>com.oracle.soa.archetype</groupId>
+		<artifactId>oracle-soa-application</artifactId>
+		<version>${weblogic.server.merged.version}</version>
+	  </plugin>	
+	  
+	  <plugin>
+		<groupId>com.oracle.soa.archetype</groupId>
+		<artifactId>oracle-soa-project</artifactId>
+		<version>${weblogic.server.merged.version}</version>
+	  </plugin>
+	  -->
+	  <!-- ******************************************************** -->
    
       <plugin>
         <groupId>com.oracle.weblogic</groupId>
         <artifactId>weblogic-maven-plugin</artifactId>
         <version>${weblogic.server.merged.version}</version>
-        
         <!--
         You can find and redefine the following variables in the parent pom file.
 
@@ -169,10 +192,8 @@
               <adminurl>${oracleServerUrl}</adminurl>
               <user>${oracleUsername}</user>
               <password>${oraclePassword}</password>
-              
               <!--The location of the file or directory to be deployed-->
               <source>${project.build.directory}/${project.build.finalName}.${project.packaging}</source>
-              
               <!--The target servers where the application is deployed. Here use the plugin's default value AdminServer-->
               <!--targets>${oracleServerName}</targets-->
               <verbose>true</verbose>
