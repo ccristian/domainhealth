@@ -50,8 +50,6 @@
 
 	</run-as-role-assignment>
 	
-	
-
 	<context-root>/domainhealth</context-root>
 
 	<work-manager>
