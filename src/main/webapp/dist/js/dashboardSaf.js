@@ -6,14 +6,14 @@ function safaction(actionName) {
     var checkboxesChecked = $("#dashboardtable input[type='checkbox']:checked");
     checkboxesChecked.each(function (index) {
         $.ajax({            
-            //url: '/domainhealth/rest/jmsaction/safdestination/' + $.AdminLTE.options.currentResource + '/' + $(this).attr("id") + '/' + actionName,
-        	url: '/domainhealth/rest/jmsaction/safdestination/' + actionName + '/' + $.AdminLTE.options.currentResource + '/' + $(this).attr("id"),
+            url: '/domainhealth/rest/jmsaction/safdestination/' + $.AdminLTE.options.currentResource + '/' + $(this).attr("id") + '/' + actionName,
+        	//url: '/domainhealth/rest/jmsaction/safdestination/' + actionName + '/' + $.AdminLTE.options.currentResource + '/' + $(this).attr("id"),
             cache: false,
             success: function (response) {
                $("#safdashboard"+ $.AdminLTE.options.currentResource).trigger("click");
             },
             error: function (xhr) {
-                alert("error");
+                alert("error");                
             }
         });
     });

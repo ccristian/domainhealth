@@ -173,8 +173,8 @@ else{
      * @return
      */
     @GET
-    @Path("jmsdestination/{action}/{jmsServer}/{destination}")
-    //@Path("jmsdestination/{jmsServer}/{destination}/{action}")
+    //@Path("jmsdestination/{action}/{jmsServer}/{destination}")
+    @Path("jmsdestination/{jmsServer}/{destination}/{action}")
     @Produces({MediaType.APPLICATION_JSON})
     public boolean jmsDestinationAction(	@HeaderParam("user-agent") String userAgent, 
 											@QueryParam("scope") Set<String> scope,
@@ -214,8 +214,8 @@ else{
 /*
 // Not used so commented to avoid usage
     @GET
-    @Path("jmsserver/{action}/{jmsServer}")
-    //@Path("jmsserver/{jmsServer}/{action}")
+    //@Path("jmsserver/{action}/{jmsServer}")
+    @Path("jmsserver/{jmsServer}/{action}")
     @Produces({MediaType.APPLICATION_JSON})
     public boolean jmsServerAction(	@HeaderParam("user-agent") String userAgent, 
 									@QueryParam("scope") Set<String> scope,
@@ -254,8 +254,9 @@ else{
      * @return
      */
     @GET
-    @Path("safdestination/{action}/{safAgent}/{saf}")
-    //@Path("safdestination/{safAgent}/{saf}/{action}")
+    //@Path("safdestination/{action}/{safAgent}/{saf}")
+    @Path("safdestination/{safAgent}/{saf}/{action}")
+    @Produces({MediaType.APPLICATION_JSON})
     public boolean safDestinationAction(	@HeaderParam("user-agent") String userAgent, 
 											@QueryParam("scope") Set<String> scope,
 											@PathParam("safAgent") String safAgent,
@@ -294,8 +295,8 @@ else{
 /*
 // Not used so commented to avoid usage
     @GET
-    @Path("safagent/{action}/{safAgent}")
-    //@Path("safagent/{safAgent}/{action}")
+    //@Path("safagent/{action}/{safAgent}")
+    @Path("safagent/{safAgent}/{action}")
     @Produces({MediaType.APPLICATION_JSON})
     public boolean safAgentAction(	@HeaderParam("user-agent") String userAgent, 
 									@QueryParam("scope") Set<String> scope,
@@ -1055,16 +1056,17 @@ else{
 		        // Find correct JMS server
 		        for (ObjectName safAgent : safServers)
 		        {
-		        	String currentSafAgentName = conn.getTextAttr(safAgent, NAME);			        	
+		        	String currentSafAgentName = conn.getTextAttr(safAgent, NAME);		        	
 		        	if(currentSafAgentName.equals(safAgentName)){
-		        		
+		        		        		
 		        		// Find the correct element
 		        		for (ObjectName remoteEndPoint : conn.getChildren(safAgent, REMOTE_END_POINTS)) {
 					    	
 		        			String currentSafName = ResourceNameNormaliser.normalise(SAFAGENT_RESOURCE_TYPE, conn.getTextAttr(remoteEndPoint, NAME));
 		        			if(currentSafName.equals(safName)) {
-		        				
+		        						        				
 		        				conn.invoke(remoteEndPoint, action, null, null);
+		        						        				
 		        				String username = securityContext.getUserPrincipal().getName();
 		        				AppLog.getLogger().notice("The username [" + username + "] executed the action [" + action + "] for the SAF [" + safName + "] deployed on SAF agent [" + safAgentName + "]");
 		        				return true;

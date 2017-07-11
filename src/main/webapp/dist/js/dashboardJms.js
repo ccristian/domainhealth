@@ -6,8 +6,8 @@ function jmsaction(actionName) {
     var checkboxesChecked = $("#dashboardtable input[type='checkbox']:checked");
     checkboxesChecked.each(function (index) {
         $.ajax({
-        	//url: '/domainhealth/rest/jmsaction/jmsdestination/' + $.AdminLTE.options.currentResource + '/' + $(this).attr("id") + '/' + actionName,
-        	url: '/domainhealth/rest/jmsaction/jmsdestination/' + actionName + '/' + $.AdminLTE.options.currentResource + '/' + $(this).attr("id"),
+        	url: '/domainhealth/rest/jmsaction/jmsdestination/' + $.AdminLTE.options.currentResource + '/' + $(this).attr("id") + '/' + actionName,
+        	//url: '/domainhealth/rest/jmsaction/jmsdestination/' + actionName + '/' + $.AdminLTE.options.currentResource + '/' + $(this).attr("id"),
         	cache: false,
             success: function (response) {
                $("#jmsdashboard"+ $.AdminLTE.options.currentResource).trigger("click");
@@ -27,8 +27,9 @@ checkboxes.click(function () {
     $("#constgl").attr("disabled", !checkboxes.is(":checked"));
     $("#instgl").attr("disabled", !checkboxes.is(":checked"));
     
-    // Added by gregoan
-    $("#msgdesttgl").attr("disabled", !checkboxes.is(":checked"));
+	// Added by gregoan (management of JMS messages)
+	// Don't remember what I had in mind - Should be checked
+    //$("#msgdesttgl").attr("disabled", !checkboxes.is(":checked"));
 });
 
 // ------------------------------------------------
@@ -61,9 +62,12 @@ $("#resumeins").click(function () {
 });
 //------------------------------------------------
 
+//------------------------------------------------
 $("#prdtgl").prop("disabled", true);
 $("#constgl").prop("disabled", true);
 $("#instgl").prop("disabled", true);
 
-//Added by gregoan
-$("#msgdesttgl").prop("disabled", true);
+// Added by gregoan (management of JMS messages)
+// Don't remember what I had in mind - Should be checked
+//$("#msgdesttgl").prop("disabled", true);
+//------------------------------------------------
