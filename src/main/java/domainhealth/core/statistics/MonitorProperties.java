@@ -19,6 +19,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.jms.BytesMessage;
+import javax.jms.MapMessage;
+import javax.jms.ObjectMessage;
+import javax.jms.StreamMessage;
+import javax.jms.TextMessage;
+
 import static domainhealth.core.jmx.WebLogicMBeanPropConstants.*;
 
 /**
@@ -310,6 +316,27 @@ public class MonitorProperties {
 	public final static String RESUME_FORWARDING = "resumeForwarding";
 	public final static String PAUSE_RECEIVING = "pauseReceiving";
 	public final static String RESUME_RECEIVING = "resumeReceiving";
+	// -----------------------------------------------------------------
+	
+	// -----------------------------------------------------------------
+	// Actions for JMS
+	// ---------------------
+	public final static String MOVE_MESSAGES = "moveMessages";
+	public final static String DELETE_MESSAGES = "deleteMessages";
+	public final static String GET_NEXT = "getNext";
+	public final static String GET_MESSAGE = "getMessage";
+	public final static String GET_MESSAGES = "getMessages";
+	public final static String GET_CURSOR_SIZE = "getCursorSize";
+	// -----------------------------------------------------------------
+	
+	// -----------------------------------------------------------------
+	// Kind of JMS message
+	// ---------------------
+	public final static String TEXT_MESSAGE = "TextMessage";
+	public final static String OBJECT_MESSAGE = "ObjectMessage";
+	public final static String MAP_MESSAGE = "MapMessage";
+	public final static String BYTES_MESSAGE = "BytesMessage";
+	public final static String STREAM_MESSAGE = "StreamMessage";
 	// -----------------------------------------------------------------
 	
 	/**

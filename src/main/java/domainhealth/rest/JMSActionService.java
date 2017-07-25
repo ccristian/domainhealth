@@ -5,21 +5,26 @@ import static domainhealth.core.jmx.WebLogicMBeanPropConstants.DESTINATIONS;
 import static domainhealth.core.jmx.WebLogicMBeanPropConstants.JMS_RUNTIME;
 import static domainhealth.core.jmx.WebLogicMBeanPropConstants.JMS_SERVERS;
 import static domainhealth.core.jmx.WebLogicMBeanPropConstants.NAME;
-import static domainhealth.core.jmx.WebLogicMBeanPropConstants.SAF_RUNTIME;
 import static domainhealth.core.jmx.WebLogicMBeanPropConstants.REMOTE_END_POINTS;
-
+import static domainhealth.core.jmx.WebLogicMBeanPropConstants.SAF_RUNTIME;
 import static domainhealth.core.statistics.MonitorProperties.JMSSVR_RESOURCE_TYPE;
 import static domainhealth.core.statistics.MonitorProperties.SAFAGENT_RESOURCE_TYPE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 import javax.annotation.PostConstruct;
+import javax.jms.BytesMessage;
+import javax.jms.MapMessage;
 import javax.jms.ObjectMessage;
+import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
 import javax.management.ObjectName;
 import javax.management.openmbean.CompositeData;
@@ -34,15 +39,15 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 
-import weblogic.jms.common.JMSMessageId;
-import weblogic.jms.extensions.JMSMessageInfo;
-import weblogic.jms.extensions.WLMessage;
 import domainhealth.core.env.AppLog;
 import domainhealth.core.env.AppProperties;
 import domainhealth.core.env.AppProperties.PropKey;
 import domainhealth.core.jmx.DomainRuntimeServiceMBeanConnection;
 import domainhealth.core.statistics.MonitorProperties;
 import domainhealth.core.statistics.ResourceNameNormaliser;
+import weblogic.jms.common.JMSMessageId;
+import weblogic.jms.extensions.JMSMessageInfo;
+import weblogic.jms.extensions.WLMessage;
 
 /**
  */
@@ -560,7 +565,7 @@ else{
 				String messages = (String) conn.invoke(destination, "getMessages", new Object[]{"", 0}, new String[] {String.class.getName(), Integer.class.getName()});
 				long cursorSize = (long) conn.invoke(destination, "getCursorSize", new Object[]{messages}, new String[] {String.class.getName()});
 	
-				CompositeData[] compositeDatas = (CompositeData[]) conn.invoke(destination, "getNext", new Object[]{messages, (int)cursorSize}, new String[] {String.class.getName(), Integer.class.getName()});
+				CompositeData[] compositeDatas = (CompositeData[]) conn.invoke(destination, MonitorProperties.NEXT_MESSAGE, new Object[]{messages, (int)cursorSize}, new String[] {String.class.getName(), Integer.class.getName()});
 				if(compositeDatas != null) {
 					
 					AppLog.getLogger().notice("There is [" + compositeDatas.length + "] messages found in the destination [" + destinationName + "] deployed on JMS server [" + jmsServerName + "]");
@@ -596,6 +601,7 @@ else{
      * @param action
      * @return
      */
+    /*
     @GET
     @Path("jmsmessage/print/{jmsServerName}/{destinationName}/{messageId}")
     @Produces({MediaType.APPLICATION_JSON})
@@ -608,7 +614,7 @@ else{
 			if(destination != null) {
 				
 				AppLog.getLogger().notice("Looking for the message [ID:" + messageId + "] in the destination [" + destinationName + "] deployed on JMS server [" + jmsServerName + "]");
-				CompositeData compositeData = (CompositeData) conn.invoke(destination, "getMessage", new Object[]{"ID:" + messageId}, new String[] {String.class.getName()});
+				CompositeData compositeData = (CompositeData) conn.invoke(destination, MonitorProperties.GET_MESSAGE, new Object[]{"ID:" + messageId}, new String[] {String.class.getName()});
 				
 				if(compositeData != null) {
 					JMSMessageInfo jmsMessageInfo = new JMSMessageInfo(compositeData);
@@ -638,10 +644,10 @@ else{
 			return false;
 		}
 		
-		AppLog.getLogger().error("getMessage method failed to be executed for the ID [" + messageId + "] for the destination [" + destinationName + "] deployed on JMS server [" + jmsServerName + "] was not executed");
-		AppLog.getLogger().error("   -> Possible reason is wrong JMS message ID, JMS server or JMS destination");
+		AppLog.getLogger().error("getMessage method failed to be executed for the ID [" + messageId + "] for the destination [" + destinationName + "] deployed on JMS server [" + jmsServerName + "]");
 		return false;
 	}
+    */
     
     /**
      * 
@@ -678,7 +684,8 @@ else{
 					
 					String selector = "JMSMessageID='ID:" + messageId + "'";
 					
-					Integer nb = (Integer) conn.invoke(fromDestination, "moveMessages", new Object[]{selector, destinationInfo}, new String[] {String.class.getName(), CompositeData.class.getName()});
+					//Integer nb = (Integer) conn.invoke(fromDestination, "moveMessages", new Object[]{selector, destinationInfo}, new String[] {String.class.getName(), CompositeData.class.getName()});
+					Integer nb = (Integer) conn.invoke(fromDestination, MonitorProperties.MOVE_MESSAGES, new Object[]{selector, destinationInfo}, new String[] {String.class.getName(), CompositeData.class.getName()});
 					if(nb != null) {
 						AppLog.getLogger().notice("-> [" + nb + "] message(s) have been moved ...");
 						return true;
@@ -694,6 +701,91 @@ else{
 		AppLog.getLogger().error("   -> Possible reason is wrong JMS message ID, JMS server or JMS destination");
 		return false;
 	}
+    
+    /**
+     * 
+     * @param jmsServerName
+     * @param destinationName
+     * @param messageId
+     * @return
+     */
+    @GET
+    @Path("jmsmessage/delete/{jmsServerName}/{destinationName}/{messageId}")
+    //@Path("jmsmessage/delete/{messageId}/{jmsServerName}/{destinationName}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public boolean deleteMessage(	@PathParam("jmsServerName") String jmsServerName,
+				    			@PathParam("destinationName") String destinationName,
+				    			@PathParam("messageId") String messageId) {
+		try {
+			
+			DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();
+			
+			ObjectName destination = getJmsDestination(conn, jmsServerName, destinationName);
+			
+			if(destination != null) {
+					
+				// Delete the message
+				AppLog.getLogger().notice("Deleting the message ID [" + messageId + "] from the queue [" + destinationName + "] deployed on JMS server [" + jmsServerName + "]");
+				
+				String selector = "JMSMessageID='ID:" + messageId + "'";
+				
+				//Integer nb = (Integer) conn.invoke(destination, "deleteMessages", new Object[]{selector}, new String[] {String.class.getName()});
+				Integer nb = (Integer) conn.invoke(destination, MonitorProperties.DELETE_MESSAGES, new Object[]{selector}, new String[] {String.class.getName()});
+				if(nb != null) {
+					AppLog.getLogger().notice("-> [" + nb + "] message(s) have been deleted ...");
+					return true;
+				}
+			}
+		} catch(Exception ex){
+			AppLog.getLogger().error("Error during execution of deleteMessages with ID [" + messageId + "] from the queue [" + destinationName + "] deployed on JMS server [" + jmsServerName + "]");
+			return false;
+		}
+		
+		AppLog.getLogger().error("deketeMessages method failed to be executed for the ID [" + messageId + "] from the queue [" + destinationName + "] deployed on JMS server [" + jmsServerName + "]");
+		AppLog.getLogger().error("   -> Possible reason is wrong JMS message ID, JMS server or JMS destination");
+		return false;
+	}
+    
+    /**
+     * 
+     * @param jmsServerName
+     * @param destinationName
+     * @return
+     */
+    @GET
+    @Path("jmsmessages/delete/{jmsServerName}/{destinationName}")
+    //@Path("jmsmessages/delete/{jmsServerName}/{destinationName}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public boolean deleteMessages(	@PathParam("jmsServerName") String jmsServerName,
+				    			@PathParam("destinationName") String destinationName) {
+		try {
+			
+			DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();
+			
+			ObjectName destination = getJmsDestination(conn, jmsServerName, destinationName);
+			
+			if(destination != null) {
+		        			
+				// Delete the messages
+				AppLog.getLogger().notice("Deleting the messages from the queue [" + destinationName + "] deployed on JMS server [" + jmsServerName + "]");
+									
+				//Integer nb = (Integer) conn.invoke(destination, "deleteMessages", new Object[]{""}, new String[] {String.class.getName()});
+				Integer nb = (Integer) conn.invoke(destination, MonitorProperties.DELETE_MESSAGES, new Object[]{""}, new String[] {String.class.getName()});
+				
+				if(nb != null) {
+					AppLog.getLogger().notice("-> [" + nb + "] message(s) have been deleted ...");
+					return true;
+				}
+			}
+		} catch(Exception ex){
+			AppLog.getLogger().error("Error during execution of deleteMessages from the queue [" + destinationName + "] deployed on JMS server [" + jmsServerName + "]");
+			return false;
+		}
+		
+		AppLog.getLogger().error("deleteMessages method failed to be executed from the queue [" + destinationName + "] deployed on JMS server [" + jmsServerName + "]");
+		AppLog.getLogger().error("   -> Possible reason is wrong JMS server or JMS destination");
+		return false;
+    }
     
     /**
      * 
@@ -780,10 +872,14 @@ else{
 			ObjectName destination = getJmsDestination(conn, jmsServerName, destinationName);
 			if(destination != null) {
 			
-				String messages = (String) conn.invoke(destination, "getMessages", new Object[]{"", 0}, new String[] {String.class.getName(), Integer.class.getName()});
-				long cursorSize = (long) conn.invoke(destination, "getCursorSize", new Object[]{messages}, new String[] {String.class.getName()});
-	
-				CompositeData[] compositeDatas = (CompositeData[]) conn.invoke(destination, "getNext", new Object[]{messages, (int)cursorSize}, new String[] {String.class.getName(), Integer.class.getName()});
+				//String messages = (String) conn.invoke(destination, "getMessages", new Object[]{"", 0}, new String[] {String.class.getName(), Integer.class.getName()});
+				//long cursorSize = (long) conn.invoke(destination, "getCursorSize", new Object[]{messages}, new String[] {String.class.getName()});
+
+				String messages = (String) conn.invoke(destination, MonitorProperties.GET_MESSAGES, new Object[]{"", 0}, new String[] {String.class.getName(), Integer.class.getName()});
+				long cursorSize = (long) conn.invoke(destination, MonitorProperties.GET_CURSOR_SIZE, new Object[]{messages}, new String[] {String.class.getName()});
+				
+				//CompositeData[] compositeDatas = (CompositeData[]) conn.invoke(destination, "getNext", new Object[]{messages, (int)cursorSize}, new String[] {String.class.getName(), Integer.class.getName()});
+				CompositeData[] compositeDatas = (CompositeData[]) conn.invoke(destination, MonitorProperties.GET_NEXT, new Object[]{messages, (int)cursorSize}, new String[] {String.class.getName(), Integer.class.getName()});
 				if(compositeDatas != null) {
 					
 					AppLog.getLogger().notice("There is [" + compositeDatas.length + "] messages found in the destination [" + destinationName + "] deployed on JMS server [" + jmsServerName + "]");
@@ -819,17 +915,20 @@ else{
      */
     @GET
     @Path("jmsmessage/get/{jmsServerName}/{destinationName}/{messageId}")
-    @Produces({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})    
     //public String getMessage(@PathParam("jmsServerName") String jmsServerName, @PathParam("destinationName") String destinationName, @PathParam("messageId") String messageId) {
     public Object getMessage(@PathParam("jmsServerName") String jmsServerName, @PathParam("destinationName") String destinationName, @PathParam("messageId") String messageId) {
-		try {
+		
+    	/*
+    	try {
 			
 			DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();
 			ObjectName destination = getJmsDestination(conn, jmsServerName, destinationName );
 			if(destination != null) {
 				
 				AppLog.getLogger().notice("Looking for the message [ID:" + messageId + "] in the destination [" + destinationName + "] deployed on JMS server [" + jmsServerName + "]");
-				CompositeData compositeData = (CompositeData) conn.invoke(destination, "getMessage", new Object[]{"ID:" + messageId}, new String[] {String.class.getName()});
+				//CompositeData compositeData = (CompositeData) conn.invoke(destination, "getMessage", new Object[]{"ID:" + messageId}, new String[] {String.class.getName()});
+				CompositeData compositeData = (CompositeData) conn.invoke(destination, MonitorProperties.GET_MESSAGE, new Object[]{"ID:" + messageId}, new String[] {String.class.getName()});
 				
 				if(compositeData != null) {
 					JMSMessageInfo jmsMessageInfo = new JMSMessageInfo(compositeData);
@@ -844,8 +943,39 @@ else{
 						Object message = ((ObjectMessage)wlMessage).getObject();
 						AppLog.getLogger().notice("   Message is Object [" + message + "]");
 						return message;
-					} else {
-						AppLog.getLogger().notice("   Not a Text or Object Message");
+						
+					} else if (wlMessage instanceof MapMessage) {
+						
+						MapMessage mapMessage = (MapMessage)wlMessage;
+						Enumeration<String> enumMap = mapMessage.getMapNames();
+						AppLog.getLogger().notice("   Message is Map");
+						while(enumMap.hasMoreElements()) {
+							String key = enumMap.nextElement().toString();
+							AppLog.getLogger().notice("      [" + key + "] is [" + mapMessage.getObject(key)  + "]");
+						}
+						return enumMap;
+						
+					} else if (wlMessage instanceof BytesMessage) {
+						
+						BytesMessage byteMessage = (BytesMessage)wlMessage;
+						byte[] b = new byte [(int)byteMessage.getBodyLength()];
+						byteMessage.readBytes(b);
+												
+						AppLog.getLogger().notice("   Message is Bytes [" + b + "]");
+						return b;
+						
+					}
+					
+					//else if (wlMessage instanceof StreamMessage) {
+					//	
+					//	Object message = ((StreamMessage)wlMessage).readObject();
+					//	AppLog.getLogger().notice("   Message is Stream [" + message + "]");
+					//	return message;
+					//	
+					//}
+					
+					else {
+						AppLog.getLogger().notice("   Not a supported JMS Message");
 						AppLog.getLogger().notice("   Message is [" + wlMessage.toString() + "]");
 						return null;
 					}
@@ -859,10 +989,151 @@ else{
 			return null;
 		}
 		
-		AppLog.getLogger().error("getMessage method failed to be executed for the ID [" + messageId + "] for the destination [" + destinationName + "] deployed on JMS server [" + jmsServerName + "] was not executed");
+		AppLog.getLogger().error("getMessage method failed to be executed for the ID [" + messageId + "] for the destination [" + destinationName + "] deployed on JMS server [" + jmsServerName + "]");
+		return null;
+		*/
+    	
+    	try {
+	    	WLMessage wlMessage = getJmsMessage(jmsServerName, destinationName, messageId);
+	    	if(wlMessage != null) {
+	    		
+	    		if (wlMessage instanceof TextMessage) {
+					String message = ((TextMessage)wlMessage).getText();
+					AppLog.getLogger().notice("   Message is Text [" + message + "]");
+					return message;
+					
+				} else if (wlMessage instanceof ObjectMessage) {
+					Object message = ((ObjectMessage)wlMessage).getObject();
+					AppLog.getLogger().notice("   Message is Object [" + message + "]");
+					return message;
+					
+				} else if (wlMessage instanceof MapMessage) {
+					
+					MapMessage mapMessage = (MapMessage)wlMessage;
+					Enumeration<String> enumMap = mapMessage.getMapNames();
+					AppLog.getLogger().notice("   Message is Map");
+					while(enumMap.hasMoreElements()) {
+						String key = enumMap.nextElement().toString();
+						AppLog.getLogger().notice("      [" + key + "] is [" + mapMessage.getObject(key)  + "]");
+					}
+					return enumMap;
+					
+				} else if (wlMessage instanceof BytesMessage) {
+					
+					BytesMessage byteMessage = (BytesMessage)wlMessage;
+					byte[] b = new byte [(int)byteMessage.getBodyLength()];
+					byteMessage.readBytes(b);
+											
+					AppLog.getLogger().notice("   Message is Bytes [" + b + "]");
+					return b;
+					
+				}
+				
+				//else if (wlMessage instanceof StreamMessage) {
+				//	
+				//	Object message = ((StreamMessage)wlMessage).readObject();
+				//	AppLog.getLogger().notice("   Message is Stream [" + message + "]");
+				//	return message;
+				//	
+				//}
+				
+				else {
+					AppLog.getLogger().notice("   Not a supported JMS Message");
+					AppLog.getLogger().notice("   Message is [" + wlMessage.toString() + "]");
+					return null;
+				}
+	    		
+	    	} else {
+	    		AppLog.getLogger().error("getMessage method failed to be executed");
+	    		return null;
+	    	}
+	    		
+    	} catch(Exception ex){
+			AppLog.getLogger().error("Error during execution of getMessage with ID [" + messageId + "] for the destination [" + destinationName + "] deployed on JMS server [" + jmsServerName + "]", ex);
+			return null;
+		}
+	}
+    
+    /**
+     * 
+     * @param jmsServerName
+     * @param destinationName
+     * @param messageId
+     * @return
+     */
+    private WLMessage getJmsMessage(String jmsServerName, String destinationName, String messageId) {
+		
+    	try {
+			
+			DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();
+			ObjectName destination = getJmsDestination(conn, jmsServerName, destinationName );
+			if(destination != null) {
+				
+				AppLog.getLogger().notice("Looking for the message [ID:" + messageId + "] in the destination [" + destinationName + "] deployed on JMS server [" + jmsServerName + "]");
+				CompositeData compositeData = (CompositeData) conn.invoke(destination, MonitorProperties.GET_MESSAGE, new Object[]{"ID:" + messageId}, new String[] {String.class.getName()});
+				
+				if(compositeData != null) {
+					JMSMessageInfo jmsMessageInfo = new JMSMessageInfo(compositeData);
+					WLMessage wlMessage = jmsMessageInfo.getMessage();
+					return wlMessage;
+					
+				} else {
+					AppLog.getLogger().notice("-> Cannot find the message [" + messageId + "] ...");
+					return null;
+				}
+			}
+		} catch(Exception ex){
+			AppLog.getLogger().error("Error during execution of getJmsMessage with ID [" + messageId + "] for the destination [" + destinationName + "] deployed on JMS server [" + jmsServerName + "]", ex);
+			return null;
+		}
+		
+		AppLog.getLogger().error("getJmsMessage method failed to be executed for the ID [" + messageId + "] for the destination [" + destinationName + "] deployed on JMS server [" + jmsServerName + "]");
 		AppLog.getLogger().error("   -> Possible reason is wrong JMS message ID, JMS server or JMS destination");
 		return null;
 	}
+    
+    
+    
+    /**
+     * 
+     * @param conn
+     * @param jmsServerName
+     * @param destinationName
+     * @param action
+     * @return
+     */
+    @GET
+    @Path("jmsmessage/property/{jmsServerName}/{destinationName}/{messageId}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Map<String, String> getMessageProperty(@PathParam("jmsServerName") String jmsServerName, @PathParam("destinationName") String destinationName, @PathParam("messageId") String messageId) {
+    	
+    	Map<String, String> properties = new HashMap<String, String>();
+        
+    	try {
+    		WLMessage wlMessage = getJmsMessage(jmsServerName, destinationName, messageId);
+    		if(wlMessage != null) {
+				Enumeration<String> enumProperties = wlMessage.getPropertyNames();
+				while(enumProperties.hasMoreElements()) {
+					
+					String key = enumProperties.nextElement().toString();
+					String value = wlMessage.getStringProperty(key);
+					
+					//AppLog.getLogger().notice("      [" + key + "] is [" + value  + "]");
+					properties.put(key, value);
+				}
+				
+				return properties;
+			} else {
+				
+				AppLog.getLogger().error("getMessageProperty method failed to be executed for the ID [" + messageId + "] for the destination [" + destinationName + "] deployed on JMS server [" + jmsServerName + "] was not executed");
+				return null;
+			}
+		} catch(Exception ex){
+			AppLog.getLogger().error("Error during execution of getMessageProperty with ID [" + messageId + "] for the destination [" + destinationName + "] deployed on JMS server [" + jmsServerName + "]", ex);
+			return null;
+		}
+	}
+    
     
     /**
      * 
@@ -893,18 +1164,6 @@ else{
 			ObjectName[] jmsServersObjectList = new ObjectName[jmsServersList.size()];
 			jmsServersObjectList = jmsServersList.toArray(jmsServersObjectList);
 			return jmsServersObjectList;
-			
-			/*
-			// Return the global list
-			ObjectName[] jmsServersObjectList = new ObjectName[jmsServersList.size()];
-			Iterator<ObjectName> jmsServersListIterator = jmsServersList.iterator();
-			int index = 0;
-			while(jmsServersListIterator.hasNext()) {
-				jmsServersObjectList[index] = jmsServersListIterator.next();
-				index ++;
-    		}
-    		return jmsServersObjectList;
-    		*/
 			
 	    } catch(Exception ex){
 			AppLog.getLogger().error("Error during execution of getJmsServers", ex);
@@ -1091,7 +1350,7 @@ else{
      * @param action
      * @return
      */
-/*
+    /*
 // Not used so commented to avoid usage
     private boolean executeSafOperation(DomainRuntimeServiceMBeanConnection conn, String safAgentName, String action){
     	
@@ -1126,5 +1385,52 @@ else{
 		AppLog.getLogger().error("   -> Possible reason is wrong SAF agent");
 		return false;
 	}
-*/
+ 	*/
+    
+    /**
+     * 
+     * @param action
+     * @return
+     */
+    @GET
+    @Path("jmsmessage/type/{jmsServerName}/{destinationName}/{messageId}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public String getMessageType(@PathParam("jmsServerName") String jmsServerName, @PathParam("destinationName") String destinationName, @PathParam("messageId") String messageId) {
+	
+    	
+    	try {
+	    	WLMessage wlMessage = getJmsMessage(jmsServerName, destinationName, messageId);
+	    	if(wlMessage != null) {
+	    		
+	    		if (wlMessage instanceof TextMessage) {
+					return MonitorProperties.TEXT_MESSAGE;
+					
+				} else if (wlMessage instanceof ObjectMessage) {
+					return MonitorProperties.OBJECT_MESSAGE;
+					
+				} else if (wlMessage instanceof MapMessage) {
+					return MonitorProperties.MAP_MESSAGE;
+					
+				} else if (wlMessage instanceof BytesMessage) {
+					return MonitorProperties.BYTES_MESSAGE;
+					
+				} else if (wlMessage instanceof StreamMessage) {
+					return MonitorProperties.STREAM_MESSAGE;
+				}
+				
+				else {
+					AppLog.getLogger().notice("   Not a supported JMS Message");
+					return null;
+				}
+	    		
+	    	} else {
+	    		AppLog.getLogger().error("getMessageType method failed to be executed for the ID [" + messageId + "] for the destination [" + destinationName + "] deployed on JMS server [" + jmsServerName + "]");
+	    		return null;
+	    	}
+	    		
+    	} catch(Exception ex){
+			AppLog.getLogger().error("Error during execution of getMessageType with ID [" + messageId + "] for the destination [" + destinationName + "] deployed on JMS server [" + jmsServerName + "]", ex);
+			return null;
+		}
+    }
 }
