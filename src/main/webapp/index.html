@@ -158,22 +158,27 @@ desired effect
           <span>JVM</span></a>
         </li>
 
-          <li class="treeview">
-              <a href="#">
-                  <i class="fa fa-share"></i> <span>Multilevel</span>
-                  <i class="fa fa-angle-left pull-right"></i>
-              </a>
-              <ul class="treeview-menu">
-                  <li class="treeview">
-                      <a href="#"><i class="fa fa-dashboard"></i><span>JMS Dashboard</span> <i class="fa fa-angle-left pull-right"></i></a>
-                      <ul id="jmsdashboard" class="treeview-menu"></ul>
-                  </li>
-                  <li class="treeview">
-                      <a href="#"><i class="fa fa-dashboard"></i><span>SAF Dashboard</span> <i class="fa fa-angle-left pull-right"></i></a>
-                      <ul id="safdashboard" class="treeview-menu"></ul>
-                  </li>
-              </ul>
-          </li>
+        <li class="treeview">
+            <a href="#">
+                <i class="fa fa-share"></i> <span>Dashboard</span>
+                <i class="fa fa-angle-left pull-right"></i>
+            </a>
+            <ul class="treeview-menu">
+                <li class="treeview">
+                    <a href="#"><i class="fa fa-dashboard"></i><span>JMS</span> <i class="fa fa-angle-left pull-right"></i></a>
+                    <ul id="jmsdashboard" class="treeview-menu"></ul>
+                </li>
+                <li class="treeview">
+                    <a href="#"><i class="fa fa-dashboard"></i><span>SAF</span> <i class="fa fa-angle-left pull-right"></i></a>
+                    <ul id="safdashboard" class="treeview-menu"></ul>
+                </li>
+                
+                <li class="treeview">
+                    <a href="#"><i class="fa fa-dashboard"></i><span>JMS Action</span> <i class="fa fa-angle-left pull-right"></i></a>
+                    <ul id="jmsruntimedashboard" class="treeview-menu"></ul>
+                </li>
+            </ul>
+		</li>
 
       </ul><!-- /.sidebar-menu -->
 
@@ -196,6 +201,7 @@ desired effect
             <!--div class="overlay">
                 <i class="fa fa-refresh fa-spin"></i>
             </div>
+            -->
             <!-- end loading -->
         </div>
     </section>
@@ -215,7 +221,7 @@ desired effect
     <div class="pull-right hidden-xs">DomainHealth</div>
 
     <!-- Default to the left Cristian Chiovari -->
-    <strong>2017 <a href="#">DH2</a>.</strong>
+    <strong>2018 <a href="#">DH2</a>.</strong>
   </footer>
 
   <!-- Control Sidebar -->
@@ -449,21 +455,6 @@ Action not possible for SAF RemoteEndPoints
                         </ul>
                     </div>
 
-					<!-- Added by gregoan (JMS message management) -->
-<!--
-					<div class="btn-group">
-                        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" id="msgdesttgl">
-                            <span>Messages</span>
-                            <span class="caret"></span>
-                            <span class="sr-only">Toggle Dropdown</span>
-                        </button>
-                        <ul class="dropdown-menu" role="menu">
-                            <li id="viewdestmsg"><a href="#"><span class="fa fa-view"></span>View</a></li>
-                            <li class="divider"></li>
-                            <li id="movedestmsg"><a href="#"><span class="fa fa-move"></span>Move</a></li>
-                        </ul>
-                    </div>
--->
                 </div>
             </div>
           <table class="table table-hover" id="dashboardtable">
@@ -521,6 +512,235 @@ Action not possible for SAF RemoteEndPoints
  <script src="dist/js/dashboardJms.js" type="text/javascript"> <{{!}}/script>
 
 </script>
+
+
+
+
+
+
+
+
+
+
+
+<script id="dashboard-action-template-jms-runtime" type="text/x-handlebars-template">
+
+  <section class="content-header">
+
+  </section>
+
+  <div class="row">
+    <div class="col-xs-12" >
+      <!--margin: 0 auto !important;float: none !important;-->
+      <div class="box">
+        <div class="box-header">
+          <h3 class="box-title">{{this.options.selectedPath}}</h3>
+        </div><!-- /.box-header -->
+        <div class="box-body table-responsive no-padding">
+            <div class="box-tools">
+                <div class="margin">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" id="prdtgl">
+                            <span>Production</span>
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li id="pauseprd"><a href="#"><span class="fa fa-pause"></span>Pause</a></li>
+                            <li class="divider"></li>
+                            <li id="resumeprd"><a href="#"><span class="fa fa-play"></span>Resume</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" id="constgl">
+                            <span>Consumption</span>
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li id="pausecons"><a href="#"><span class="fa fa-pause"></span>Pause</a></li>
+                            <li class="divider"></li>
+                            <li id="resumecons"><a href="#"><span class="fa fa-play"></span>Resume</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" id="instgl">
+                            <span>Insertion</span>
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li id="pauseins"><a href="#"><span class="fa fa-pause"></span>Pause</a></li>
+                            <li class="divider"></li>
+                            <li id="resumeins"><a href="#"><span class="fa fa-play"></span>Resume</a></li>
+                        </ul>
+                    </div>
+
+					<div class="btn-group">
+                        <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" id="runtgl">
+                            <span>Runtime</span>
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li id="listmsg"><a href="#"><span class="fa fa-play"></span>List Messages</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+          <table class="table table-hover" id="dashboardtable">
+
+            <tr>
+
+			  <!-- Add the "Action" column -->
+			  <th class="col-xs-2" style="text-align: center;">Action</th>
+
+              <th class="col-xs-2">Name</th>
+
+              {{#each this.options.renderedData}}
+              	{{#if @first}}
+              	  {{#each this}}
+              		<th class="col-xs-2" style="text-align: center;">
+                	{{@key}}
+              		</th>
+            	  {{/each}}
+              	{{/if}}
+              {{/each}}
+            </tr>
+
+            {{#each this.options.renderedData}}
+            <tr>
+                <td style="text-align: center;">
+                    <label>
+                        <input id = "{{@key}}" type="checkbox" class="minimal">
+                    </label>
+                </td>
+              <td>{{@key}}</td>
+
+              {{#each this}}
+
+              	<td style="text-align: center;">
+                    {{#ifCond this 'true'}}
+              	  <span class = "badge bg-red text-left">
+                    {{this}}
+                  </span>
+                    {{else}}
+                   <span class = "badge bg-blue text-left">
+                    {{this}}
+                  </span>
+                    {{/ifCond}}
+              	</td>
+              {{/each}}
+            </tr>
+            {{/each}}
+
+          </table>
+        </div><!-- /.box-body -->
+      </div><!-- /.box -->
+    </div>
+  </div>
+
+ <script src="dist/js/dashboardJmsRuntime.js" type="text/javascript"> <{{!}}/script>
+
+</script>
+
+<script id="dashboard-list-message-template-jms-runtime" type="text/x-handlebars-template">
+
+  <section class="content-header">
+
+  </section>
+
+  <div class="row">
+    <div class="col-xs-12" >
+      <!--margin: 0 auto !important;float: none !important;-->
+      <div class="box">
+        <div class="box-header">
+          <h3 class="box-title">{{this.options.selectedPath}}</h3>
+        </div><!-- /.box-header -->
+        <div class="box-body table-responsive no-padding">
+            <div class="box-tools">
+                <div class="margin">
+                    
+					<div class="btn-group">
+                        <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" id="runtgl">
+                            <span>Runtime</span>
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li id="viewmsg"><a href="#"><span class="fa fa-play"></span>View Message</a></li>
+						    <li class="divider"></li>
+                            <li id="movemsg"><a href="#"><span class="fa fa-truck"></span>Move Message</a></li>
+						    <li class="divider"></li>
+                            <li id="deletemsg"><a href="#"><span class="fa fa-trash"></span>Delete Message</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+          <table class="table table-hover" id="dashboardtable">
+
+            <tr>
+
+			  <!-- Add the "Action" column -->
+			  <th class="col-xs-2" style="text-align: center;">Action</th>
+
+              <th class="col-xs-2">Name</th>
+
+              {{#each this.options.renderedData}}
+              	{{#if @first}}
+              	  {{#each this}}
+              		<th class="col-xs-2" style="text-align: center;">
+                	{{@key}}
+              		</th>
+            	  {{/each}}
+              	{{/if}}
+              {{/each}}
+            </tr>
+
+            {{#each this.options.renderedData}}
+            <tr>
+                <td style="text-align: center;">
+                    <label>
+                        <input id = "{{@key}}" type="checkbox" class="minimal">
+                    </label>
+                </td>
+              <td>{{@key}}</td>
+
+              {{#each this}}
+
+              	<td style="text-align: center;">
+                    {{#ifCond this 'true'}}
+              	  <span class = "badge bg-red text-left">
+                    {{this}}
+                  </span>
+                    {{else}}
+                   <span class = "badge bg-blue text-left">
+                    {{this}}
+                  </span>
+                    {{/ifCond}}
+              	</td>
+              {{/each}}
+            </tr>
+            {{/each}}
+
+          </table>
+        </div><!-- /.box-body -->
+      </div><!-- /.box -->
+    </div>
+  </div>
+
+ <script src="dist/js/dashboardJmsRuntime.js" type="text/javascript"> <{{!}}/script>
+
+</script>
+
+
+
+
+
 
 <script id="graph-template" type="text/x-handlebars-template">
     <!-- Content Header (Page header) -->

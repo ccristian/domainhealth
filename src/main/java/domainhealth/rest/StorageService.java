@@ -90,6 +90,7 @@ public class StorageService {
 			// Add the dashboard
 			resourcesMap.put(MonitorProperties.JMS_DASHBOARD_RESOURCE_TYPE, getResourceNamesForJmsDashboard());
 			resourcesMap.put(MonitorProperties.SAF_DASHBOARD_RESOURCE_TYPE, getResourceNamesForSafDashboard());
+			resourcesMap.put(MonitorProperties.JMS_RUNTIME_DASHBOARD_RESOURCE_TYPE, getResourceNamesForJmsDashboard());
 			
         } catch (IOException ex) {
             AppLog.getLogger().error("Error while getting resources", ex);
@@ -444,17 +445,21 @@ public class StorageService {
 			    													@PathParam("resource") String resource) {
         try {
         	DomainRuntimeServiceMBeanConnection conn = new DomainRuntimeServiceMBeanConnection();;
-            // --------------------------------------------------------------------------
-            // for now we should get all jmsservers/safagent and skip the scope cause it just does a loop now and not used as param
+            
+        		// --------------------------------------------------------------------------
+            // For now, we should get all jmsservers/safagent and skip the scope cause it just does a loop now and not used as param
                         
             //for (String server : scope) {        	
                 switch (resourceType) {
                 
                 	case MonitorProperties.JMS_DASHBOARD_RESOURCE_TYPE:
-						return getJMSServerDashboard(conn, resource);
+					return getJMSServerDashboard(conn, resource);
                 		
                 	case MonitorProperties.SAF_DASHBOARD_RESOURCE_TYPE:
                 		return getSAFAgentDashboard(conn, resource);
+                		
+case MonitorProperties.JMS_RUNTIME_DASHBOARD_RESOURCE_TYPE:
+	return getJMSServerDashboard(conn, resource);
                 }
             //}
                         

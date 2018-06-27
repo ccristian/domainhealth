@@ -192,6 +192,12 @@ public class MonitorProperties {
 	 */
 	// Added by gregoan
 	public final static String SAF_DASHBOARD_RESOURCE_TYPE = "safdashboard";
+	
+	/**
+	 * Name of the 'jmsruntimedashboard' category of resource for JMS Runtime Dashboard related statistics
+	 */
+	// Added by gregoan
+	public final static String JMS_RUNTIME_DASHBOARD_RESOURCE_TYPE = "jmsruntimedashboard";
 
 	/**
 	 * List of names or allowable resource types (eg. core, datasource)

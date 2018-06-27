@@ -350,26 +350,29 @@ $(function () {
        // console.log(picker.ranges);
     });
 
-
-
     //http://localhost:7001/domainhealth/rest/resources/workmgr?startTime=01-09-2014-00-00&endTime=17-09-2015-0-00
 
     var source = $("#menu-template").html();
     var template = Handlebars.compile(source);
-
 
     var sourceGraph = $("#graph-template").html();
     var templateHighstock = Handlebars.compile(sourceGraph);
 
     // ----------------------------------------------------------------
     // Added by gregoan
-    // JMS contains an ACTION column
     // -----------------------------
     var sourceDashboardActionJms = $("#dashboard-action-template-jms").html();
     var templateDashboardActionJms = Handlebars.compile(sourceDashboardActionJms);
 
     var sourceDashboardActionSaf = $("#dashboard-action-template-saf").html();
     var templateDashboardActionSaf = Handlebars.compile(sourceDashboardActionSaf);
+    
+    var sourceDashboardActionJmsRuntime = $("#dashboard-action-template-jms-runtime").html();
+    var templateDashboardActionJmsRuntime = Handlebars.compile(sourceDashboardActionJmsRuntime);
+   
+    // Not used here but in dashboardJmsRuntime.js
+    //var sourceDashboardListMessageJmsRuntime = $("#dashboard-list-message-template-jms-runtime").html();
+    //var templateDashboardListMessageJmsRuntime = Handlebars.compile(sourceDashboardListMessageJmsRuntime);
     //----------------------------------------------------------------
 
     $("#move-left").click(function () {
@@ -430,14 +433,20 @@ $(function () {
                 $.AdminLTE.options.currentPath = respath;
                 $.AdminLTE.options.currentResource = value;
                 $.AdminLTE.options.currentResname = resname;
+                
                 // ------------------------------------------------
                 // Updated by gregoan
                 // ------------------
                 //$(".content-wrapper").html(templateDashboard($.AdminLTE));
+                
+//console.log("respath is :" + respath);
+                
                 if (respath == "safdashboard") {
                     $(".content-wrapper").html(templateDashboardActionSaf($.AdminLTE));
-                } else {
+                } else if (respath == "jmsdashboard") {
                     $(".content-wrapper").html(templateDashboardActionJms($.AdminLTE));
+                } else if (respath == "jmsruntimedashboard") {
+                    $(".content-wrapper").html(templateDashboardActionJmsRuntime($.AdminLTE));
                 }
                 //dhLocalObj.currentPath = $.AdminLTE.options.currentPath;
                 //dhLocalObj.currentResource = $.AdminLTE.options.currentResource;
@@ -451,7 +460,6 @@ $(function () {
             }
         });
     }
-
 
     function getAndDisplayCharts(resname, respath, value) {
         $.ajax({
@@ -489,7 +497,6 @@ $(function () {
         });
     }
 
-
     function addDashboardListener(res, resname, respath) {
         $.each(res.list, function (key, value) {
             $("#" + res.uniquename + value).click(function () {
@@ -518,10 +525,8 @@ $(function () {
 
     $("#livedataCb").click(function () {
 
-
         //if livedata is selected start interval
         if ($('#livedataCb').is(':checked')) {
-
 
             console.log("start live data ...");
             $.AdminLTE.options.interval = setInterval(function () {
@@ -590,7 +595,6 @@ $(function () {
             var resources = response;
             var res = new Object();
 
-
             res.uniquename = "datasource"
             res.list = response[res.uniquename];
             $("#datasource").html(template(res));
@@ -600,25 +604,27 @@ $(function () {
             res.list = response[res.uniquename];
             $("#destination").html(template(res));
             addListener(res, "JMS", "destination");
-
+            
+// JMS Message dashboard
+// ---------------------
+            
+// Se baser sur la liste des queues pour afficher les messages de la queue JMS et proposer les actions à executer
+// plutot que de passer par le menu en fin de liste
 
             res.uniquename = "saf"
             res.list = response[res.uniquename];
             $("#saf").html(template(res));
             addListener(res, "Store and Forward", "saf");
 
-
             res.uniquename = "webapp"
             res.list = response[res.uniquename];
             $("#webapp").html(template(res));
             addListener(res, "Web Applications", "webapp");
 
-
             res.uniquename = "ejb"
             res.list = response[res.uniquename];
             $("#ejb").html(template(res));
             addListener(res, "EJBs", "ejb");
-
 
             res.uniquename = "svrchnl"
             res.list = response[res.uniquename];
@@ -630,11 +636,15 @@ $(function () {
             $("#jmsdashboard").html(template(res));
             addDashboardListener(res, "JMS Dashboard", "jmsdashboard");
 
-
             res.uniquename = "safdashboard"
             res.list = response[res.uniquename];
             $("#safdashboard").html(template(res));
             addDashboardListener(res, "SAF Dashboard", "safdashboard");
+            
+res.uniquename = "jmsruntimedashboard"
+res.list = response[res.uniquename];
+$("#jmsruntimedashboard").html(template(res));
+addDashboardListener(res, "JMS Runtime Dashboard", "jmsruntimedashboard");
 
         },
         error: function (xhr) {

@@ -826,7 +826,7 @@ else{
     @GET
     @Path("jmsdestinations/list/{jmsServerName}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Set<String> getJmsDestinations(	@PathParam("jmsServerName") String jmsServerName) {
+    public Set<String> getJmsDestinations(@PathParam("jmsServerName") String jmsServerName) {
     	
     	Set<String> jmsDestinationsList = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
     	try {
@@ -837,11 +837,13 @@ else{
 			if(destinations != null) {
 								
 				// Update the name of the resource
-	    		for (ObjectName destination : destinations) {
-			    	
-	    			String destinationName = ResourceNameNormaliser.normalise(JMSSVR_RESOURCE_TYPE, conn.getTextAttr(destination, NAME));
-	    			jmsDestinationsList.add(destinationName);
-	    		}
+		    		for (ObjectName destination : destinations) {
+				    	
+		    			String destinationName = ResourceNameNormaliser.normalise(JMSSVR_RESOURCE_TYPE, conn.getTextAttr(destination, NAME));
+		    			
+		    			AppLog.getLogger().notice("Found the destination [" + destinationName + "]");
+		    			jmsDestinationsList.add(destinationName);
+		    		}
 			}
 			return jmsDestinationsList;
 			
@@ -872,13 +874,9 @@ else{
 			ObjectName destination = getJmsDestination(conn, jmsServerName, destinationName);
 			if(destination != null) {
 			
-				//String messages = (String) conn.invoke(destination, "getMessages", new Object[]{"", 0}, new String[] {String.class.getName(), Integer.class.getName()});
-				//long cursorSize = (long) conn.invoke(destination, "getCursorSize", new Object[]{messages}, new String[] {String.class.getName()});
-
 				String messages = (String) conn.invoke(destination, MonitorProperties.GET_MESSAGES, new Object[]{"", 0}, new String[] {String.class.getName(), Integer.class.getName()});
 				long cursorSize = (long) conn.invoke(destination, MonitorProperties.GET_CURSOR_SIZE, new Object[]{messages}, new String[] {String.class.getName()});
 				
-				//CompositeData[] compositeDatas = (CompositeData[]) conn.invoke(destination, "getNext", new Object[]{messages, (int)cursorSize}, new String[] {String.class.getName(), Integer.class.getName()});
 				CompositeData[] compositeDatas = (CompositeData[]) conn.invoke(destination, MonitorProperties.GET_NEXT, new Object[]{messages, (int)cursorSize}, new String[] {String.class.getName(), Integer.class.getName()});
 				if(compositeDatas != null) {
 					
