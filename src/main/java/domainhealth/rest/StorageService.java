@@ -673,16 +673,16 @@ case MonitorProperties.JMS_RUNTIME_DASHBOARD_RESOURCE_TYPE:
 
 		        		for (ObjectName destination : conn.getChildren(jmsServer, WebLogicMBeanPropConstants.DESTINATIONS)) {
 
-                            // This map should be inside the loop otherwise will contain only the latest values
-                            Map<String, String> metrics = new LinkedHashMap<String, String>();
+                        // This map should be inside the loop otherwise will contain only the latest values
+                        Map<String, String> metrics = new LinkedHashMap<String, String>();
 
 		        			String destinationName = ResourceNameNormaliser.normalise(MonitorProperties.JMSSVR_RESOURCE_TYPE, conn.getTextAttr(destination, WebLogicMBeanPropConstants.NAME));
 		        			
-                            metrics.put(WebLogicMBeanPropConstants.PRODUCTION_PAUSED, conn.getBooleanAttr(destination, WebLogicMBeanPropConstants.PRODUCTION_PAUSED) + "");
-                            metrics.put(WebLogicMBeanPropConstants.CONSUMPTION_PAUSED, conn.getBooleanAttr(destination, WebLogicMBeanPropConstants.CONSUMPTION_PAUSED) + "");
-                            metrics.put(WebLogicMBeanPropConstants.INSERTION_PAUSED, conn.getBooleanAttr(destination, WebLogicMBeanPropConstants.INSERTION_PAUSED) + "");
-
-                            metrics.put(WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(destination, WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT)).toString());
+						metrics.put(WebLogicMBeanPropConstants.PRODUCTION_PAUSED, conn.getBooleanAttr(destination, WebLogicMBeanPropConstants.PRODUCTION_PAUSED) + "");
+						metrics.put(WebLogicMBeanPropConstants.CONSUMPTION_PAUSED, conn.getBooleanAttr(destination, WebLogicMBeanPropConstants.CONSUMPTION_PAUSED) + "");
+						metrics.put(WebLogicMBeanPropConstants.INSERTION_PAUSED, conn.getBooleanAttr(destination, WebLogicMBeanPropConstants.INSERTION_PAUSED) + "");
+						
+						metrics.put(WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(destination, WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT)).toString());
 		        			metrics.put(WebLogicMBeanPropConstants.MESSAGES_PENDING_COUNT, new Integer((int)conn.getNumberAttr(destination, WebLogicMBeanPropConstants.MESSAGES_PENDING_COUNT)).toString());
 		        			metrics.put(WebLogicMBeanPropConstants.MESSAGES_RECEIVED_COUNT, new Integer((int)conn.getNumberAttr(destination, WebLogicMBeanPropConstants.MESSAGES_RECEIVED_COUNT)).toString());
 		        			metrics.put(WebLogicMBeanPropConstants.MESSAGES_HIGH_COUNT, new Integer((int)conn.getNumberAttr(destination, WebLogicMBeanPropConstants.MESSAGES_HIGH_COUNT)).toString());
@@ -724,17 +724,17 @@ case MonitorProperties.JMS_RUNTIME_DASHBOARD_RESOURCE_TYPE:
 			        
 		        for (ObjectName safAgent : safAgents)
 		        {	
-		        	String currentSafAgentName = conn.getTextAttr(safAgent, WebLogicMBeanPropConstants.NAME);
-			        		        	
-		        	if(currentSafAgentName.equals(safAgentName)){
-
-		        		for (ObjectName remoteEndPoint : conn.getChildren(safAgent, WebLogicMBeanPropConstants.REMOTE_END_POINTS)) {
-		        			
-		        			// This map should be inside the loop otherwise will contain only the latest values
-                            Map<String, String> metrics = new LinkedHashMap<String, String>();
+			        	String currentSafAgentName = conn.getTextAttr(safAgent, WebLogicMBeanPropConstants.NAME);
+				        		        	
+			        	if(currentSafAgentName.equals(safAgentName)){
+	
+			        		for (ObjectName remoteEndPoint : conn.getChildren(safAgent, WebLogicMBeanPropConstants.REMOTE_END_POINTS)) {
 			        			
-		        			String safName = ResourceNameNormaliser.normalise(MonitorProperties.SAFAGENT_RESOURCE_TYPE, conn.getTextAttr(remoteEndPoint, WebLogicMBeanPropConstants.NAME));
-		        			
+			        			// This map should be inside the loop otherwise will contain only the latest values
+	                        Map<String, String> metrics = new LinkedHashMap<String, String>();
+				        			
+			        			String safName = ResourceNameNormaliser.normalise(MonitorProperties.SAFAGENT_RESOURCE_TYPE, conn.getTextAttr(remoteEndPoint, WebLogicMBeanPropConstants.NAME));
+			        			
 							metrics.put(WebLogicMBeanPropConstants.PAUSED_FOR_INCOMING, conn.getBooleanAttr(remoteEndPoint, WebLogicMBeanPropConstants.PAUSED_FOR_INCOMING) + "");
 							metrics.put(WebLogicMBeanPropConstants.PAUSED_FOR_FORWARDING, conn.getBooleanAttr(remoteEndPoint, WebLogicMBeanPropConstants.PAUSED_FOR_FORWARDING) + "");
 							
@@ -742,21 +742,21 @@ case MonitorProperties.JMS_RUNTIME_DASHBOARD_RESOURCE_TYPE:
 							// PAUSE_FOR_RECEIVING is available only for the SAF_AGENT not for the REMOTE_ENDPOINT
 							//metrics.put(WebLogicMBeanPropConstants.PAUSED_FOR_RECEIVING, conn.getBooleanAttr(remoteEndPoint, WebLogicMBeanPropConstants.PAUSED_FOR_RECEIVING) + "");
 							*/
-							
+								
 							metrics.put(WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT)).toString());
-		        			metrics.put(WebLogicMBeanPropConstants.MESSAGES_PENDING_COUNT, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.MESSAGES_PENDING_COUNT)).toString());
-		        			metrics.put(WebLogicMBeanPropConstants.MESSAGES_RECEIVED_COUNT, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.MESSAGES_RECEIVED_COUNT)).toString());
-		        			metrics.put(WebLogicMBeanPropConstants.MESSAGES_HIGH_COUNT, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.MESSAGES_HIGH_COUNT)).toString());
-							
-		        			metrics.put(WebLogicMBeanPropConstants.DOWNTIME_HIGH, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.DOWNTIME_HIGH)).toString());
+			        			metrics.put(WebLogicMBeanPropConstants.MESSAGES_PENDING_COUNT, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.MESSAGES_PENDING_COUNT)).toString());
+			        			metrics.put(WebLogicMBeanPropConstants.MESSAGES_RECEIVED_COUNT, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.MESSAGES_RECEIVED_COUNT)).toString());
+			        			metrics.put(WebLogicMBeanPropConstants.MESSAGES_HIGH_COUNT, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.MESSAGES_HIGH_COUNT)).toString());
+								
+			        			metrics.put(WebLogicMBeanPropConstants.DOWNTIME_HIGH, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.DOWNTIME_HIGH)).toString());
 							metrics.put(WebLogicMBeanPropConstants.DOWNTIME_TOTAL, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.DOWNTIME_TOTAL)).toString());
 							metrics.put(WebLogicMBeanPropConstants.UPTIME_HIGH, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.UPTIME_HIGH)).toString());
 							metrics.put(WebLogicMBeanPropConstants.UPTIME_TOTAL, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.UPTIME_TOTAL)).toString());
 							metrics.put(WebLogicMBeanPropConstants.FAILED_MESSAGES_TOTAL, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.FAILED_MESSAGES_TOTAL)).toString());
-							
-		        			result.put(safName, metrics);
-		        		}
-		        	}			    
+								
+			        			result.put(safName, metrics);
+			        		}
+			        	} 
 		        }
 			}
 		} catch(Exception ex){
