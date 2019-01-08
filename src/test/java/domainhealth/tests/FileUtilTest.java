@@ -43,7 +43,7 @@ public class FileUtilTest extends TestCase {
 	 */	
     public void testFileExists() {
     	try {
-    		assertNotNull(FileUtil.retrieveFile("build.xml"));
+    		assertNotNull(FileUtil.retrieveFile("pom.xml"));
     	} catch (IOException e) {
 			fail(e.getMessage());
 		}

@@ -367,9 +367,11 @@ $(function () {
     var sourceDashboardActionSaf = $("#dashboard-action-template-saf").html();
     var templateDashboardActionSaf = Handlebars.compile(sourceDashboardActionSaf);
     
+// ***************************************************************************
     var sourceDashboardActionJmsRuntime = $("#dashboard-action-template-jms-runtime").html();
     var templateDashboardActionJmsRuntime = Handlebars.compile(sourceDashboardActionJmsRuntime);
-   
+// ***************************************************************************
+    
     // Not used here but in dashboardJmsRuntime.js
     //var sourceDashboardListMessageJmsRuntime = $("#dashboard-list-message-template-jms-runtime").html();
     //var templateDashboardListMessageJmsRuntime = Handlebars.compile(sourceDashboardListMessageJmsRuntime);
@@ -608,8 +610,7 @@ $(function () {
 // JMS Message dashboard
 // ---------------------
             
-// Se baser sur la liste des queues pour afficher les messages de la queue JMS et proposer les actions à executer
-// plutot que de passer par le menu en fin de liste
+// Se baser sur la liste des queues pour afficher les messages de la queue JMS et proposer les actions à executer plutôt que de passer par le menu en fin de liste
 
             res.uniquename = "saf"
             res.list = response[res.uniquename];
@@ -640,12 +641,14 @@ $(function () {
             res.list = response[res.uniquename];
             $("#safdashboard").html(template(res));
             addDashboardListener(res, "SAF Dashboard", "safdashboard");
+           
+// ***************************************************************************
+			res.uniquename = "jmsruntimedashboard"
+			res.list = response[res.uniquename];
+			$("#jmsruntimedashboard").html(template(res));
+			addDashboardListener(res, "JMS Runtime Dashboard", "jmsruntimedashboard");
+// ***************************************************************************
             
-res.uniquename = "jmsruntimedashboard"
-res.list = response[res.uniquename];
-$("#jmsruntimedashboard").html(template(res));
-addDashboardListener(res, "JMS Runtime Dashboard", "jmsruntimedashboard");
-
         },
         error: function (xhr) {
             alert("error");

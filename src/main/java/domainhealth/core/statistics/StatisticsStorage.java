@@ -14,41 +14,53 @@
 //POSSIBILITY OF SUCH DAMAGE.
 package domainhealth.core.statistics;
 
+import static domainhealth.core.statistics.MonitorProperties.CORE_RESOURCE_TYPE;
+import static domainhealth.core.util.DateUtil.DATE_PATH_FORMAT;
+import static domainhealth.core.util.DateUtil.DISPLAY_DATETIME_FORMAT;
+import static java.io.File.separatorChar;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
+//import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.FileReader;
+//import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.io.FileReader;
-import java.io.IOException;
-
-import static java.io.File.*;
-
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.management.ObjectName;
+
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
 
 import domainhealth.core.env.AppLog;
 import domainhealth.core.jmx.DomainRuntimeServiceMBeanConnection;
 import domainhealth.core.jmx.WebLogicMBeanException;
 import domainhealth.core.jmx.WebLogicMBeanPropConstants;
-
-import static domainhealth.core.statistics.MonitorProperties.*;
-import static domainhealth.core.util.DateUtil.*;
-
 import domainhealth.core.util.DateUtil;
 import domainhealth.core.util.FileUtil;
 import domainhealth.frontend.data.DateAmountDataSet;
-import org.joda.time.DateTime;
-import org.joda.time.Interval;
 
 /**
  * Provides access and persistence to the file-system based storage for
@@ -265,7 +277,13 @@ public class StatisticsStorage {
                 File file = FileUtil.retrieveFile(getDayResourcePropListFilePath(dateTime, resourceType));
 
                 if (file != null) {
-                    propsIn = new FileInputStream(file);
+                    
+                		// < JDK7 implementation
+                		//propsIn = new FileInputStream(file);
+                	
+                		// JDK7 implementation
+                		propsIn = Files.newInputStream(file.toPath());
+                	
                     propList.load(propsIn);
                 }
             } finally {
@@ -296,7 +314,7 @@ public class StatisticsStorage {
      */
     public void appendSavedOneDayResourceNameList(Date dateTime, String resourceType, Properties extraPropList) throws IOException {
         
-    	// Lock per resource type enabling threads reading/writing from/to different resource files to still work in parallel
+    		// Lock per resource type enabling threads reading/writing from/to different resource files to still work in parallel
         synchronized (getResourceMonitorObject(resourceType)) {
             Properties propList = retrieveOneDayResoureNameList(dateTime, resourceType);
             OutputStream propsOut = null;
@@ -304,7 +322,13 @@ public class StatisticsStorage {
             try {
                 FileUtil.createOrRetrieveDir(getDayDirectoryPath(dateTime));
                 File file = FileUtil.createOrRetrieveFile(getDayResourcePropListFilePath(dateTime, resourceType));
-                propsOut = new FileOutputStream(file);
+                
+                // < JDK7
+                //propsOut = new FileOutputStream(file);
+                
+                // JDK 7 implementation
+                propsOut = Files.newOutputStream(file.toPath());
+                
                 propList.putAll(extraPropList);
                 propList.store(propsOut, PROP_LIST_CMNT_PREFIX + resourceType);
             } finally {

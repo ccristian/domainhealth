@@ -719,6 +719,11 @@ public interface WebLogicMBeanPropConstants {
 	public final static String PERM_GEN_COMMITTED = "PermGenCommitted";
 	public final static String PERM_GEN_MAX = "PermGenMax";
 	
+	public final static String META_SPACE_INIT = "MetaSpaceInit";
+	public final static String META_SPACE_USED = "MetaSpaceUsed";
+	public final static String META_SPACE_COMMITTED = "MetaSpaceCommitted";
+	public final static String META_SPACE_MAX = "MetaSpaceMax";
+	
 	/**
 	 * 'wlhostmachinestats.mbeans.WLHostMachineStats' MBean property
 	 */

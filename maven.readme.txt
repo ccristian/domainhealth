@@ -67,8 +67,8 @@ mvn com.oracle.maven:oracle-maven-sync:push
 
 ex:
 
-mvn com.oracle.maven:oracle-maven-sync:push -Doracle-maven-sync.oracleHome=c:\Oracle\Middleware\Oracle_Home_12c -Doracle-maven-sync.testingOnly=false
-mvn com.oracle.maven:oracle-maven-sync:push -Doracle-maven-sync.oracleHome=c:\Oracle\Middleware\Oracle_Home_12c_12_1_3 -Doracle-maven-sync.testingOnly=false
+mvn com.oracle.maven:oracle-maven-sync:push -DoracleHome=c:\Oracle\Middleware\Oracle_Home_12c -Doracle-maven-sync.testingOnly=false
+mvn com.oracle.maven:oracle-maven-sync:push -DoracleHome=c:\Oracle\Middleware\Oracle_Home_12c_12_1_3 -Doracle-maven-sync.testingOnly=false
 
 The localRepository element in your settings.xml file indicates the location of your local Maven repository. If you exclude the localRepository element in settings.xml, the default location is in the ${HOME}/.m2/repository directory.
 

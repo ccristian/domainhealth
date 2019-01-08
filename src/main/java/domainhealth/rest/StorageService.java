@@ -346,7 +346,7 @@ public class StorageService {
                         
                     case MonitorProperties.JVM_RESOURCE_TYPE:
                     	                    	
-                    	coreProps.add(WebLogicMBeanPropConstants.HEAP_MEMORY_INIT);
+                    		coreProps.add(WebLogicMBeanPropConstants.HEAP_MEMORY_INIT);
                         coreProps.add(WebLogicMBeanPropConstants.HEAP_MEMORY_USED);
                         coreProps.add(WebLogicMBeanPropConstants.HEAP_MEMORY_COMMITTED);
                         coreProps.add(WebLogicMBeanPropConstants.HEAP_MEMORY_MAX);
@@ -369,12 +369,17 @@ public class StorageService {
                         coreProps.add(WebLogicMBeanPropConstants.TENURED_GEN_INIT);
                         coreProps.add(WebLogicMBeanPropConstants.TENURED_GEN_USED);
                         coreProps.add(WebLogicMBeanPropConstants.TENURED_GEN_COMMITTED);
-                    	coreProps.add(WebLogicMBeanPropConstants.TENURED_GEN_MAX);
+                    		coreProps.add(WebLogicMBeanPropConstants.TENURED_GEN_MAX);
                     	
-                    	coreProps.add(WebLogicMBeanPropConstants.PERM_GEN_INIT);
-                    	coreProps.add(WebLogicMBeanPropConstants.PERM_GEN_USED);
-                    	coreProps.add(WebLogicMBeanPropConstants.PERM_GEN_COMMITTED);
-                    	coreProps.add(WebLogicMBeanPropConstants.PERM_GEN_MAX);
+	                    	coreProps.add(WebLogicMBeanPropConstants.PERM_GEN_INIT);
+	                    	coreProps.add(WebLogicMBeanPropConstants.PERM_GEN_USED);
+	                    	coreProps.add(WebLogicMBeanPropConstants.PERM_GEN_COMMITTED);
+	                    	coreProps.add(WebLogicMBeanPropConstants.PERM_GEN_MAX);
+	                    	
+	                    	coreProps.add(WebLogicMBeanPropConstants.META_SPACE_INIT);
+	                    	coreProps.add(WebLogicMBeanPropConstants.META_SPACE_USED);
+	                    	coreProps.add(WebLogicMBeanPropConstants.META_SPACE_COMMITTED);
+	                    	coreProps.add(WebLogicMBeanPropConstants.META_SPACE_MAX);
                         
                         // Is important to find the file to read
                         resource = MonitorProperties.JVM_MBEAN_NAME;
