@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<weblogic-web-app xmlns="http://xmlns.oracle.com/weblogic/weblogic-web-app">
+
+	<container-descriptor>
+         <prefer-application-packages>
+             <package-name>org.joda.time</package-name>
+         </prefer-application-packages>
+    </container-descriptor>
+    
+	<!-- ****************************************************** -->
+ 	<!-- Is required for 12.1.3 -->
+ 	<!--
+ 	<library-ref>
+       <library-name>jax-rs</library-name>
+       <specification-version>2.0</specification-version>
+       <exact-match>false</exact-match>
+    </library-ref>
+    -->
+    <!-- ****************************************************** -->
+	
+	<security-role-assignment>
+		<!-- The security-role-assignment element declares a mapping between a Web application security role and one or more principals in WebLogic Server -->
+		<role-name>SystemAdministrator</role-name>
+		
+		<!-- The <principal-name> can map to 
+			a) a user defined in any realm or b) 
+			a group defined in any realm
+		-->
+
+		<!-- Default WL groups -->
+		<principal-name>Administrators</principal-name>
+		<principal-name>Monitors</principal-name>
+
+		<!-- Custom EC groups - Admin and ReadOnly -->
+		<principal-name>digit-adminGroup</principal-name>
+		<principal-name>dg-monitorGroup</principal-name>
+	</security-role-assignment>
+
+	<security-role-assignment>
+		<!--The security-role-assignment element declares a mapping between a Web 
+			application security role and one or more principals in WebLogic Server -->
+		<role-name>jmsOperator</role-name>
+		<!--The <principal-name> can map to a) a user defined in any realm or b) 
+			a group defined in any realm -->
+
+		<!-- Default WL groups -->
+		<principal-name>Administrators</principal-name>
+
+		<!-- Custom EC groups - Admin and special jmsOperator -->
+		<principal-name>digit-adminGroup</principal-name>
+		<principal-name>dg-jmsoperatorGroup</principal-name>
+	</security-role-assignment>
+	
+	<run-as-role-assignment>
+		<!--The run-as-role-assignment element maps a run-as role name (a sub-element of the servlet element) in web.xml to a valid user name in the system-->
+		<role-name>SystemAdministrator</role-name>
+		
+		<!--
+		Updated by gregoan
+		<run-as-principal-name>weblogic</run-as-principal-name
+		-->
+		<run-as-principal-name>system</run-as-principal-name>
+
+	</run-as-role-assignment>
+	
+	<context-root>/domainhealth</context-root>
+
+	<work-manager>
+		<name>DomainHealth_IndividualServerStatCapturerWorkMngr</name>
+		<max-threads-constraint>
+			<name>StatPollerMultiMaxThreadConstraint</name>
+			<count>12</count>
+		</max-threads-constraint>
+	</work-manager>
+
+	<session-descriptor>
+		<timeout-secs>3600</timeout-secs>
+	</session-descriptor>
+</weblogic-web-app>
