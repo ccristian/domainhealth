@@ -22,9 +22,10 @@
 		<!-- The security-role-assignment element declares a mapping between a Web application security role and one or more principals in WebLogic Server -->
 		<role-name>SystemAdministrator</role-name>
 		
-		<!-- The <principal-name> can map to 
-			a) a user defined in any realm or b) 
-			a group defined in any realm
+		<!--
+		The <principal-name> can map to 
+			a) a user defined in any realm
+			b) a group defined in any realm
 		-->
 
 		<!-- Default WL groups -->
@@ -37,11 +38,14 @@
 	</security-role-assignment>
 
 	<security-role-assignment>
-		<!--The security-role-assignment element declares a mapping between a Web 
-			application security role and one or more principals in WebLogic Server -->
+		<!--The security-role-assignment element declares a mapping between a Web application security role and one or more principals in WebLogic Server -->
 		<role-name>jmsOperator</role-name>
-		<!--The <principal-name> can map to a) a user defined in any realm or b) 
-			a group defined in any realm -->
+		
+		<!--
+		The <principal-name> can map to 
+			a) a user defined in any realm
+			b) a group defined in any realm
+		-->
 
 		<!-- Default WL groups -->
 		<principal-name>Administrators</principal-name>
