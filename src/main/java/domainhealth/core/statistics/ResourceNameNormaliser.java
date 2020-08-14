@@ -66,20 +66,45 @@ public class ResourceNameNormaliser {
 				}
 			}			
 		} else if (resourceType == WEBAPP_RESOURCE_TYPE) {
+			
+//System.out.println("ResourceNameNormaliser::normalise() - WEB-APP - Processing the resource [" + resourceName + "]");			
+//System.out.println("ResourceNameNormaliser::normalise() - WEB-APP - Looking for [" + WEBAPP_SERVER_NAME_SEPARATOR + "]");
+			
 			int startPos = resourceName.indexOf(WEBAPP_SERVER_NAME_SEPARATOR);
-
+			
 			if (startPos > 0) {
+				
+//System.out.println("ResourceNameNormaliser::normalise() - WEB-APP - Found [" + WEBAPP_SERVER_NAME_SEPARATOR + "] in position [" + startPos + "]");
+
 				normalisedName = resourceName.substring(startPos + WEBAPP_SERVER_NAME_SEPARATOR.length());
+				
+//System.out.println("ResourceNameNormaliser::normalise() - WEB-APP - startPos > 0 - normalisedName is [" + normalisedName + "]");
+
 			}
 		}
 
-		normalisedName = normalisedName.replace(BAD_CHAR_1, GOOD_CHAR);		
-		normalisedName = normalisedName.replace(BAD_CHAR_2, GOOD_CHAR);		
+		normalisedName = normalisedName.replace(BAD_CHAR_1, GOOD_CHAR);
+//System.out.println("ResourceNameNormaliser::normalise() - normalisedName BAD_CHAR_1 is [" + normalisedName + "]");
+
+		normalisedName = normalisedName.replace(BAD_CHAR_2, GOOD_CHAR);
+//System.out.println("ResourceNameNormaliser::normalise() - normalisedName BAD_CHAR_2 is [" + normalisedName + "]");
+
 		normalisedName = normalisedName.replace(BAD_CHAR_3, GOOD_CHAR);
+//System.out.println("ResourceNameNormaliser::normalise() - normalisedName BAD_CHAR_3 is [" + normalisedName + "]");
 		
+		
+		normalisedName = normalisedName.replace(BAD_CHAR_4, GOOD_CHAR);
+//System.out.println("ResourceNameNormaliser::normalise() - normalisedName BAD_CHAR_4 is [" + normalisedName + "]");
+
 		if (normalisedName.endsWith(REDUNDANT_GOOD_STR)) {
+			
+//System.out.println("ResourceNameNormaliser::normalise() - normalisedName REDUNDANT_GOOD_STR return [" + normalisedName.substring(0, (normalisedName.length() - 1)) + "]");
+			
 			return normalisedName.substring(0, (normalisedName.length() - 1));			
 		}
+		
+//System.out.println("ResourceNameNormaliser::normalise() - normalisedName final [" + normalisedName.trim() + "]");
+//System.out.println("");
 
 		return normalisedName.trim();
 	}
@@ -91,6 +116,7 @@ public class ResourceNameNormaliser {
 	private final static char BAD_CHAR_1 = '/';
 	private final static char BAD_CHAR_2 = '[';
 	private final static char BAD_CHAR_3 = ']';
+	private final static char BAD_CHAR_4 = '.';
 	private final static char GOOD_CHAR = '_';
 	private final static String REDUNDANT_GOOD_STR = "" + GOOD_CHAR;
 }

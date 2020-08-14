@@ -491,7 +491,8 @@ $(function () {
         });
     }
 
-    function addListener(res, resname, respath) {
+    function addListener(res, resname, respath) {    	
+    	
         $.each(res.list, function (key, value) {
             $("#" + res.uniquename + value).click(function () {
                 getAndDisplayCharts(resname, respath, value);
