@@ -28,7 +28,7 @@
     
     <context-param>
         <param-name>dh_csv_retain_num_days</param-name>
-        <param-value>60</param-value>
+        <param-value>20</param-value>
     </context-param>
 
 	<!-- Added by gregoan -->
