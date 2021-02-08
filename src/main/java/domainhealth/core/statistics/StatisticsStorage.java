@@ -267,6 +267,8 @@ public class StatisticsStorage {
      */
     private Properties retrieveOneDayResoureNameList(Date dateTime, String resourceType) throws IOException {
         Properties propList = new Properties();
+        
+//if(resourceType.equals(MonitorProperties.DESTINATION_RESOURCE_TYPE)) System.out.println("StatisticsStorage::retrieveOneDayResoureNameList() - Processing destination");
 
         // Lock per resource type enabling threads reading/writing from/to
         // different resource files to still work in parallel
@@ -278,13 +280,25 @@ public class StatisticsStorage {
 
                 if (file != null) {
                     
-                		// < JDK7 implementation
-                		//propsIn = new FileInputStream(file);
-                	
-                		// JDK7 implementation
-                		propsIn = Files.newInputStream(file.toPath());
+            		// < JDK7 implementation
+            		//propsIn = new FileInputStream(file);
+            	
+            		// JDK7 implementation
+            		propsIn = Files.newInputStream(file.toPath());
                 	
                     propList.load(propsIn);
+  
+/*
+if(resourceType.equals(MonitorProperties.DESTINATION_RESOURCE_TYPE)){
+	
+	System.out.println("StatisticsStorage::retrieveOneDayResoureNameList() - Processing the file [" + file.toPath() + "]");
+	System.out.println("StatisticsStorage::retrieveOneDayResoureNameList() -    ---> Loaded [" + propList.size() + "] elements");
+		
+	propList.forEach((k, v) -> {
+		System.out.println("StatisticsStorage::retrieveOneDayResoureNameList() -       ---> Key/Value is [" + k + "/" + v + "]");
+    });
+}
+*/
                 }
             } finally {
                 if (propsIn != null) {
@@ -314,7 +328,7 @@ public class StatisticsStorage {
      */
     public void appendSavedOneDayResourceNameList(Date dateTime, String resourceType, Properties extraPropList) throws IOException {
         
-    		// Lock per resource type enabling threads reading/writing from/to different resource files to still work in parallel
+    	// Lock per resource type enabling threads reading/writing from/to different resource files to still work in parallel
         synchronized (getResourceMonitorObject(resourceType)) {
             Properties propList = retrieveOneDayResoureNameList(dateTime, resourceType);
             OutputStream propsOut = null;
@@ -562,6 +576,9 @@ public class StatisticsStorage {
         DateFormat dayDateFormat = new SimpleDateFormat(DATE_PATH_FORMAT);
         String dirPath = getDayDirectoryPath(dateTime);
         String res = String.format("%s%s%s_%s_%s%s", dirPath, separatorChar, resourceType, RESOURCE_LIST_FILENAME_SUFFIX, dayDateFormat.format(dateTime), PROPS_SUFFIX);
+        
+//if(resourceType.equals(MonitorProperties.DESTINATION_RESOURCE_TYPE))System.out.println("StatisticsStorage::getDayResourcePropListFilePath() - res is [" + res + "]");
+        
         return res;
     }
 

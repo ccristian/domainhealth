@@ -180,15 +180,16 @@ public class StorageService {
             if (scope == null || scope.size() == 0) {
                 scope = statisticsStorage.getAllPossibleServerNames(conn);
             }
+            
             //temp
             /*scope = new TreeSet<>();
             scope.add("EFP7-OSB_TESTosb11");
             scope.add("EFP7-OSB_TESTosb12");
             scope.add("EFP7-OSB_TESTserver");
-               */
+            */
 
             // --------------------------------------------------------------------------
-            
+			
             Map<String, DateAmountDataSet> dataMap = null;
 
             for (String server : scope) {
@@ -369,17 +370,17 @@ public class StorageService {
                         coreProps.add(WebLogicMBeanPropConstants.TENURED_GEN_INIT);
                         coreProps.add(WebLogicMBeanPropConstants.TENURED_GEN_USED);
                         coreProps.add(WebLogicMBeanPropConstants.TENURED_GEN_COMMITTED);
-                    		coreProps.add(WebLogicMBeanPropConstants.TENURED_GEN_MAX);
+                		coreProps.add(WebLogicMBeanPropConstants.TENURED_GEN_MAX);
+                	
+                    	coreProps.add(WebLogicMBeanPropConstants.PERM_GEN_INIT);
+                    	coreProps.add(WebLogicMBeanPropConstants.PERM_GEN_USED);
+                    	coreProps.add(WebLogicMBeanPropConstants.PERM_GEN_COMMITTED);
+                    	coreProps.add(WebLogicMBeanPropConstants.PERM_GEN_MAX);
                     	
-	                    	coreProps.add(WebLogicMBeanPropConstants.PERM_GEN_INIT);
-	                    	coreProps.add(WebLogicMBeanPropConstants.PERM_GEN_USED);
-	                    	coreProps.add(WebLogicMBeanPropConstants.PERM_GEN_COMMITTED);
-	                    	coreProps.add(WebLogicMBeanPropConstants.PERM_GEN_MAX);
-	                    	
-	                    	coreProps.add(WebLogicMBeanPropConstants.META_SPACE_INIT);
-	                    	coreProps.add(WebLogicMBeanPropConstants.META_SPACE_USED);
-	                    	coreProps.add(WebLogicMBeanPropConstants.META_SPACE_COMMITTED);
-	                    	coreProps.add(WebLogicMBeanPropConstants.META_SPACE_MAX);
+                    	coreProps.add(WebLogicMBeanPropConstants.META_SPACE_INIT);
+                    	coreProps.add(WebLogicMBeanPropConstants.META_SPACE_USED);
+                    	coreProps.add(WebLogicMBeanPropConstants.META_SPACE_COMMITTED);
+                    	coreProps.add(WebLogicMBeanPropConstants.META_SPACE_MAX);
                         
                         // Is important to find the file to read
                         resource = MonitorProperties.JVM_MBEAN_NAME;
@@ -387,7 +388,7 @@ public class StorageService {
                         break;                        
                 }
 
-                // Temp solution for ordering gui
+                // Temporary solution for ordering GUI
                 Collections.reverse(coreProps);
                 Set prp = new LinkedHashSet(coreProps);
                 dataMap = statisticsStorage.getPropertyData(resourceType, resource, prp, interval, server);
@@ -463,8 +464,8 @@ public class StorageService {
                 	case MonitorProperties.SAF_DASHBOARD_RESOURCE_TYPE:
                 		return getSAFAgentDashboard(conn, resource);
                 		
-case MonitorProperties.JMS_RUNTIME_DASHBOARD_RESOURCE_TYPE:
-	return getJMSServerDashboard(conn, resource);
+					case MonitorProperties.JMS_RUNTIME_DASHBOARD_RESOURCE_TYPE:
+						return getJMSServerDashboard(conn, resource);
                 }
             //}
                         
@@ -678,16 +679,16 @@ case MonitorProperties.JMS_RUNTIME_DASHBOARD_RESOURCE_TYPE:
 
 		        		for (ObjectName destination : conn.getChildren(jmsServer, WebLogicMBeanPropConstants.DESTINATIONS)) {
 
-                        // This map should be inside the loop otherwise will contain only the latest values
-                        Map<String, String> metrics = new LinkedHashMap<String, String>();
+	                        // This map should be inside the loop otherwise will contain only the latest values
+	                        Map<String, String> metrics = new LinkedHashMap<String, String>();
 
 		        			String destinationName = ResourceNameNormaliser.normalise(MonitorProperties.JMSSVR_RESOURCE_TYPE, conn.getTextAttr(destination, WebLogicMBeanPropConstants.NAME));
 		        			
-						metrics.put(WebLogicMBeanPropConstants.PRODUCTION_PAUSED, conn.getBooleanAttr(destination, WebLogicMBeanPropConstants.PRODUCTION_PAUSED) + "");
-						metrics.put(WebLogicMBeanPropConstants.CONSUMPTION_PAUSED, conn.getBooleanAttr(destination, WebLogicMBeanPropConstants.CONSUMPTION_PAUSED) + "");
-						metrics.put(WebLogicMBeanPropConstants.INSERTION_PAUSED, conn.getBooleanAttr(destination, WebLogicMBeanPropConstants.INSERTION_PAUSED) + "");
-						
-						metrics.put(WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(destination, WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT)).toString());
+							metrics.put(WebLogicMBeanPropConstants.PRODUCTION_PAUSED, conn.getBooleanAttr(destination, WebLogicMBeanPropConstants.PRODUCTION_PAUSED) + "");
+							metrics.put(WebLogicMBeanPropConstants.CONSUMPTION_PAUSED, conn.getBooleanAttr(destination, WebLogicMBeanPropConstants.CONSUMPTION_PAUSED) + "");
+							metrics.put(WebLogicMBeanPropConstants.INSERTION_PAUSED, conn.getBooleanAttr(destination, WebLogicMBeanPropConstants.INSERTION_PAUSED) + "");
+							
+							metrics.put(WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(destination, WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT)).toString());
 		        			metrics.put(WebLogicMBeanPropConstants.MESSAGES_PENDING_COUNT, new Integer((int)conn.getNumberAttr(destination, WebLogicMBeanPropConstants.MESSAGES_PENDING_COUNT)).toString());
 		        			metrics.put(WebLogicMBeanPropConstants.MESSAGES_RECEIVED_COUNT, new Integer((int)conn.getNumberAttr(destination, WebLogicMBeanPropConstants.MESSAGES_RECEIVED_COUNT)).toString());
 		        			metrics.put(WebLogicMBeanPropConstants.MESSAGES_HIGH_COUNT, new Integer((int)conn.getNumberAttr(destination, WebLogicMBeanPropConstants.MESSAGES_HIGH_COUNT)).toString());
@@ -736,28 +737,28 @@ case MonitorProperties.JMS_RUNTIME_DASHBOARD_RESOURCE_TYPE:
 			        		for (ObjectName remoteEndPoint : conn.getChildren(safAgent, WebLogicMBeanPropConstants.REMOTE_END_POINTS)) {
 			        			
 			        			// This map should be inside the loop otherwise will contain only the latest values
-	                        Map<String, String> metrics = new LinkedHashMap<String, String>();
+			        			Map<String, String> metrics = new LinkedHashMap<String, String>();
 				        			
 			        			String safName = ResourceNameNormaliser.normalise(MonitorProperties.SAFAGENT_RESOURCE_TYPE, conn.getTextAttr(remoteEndPoint, WebLogicMBeanPropConstants.NAME));
 			        			
-							metrics.put(WebLogicMBeanPropConstants.PAUSED_FOR_INCOMING, conn.getBooleanAttr(remoteEndPoint, WebLogicMBeanPropConstants.PAUSED_FOR_INCOMING) + "");
-							metrics.put(WebLogicMBeanPropConstants.PAUSED_FOR_FORWARDING, conn.getBooleanAttr(remoteEndPoint, WebLogicMBeanPropConstants.PAUSED_FOR_FORWARDING) + "");
+								metrics.put(WebLogicMBeanPropConstants.PAUSED_FOR_INCOMING, conn.getBooleanAttr(remoteEndPoint, WebLogicMBeanPropConstants.PAUSED_FOR_INCOMING) + "");
+								metrics.put(WebLogicMBeanPropConstants.PAUSED_FOR_FORWARDING, conn.getBooleanAttr(remoteEndPoint, WebLogicMBeanPropConstants.PAUSED_FOR_FORWARDING) + "");
 							
-							/*
-							// PAUSE_FOR_RECEIVING is available only for the SAF_AGENT not for the REMOTE_ENDPOINT
-							//metrics.put(WebLogicMBeanPropConstants.PAUSED_FOR_RECEIVING, conn.getBooleanAttr(remoteEndPoint, WebLogicMBeanPropConstants.PAUSED_FOR_RECEIVING) + "");
-							*/
+								/*
+								// PAUSE_FOR_RECEIVING is available only for the SAF_AGENT not for the REMOTE_ENDPOINT
+								//metrics.put(WebLogicMBeanPropConstants.PAUSED_FOR_RECEIVING, conn.getBooleanAttr(remoteEndPoint, WebLogicMBeanPropConstants.PAUSED_FOR_RECEIVING) + "");
+								*/
 								
-							metrics.put(WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT)).toString());
+								metrics.put(WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.MESSAGES_CURRENT_COUNT)).toString());
 			        			metrics.put(WebLogicMBeanPropConstants.MESSAGES_PENDING_COUNT, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.MESSAGES_PENDING_COUNT)).toString());
 			        			metrics.put(WebLogicMBeanPropConstants.MESSAGES_RECEIVED_COUNT, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.MESSAGES_RECEIVED_COUNT)).toString());
 			        			metrics.put(WebLogicMBeanPropConstants.MESSAGES_HIGH_COUNT, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.MESSAGES_HIGH_COUNT)).toString());
 								
 			        			metrics.put(WebLogicMBeanPropConstants.DOWNTIME_HIGH, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.DOWNTIME_HIGH)).toString());
-							metrics.put(WebLogicMBeanPropConstants.DOWNTIME_TOTAL, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.DOWNTIME_TOTAL)).toString());
-							metrics.put(WebLogicMBeanPropConstants.UPTIME_HIGH, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.UPTIME_HIGH)).toString());
-							metrics.put(WebLogicMBeanPropConstants.UPTIME_TOTAL, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.UPTIME_TOTAL)).toString());
-							metrics.put(WebLogicMBeanPropConstants.FAILED_MESSAGES_TOTAL, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.FAILED_MESSAGES_TOTAL)).toString());
+								metrics.put(WebLogicMBeanPropConstants.DOWNTIME_TOTAL, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.DOWNTIME_TOTAL)).toString());
+								metrics.put(WebLogicMBeanPropConstants.UPTIME_HIGH, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.UPTIME_HIGH)).toString());
+								metrics.put(WebLogicMBeanPropConstants.UPTIME_TOTAL, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.UPTIME_TOTAL)).toString());
+								metrics.put(WebLogicMBeanPropConstants.FAILED_MESSAGES_TOTAL, new Integer((int)conn.getNumberAttr(remoteEndPoint, WebLogicMBeanPropConstants.FAILED_MESSAGES_TOTAL)).toString());
 								
 			        			result.put(safName, metrics);
 			        		}

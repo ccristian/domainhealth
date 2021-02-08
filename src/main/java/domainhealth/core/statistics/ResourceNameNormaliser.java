@@ -38,15 +38,30 @@ public class ResourceNameNormaliser {
 		//if (resourceType == DESTINATION_RESOURCE_TYPE) {
 		if (resourceType == DESTINATION_RESOURCE_TYPE || resourceType == JMSSVR_RESOURCE_TYPE) {
 			
+//System.out.println("ResourceNameNormaliser::normalise() - DESTINATION - Processing the resource [" + resourceName + "]");			
+//System.out.println("ResourceNameNormaliser::normalise() - DESTINATION - Looking for [" + DEST_MODULE_PHYSICAL_SEPERATOR + "]");
+
 			int startPos = resourceName.indexOf(DEST_MODULE_PHYSICAL_SEPERATOR);
-			
-			if (startPos < 0) {
+						
+			if (startPos < 0) {				
+//System.out.println("ResourceNameNormaliser::normalise() - DESTINATION - NOT FOUND [" + DEST_MODULE_PHYSICAL_SEPERATOR + "]");
 				startPos = resourceName.indexOf(DEST_SERVER_MODULE_SEPARATOR);
+//System.out.println("ResourceNameNormaliser::normalise() - DESTINATION - startPos will become ---> [" + startPos + "]");
 			}
 					
 			if (startPos > 0) {
+//System.out.println("ResourceNameNormaliser::normalise() - DESTINATION - Found [" + DEST_MODULE_PHYSICAL_SEPERATOR + "] in position [" + startPos + "]");
 				normalisedName = resourceName.substring(startPos + 1);
+//System.out.println("ResourceNameNormaliser::normalise() - DESTINATION - normalisedName is [" + normalisedName + "]");
 			}
+			
+			// The character "@" is causing problem
+			if (resourceType == DESTINATION_RESOURCE_TYPE) {
+				
+				normalisedName = normalisedName.replace(DEST_MODULE_PHYSICAL_SEPERATOR, GOOD_CHAR);
+//System.out.println("ResourceNameNormaliser::normalise() - DESTINATION - normalisedName is [" + normalisedName + "]");
+			}
+			
 		// For SAF the relevant information is between last "DEST_SERVER_MODULE_SEPARATOR" and "DEST_MODULE_PHYSICAL_SEPERATOR"
 		} else if (resourceType == SAFAGENT_RESOURCE_TYPE) {
 			
@@ -67,19 +82,11 @@ public class ResourceNameNormaliser {
 			}			
 		} else if (resourceType == WEBAPP_RESOURCE_TYPE) {
 			
-//System.out.println("ResourceNameNormaliser::normalise() - WEB-APP - Processing the resource [" + resourceName + "]");			
-//System.out.println("ResourceNameNormaliser::normalise() - WEB-APP - Looking for [" + WEBAPP_SERVER_NAME_SEPARATOR + "]");
-			
 			int startPos = resourceName.indexOf(WEBAPP_SERVER_NAME_SEPARATOR);
 			
 			if (startPos > 0) {
 				
-//System.out.println("ResourceNameNormaliser::normalise() - WEB-APP - Found [" + WEBAPP_SERVER_NAME_SEPARATOR + "] in position [" + startPos + "]");
-
-				normalisedName = resourceName.substring(startPos + WEBAPP_SERVER_NAME_SEPARATOR.length());
-				
-//System.out.println("ResourceNameNormaliser::normalise() - WEB-APP - startPos > 0 - normalisedName is [" + normalisedName + "]");
-
+				normalisedName = resourceName.substring(startPos + WEBAPP_SERVER_NAME_SEPARATOR.length());				
 			}
 		}
 
@@ -92,9 +99,11 @@ public class ResourceNameNormaliser {
 		normalisedName = normalisedName.replace(BAD_CHAR_3, GOOD_CHAR);
 //System.out.println("ResourceNameNormaliser::normalise() - normalisedName BAD_CHAR_3 is [" + normalisedName + "]");
 		
-		
 		normalisedName = normalisedName.replace(BAD_CHAR_4, GOOD_CHAR);
 //System.out.println("ResourceNameNormaliser::normalise() - normalisedName BAD_CHAR_4 is [" + normalisedName + "]");
+		
+		normalisedName = normalisedName.replace(BAD_CHAR_5, GOOD_CHAR);
+//System.out.println("ResourceNameNormaliser::normalise() - normalisedName BAD_CHAR_5 is [" + normalisedName + "]");
 
 		if (normalisedName.endsWith(REDUNDANT_GOOD_STR)) {
 			
@@ -117,6 +126,7 @@ public class ResourceNameNormaliser {
 	private final static char BAD_CHAR_2 = '[';
 	private final static char BAD_CHAR_3 = ']';
 	private final static char BAD_CHAR_4 = '.';
+	private final static char BAD_CHAR_5 = ' ';
 	private final static char GOOD_CHAR = '_';
 	private final static String REDUNDANT_GOOD_STR = "" + GOOD_CHAR;
 }

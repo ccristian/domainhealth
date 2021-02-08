@@ -286,12 +286,11 @@ $(function () {
     });
 
 
-    //initial view loading the first page
+    // Initial view loading the first page
     getAndDisplayCharts($.AdminLTE.options.currentResname, $.AdminLTE.options.currentPath, $.AdminLTE.options.currentResource);
 
 
-
-        //initialize the date range and add a listener when new interval is selected
+        // Initialize the date range and add a listener when new interval is selected
         $('#daterange-btn').daterangepicker(
             {
                 timePicker: true,
@@ -440,9 +439,7 @@ $(function () {
                 // Updated by gregoan
                 // ------------------
                 //$(".content-wrapper").html(templateDashboard($.AdminLTE));
-                
-//console.log("respath is :" + respath);
-                
+                                
                 if (respath == "safdashboard") {
                     $(".content-wrapper").html(templateDashboardActionSaf($.AdminLTE));
                 } else if (respath == "jmsdashboard") {
@@ -491,7 +488,7 @@ $(function () {
         });
     }
 
-    function addListener(res, resname, respath) {    	
+    function addListener(res, resname, respath) {
     	
         $.each(res.list, function (key, value) {
             $("#" + res.uniquename + value).click(function () {
@@ -531,7 +528,7 @@ $(function () {
         //if livedata is selected start interval
         if ($('#livedataCb').is(':checked')) {
 
-            console.log("start live data ...");
+            console.log("Start live data ...");
             $.AdminLTE.options.interval = setInterval(function () {
 
                 var charts = $(".currentcharts");
@@ -547,7 +544,7 @@ $(function () {
                 var start = moment(end).subtract(intrevalTime, 'seconds');
                 var endTimeInterval = end.format('DD-MM-YYYY-HH-mm');
                 var startTimeInterval = start.format('DD-MM-YYYY-HH-mm');
-
+                
                 $.ajax({
                     url: '/domainhealth/rest/stats/' + $.AdminLTE.options.currentPath + '/' + $.AdminLTE.options.currentResource + '?',
                     cache: false,
@@ -575,14 +572,14 @@ $(function () {
                         });
                     },
                     error: function (xhr) {
-                        alert("error");
+                        alert("Error");
                     }
                 });
 
-                console.log("tick ...");
+                console.log("Tick ...");
             }, 30000);
         } else {
-            console.log("stop live data ...");
+            console.log("Stop live data ...");
             clearInterval($.AdminLTE.options.interval);
         }
 
@@ -608,11 +605,6 @@ $(function () {
             $("#destination").html(template(res));
             addListener(res, "JMS", "destination");
             
-// JMS Message dashboard
-// ---------------------
-            
-// Se baser sur la liste des queues pour afficher les messages de la queue JMS et proposer les actions à executer plutôt que de passer par le menu en fin de liste
-
             res.uniquename = "saf"
             res.list = response[res.uniquename];
             $("#saf").html(template(res));
